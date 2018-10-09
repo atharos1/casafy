@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Casafy</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="css/datatables.min.css" />
+
+    <style>
+        body,
+        html {
+            height: 100%;
+        }
+
+        .card {
+            position: relative;
+        }
+    
+        .bg {
+            background-image: url("img/background.jpg");
+    
+            height: 100%;
+    
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+    </style>
+
+    <style>
+        .btn-float-main {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            bottom: 40px;
+            right: 40px;
+            border-radius: 50px;
+            text-align: center;
+            z-index: 1000;
+        }
+    
+        .btn-float-control>ul {
+            position: absolute;
+            right: 40px;
+            padding-bottom: 20px;
+            bottom: 80px;
+            z-index: 100;
+        }
+    
+        .btn-float-control>ul li {
+            list-style: none;
+            margin-bottom: 5px;
+        }
+    
+        /*.btn-float-control>ul li a {
+            background-color: #F33;
+            color: #FFF;
+            text-align: center;
+            box-shadow: 2px 2px 3px #999;
+            height: 60px;
+            display: block;
+        }*/
+    
+        .btn-float-control>ul:hover {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+    
+        .btn-float-control>a#menu-share+ul {
+            visibility: hidden;
+        }
+    
+        .btn-float-control>a#menu-share:hover+ul {
+            visibility: visible;
+            animation: scale-in 0.5s;
+        }
+    
+        .btn-float-control>a#menu-share i {
+            animation: rotate-in 0.5s;
+        }
+    
+        .btn-float-control>a#menu-share:hover>i {
+            animation: rotate-out 0.5s;
+        }
+    
+        @keyframes scale-in {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+    
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    
+        @keyframes rotate-in {
+            from {
+                transform: rotate(0deg);
+            }
+    
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    
+        @keyframes rotate-out {
+            from {
+                transform: rotate(360deg);
+            }
+    
+            to {
+                transform: rotate(0deg);
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div>
+        <div class="bg animated fadeIn slower">
+
+            <!-- Navbar -->
+            <nav class="navbar justify-content-between navbar-dark rgba-black-light sticky-top">
+                <a class="navbar-brand font-weight-bold" href="#">Casafy</a>
+                <form class="form-inline">
+                    <div class="md-form form-md my-0" style="width: 25em;">
+                        <input class="form-control form-control-xl mr-md-2 mb-2" style="width: 23em;" type="text"
+                            placeholder="Buscar dispositivos, habitaciones y rutinas..." aria-label="Search">
+                    </div>
+                    <button class="btn btn-outline-white btn-sm my-0" type="submit"><i class="fa fa-question-circle"
+                            aria-hidden="true"></i> Ayuda</button>
+                </form>
+            </nav>
+
+            <p></p>
+
+            <div id="app" class="container-fluid">
+
+                <div class="row">
+                    <div class="col-9">
+                        <!--Dispositivos y grupos-->
+
+                        <div class="card mask rgba-white-strong animated zoomIn">
+                            <div class="card-body">
+                                <div class="row card-title" style="padding: inherit; margin: inherit;">
+                                    <div class="col-1">
+                                        <a href="#"><i class="fa fa-arrow-circle-o-left fa-2x black-text" aria-hidden="true"></i></a>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4 class="d-flex justify-content-start card-title">
+                                            <a>Cocina</a>
+                                        </h4>
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <a href="#" class="btn black-text rgba-red-strong"><i class="fa fa-trash"
+                                                aria-hidden="true"></i></a>
+                                        <a href="#" class="btn black-text"><i class="fa fa-gear" aria-hidden="true"></i>
+                                            Configuración</a>
+                                    </div>
+                                </div>
+
+                                <div id="orphanDevicesView" class="row" style="padding: inherit; margin: inherit;">
+                                    <div class="col-5 col-lg-4 col-xl-4">
+                                        <div class="card hoverable" style="padding: 0px; margin: 0px">
+                                            <div class="row">
+                                                <div class="col-4 py-0 pr-0" style="padding: 0px; margin: 0px">
+                                                    <div class="view overlay hm-white-slight zoom" style="padding: 0px; margin: 0px">
+                                                        <img src="img/devices/lamp.jpg" class="img-fluid z-depth-1 rounded hoverable"
+                                                            alt="" style="width: 100%; height: 100%;">
+                                                        <a href="#">
+                                                            <div class="mask"></div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-8 text-center" style="padding-left: 0px;">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title">
+                                                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                                                            Luz de lectura
+                                                        </h4>
+                                                        <a class="btn btn-sm btn-primary" href="#" role="button">
+                                                            <i class="fa fa-gear" aria-hidden="true"></i>
+                                                        </a>
+                                                        <a class="btn btn-sm btn-primary" href="#" role="button">
+                                                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="btn-float-control animated fadeIn slower">
+                                <a href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
+                                    id="menu-share">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a class="btn mask rgba-black-strong" href="#" role="button">Agregar nuevo
+                                            dispositivo</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="col-3">
+                        <!--Rutinas-->
+                        <div class="card mask rgba-white-strong animated zoomIn">
+                            <div class="card-body text-center">
+                                <h4 class="card-title"><a>Rutinas</a></h4>
+
+                                <table id="routineTable" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Rutina</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+
+                                <br>
+                                <br>
+                                <br>
+
+                                <div class="btn-float-control animated fadeIn slower">
+                                    <a href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
+                                        id="menu-share">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </a>
+                                    <ul>
+                                        <li>
+                                            <a class="btn mask rgba-black-strong" href="#" role="button">Agregar nueva
+                                                rutina</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <p></p>
+
+            <!-- Footer -->
+            <footer class="page-footer font-small rgba-black-light">
+                <p></p>
+
+                <!-- Copyright -->
+                <div class="footer-copyright text-center py-3">© 2018 Copyright: Pruebita</div>
+                <!-- Copyright -->
+
+            </footer>
+            <!-- Footer -->
+
+        </div>
+    </div>
+
+
+
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+
+    <script type="text/javascript" src="js/datatables.min.js"></script>
+
+
+
+    <!-- SmoothScroll -->
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll@14/dist/smooth-scroll.polyfills.min.js"></script>
+    <script>
+        var scroll = new SmoothScroll('a[href*="#"]');
+    </script>
+
+    <script>
+
+        function renderRoutine(nombre) {
+            return `<tr>
+                        <td>${nombre}</td>
+                        <td>
+                            <a class="btn btn-sm" href="#" role="button">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                            <a class="btn btn-sm" href="#" role="button">
+                                <i class="fa fa-gear" aria-hidden="true"></i>
+                            </a>
+                            <a class="btn btn-sm" href="#" role="button">
+                                <i class="fa fa-play" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>`
+        }
+
+        var api = class {
+            static get baseUrl() {
+                return "http://127.0.0.1:8080/api/";
+            }
+
+            static get timeout() {
+                return 60 * 1000;
+            }
+
+            static fetch(url, init) {
+                return new Promise(function (resolve, reject) {
+                    var timeout = setTimeout(function () {
+                        reject(new Error('Time out'));
+                    }, api.timeout);
+
+                    fetch(url, init)
+                        .then(function (response) {
+                            clearTimeout(timeout);
+                            if (!response.ok)
+                                reject(new Error(response.statusText));
+
+                            return response.json();
+                        })
+                        .then(function (data) {
+                            resolve(data);
+                        })
+                        .catch(function (error) {
+                            reject(error);
+                        });
+                });
+            }
+
+            static get(url) {
+                return api.fetch(url);
+            }
+
+            static post(url, body) {
+                return api.fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify(room)
+                });
+            }
+
+            static put(url, body) {
+                return api.fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify(room)
+                });
+            }
+
+            static delete(url) {
+                return api.fetch(url, {
+                    method: 'DELETE',
+                });
+            }
+        }
+
+        api.rooms = class {
+            static get url() {
+                return api.baseUrl + "rooms/";
+            }
+
+            static create(room) {
+                return api.post(api.rooms.url, room);
+            }
+
+            static modify(room) {
+                return api.put(api.rooms.url + room.id, room);
+            }
+
+            static delete(id) {
+                return api.delete(api.rooms.url + id);
+            }
+
+            static get(id) {
+                return api.get(api.rooms.url + id);
+            }
+
+            static getAll() {
+                return api.get(api.rooms.url);
+            }
+        }
+
+        api.devices = class {
+            static get url() {
+                return api.baseUrl + "devices/";
+            }
+
+            static getAll() {
+                return api.fetch(api.devices.url);
+            }
+
+            static create(device) {
+                return api.fetch(api.devices.url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify(room)
+                });
+            }
+        }
+
+        function populateRoomList() {
+            $("#roomsView").html("");
+            api.rooms.getAll()
+                .then((data) => {
+
+                    data["rooms"].forEach(room => {
+                        var meta = JSON.parse(room["meta"]);
+                        $("#roomsView").append(renderRoomCard(meta["isFavorite"], room["name"], meta["image"], meta["deviceCount"], meta["powerOnCount"]));
+                    });
+
+                })
+                .catch((error) => {
+                    alert('Request failed: ' + error);
+                });
+        }
+
+        function populateOrphanDevicesList() {
+            $("#orphanDevicesView").html("");
+            api.devices.getAll()
+                .then((data) => {
+
+                    data["devices"].forEach(device => {
+                        //var meta = JSON.parse(device["meta"]);
+                        alert(device["name"]);
+                        //$("#roomsView").append(renderRoomCard(meta["isFavorite"], room["name"], meta["image"], meta["deviceCount"], meta["powerOnCount"]));
+                    });
+
+                })
+                .catch((error) => {
+                    alert('Request failed: ' + error);
+                });
+        }
+
+
+        $(document).ready(function () {
+            /*for(i = 0; i < 5; i++)
+                $("#roomsView").append( renderRoomCard(true, "Prueba", "rooms/kitchen.jpg", 3, 1) );*/
+
+            for (i = 0; i < 4; i++)
+                $("#routineTable").children("tbody").append(renderRoutine("Votar a Macri y devaluar la moneda"));
+
+        });
+    </script>
+
+</body>
+
+</html>
