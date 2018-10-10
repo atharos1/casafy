@@ -242,7 +242,6 @@
             if (maxIndex - minIndex <= 0) return;
             let pivotIndex = generateRandomPivot(minIndex, maxIndex);
             let k = minIndex;
-            console.log("Pivot chosen: " + data[pivotIndex]);
             swap(data, k, pivotIndex);
             for (let i = minIndex + 1; i <= maxIndex; i++) {
                 if (comparator(data[i], data[minIndex]) <= 0) {
