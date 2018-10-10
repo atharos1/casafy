@@ -272,11 +272,24 @@
 
             api.rooms.getAll()
                 .then((data) => {
-                    compareRoomsByName = function(room1, room2) {
-                        return room1["name"] < room2["name"];
+
+                    compareRooms = function (room1, room2) {
+                        let room1meta = JSON.parse(room1["meta"]);
+                        let room2meta = JSON.parse(room2["meta"]);
+                        let room1IsFavorite = room1meta["isFavorite"];
+                        let room2IsFavorite = room2meta["isFavorite"];
+                        if ((room1IsFavorite && room2IsFavorite) || (!room1IsFavorite && !room2IsFavorite)) {
+                            return function(a, b) {
+                                if(a.toLowerCase() < b.toLowerCase()) return -1;
+                                if(a.toLowerCase() === b.toLowerCase()) return 0;
+                                if(a.toLowerCase() > b.toLowerCase()) return 1;
+                            }(room1["name"], room2["name"]);
+                        }
+                        if (room1IsFavorite) return -1;
+                        if (room2IsFavorite) return 1;
                     }
-                    
-                    qSort(data["rooms"], compareRoomsByName);
+
+                    qSort(data["rooms"], compareRooms);
 
                     data["rooms"].forEach(room => {
                         var meta = JSON.parse(room["meta"]);
