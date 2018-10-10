@@ -50,22 +50,26 @@
             <div class="row">
                 <!--Dispositivos y grupos-->
                 <div class="col-9">
-                    <div id="roomsCard" class="card mask rgba-white-strong" style="height:85vh">
+                    <div id="devicesCard" class="card mask rgba-white-strong" style="height:85vh">
                         <div class="pb-0" style="padding: 1.25rem">
-                            <h4 class="d-inline card-title"><a>Habitaciones</a></h4>
+                            <a href="index.html" class="btn black-text btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i></i>
+                                Volver al menú</a>
+                            <i id="isFavorite" aria-hidden="true"></i>
+                            <h4 id="roomName" class="d-inline card-title"><a>NOMBRE-HABITACIÓN</a></h4>
                             <div class="d-inline btn-group" data-toggle="buttons" style="float: right;">
+                                <!--<a href="#" class="btn black-text rgba-red-strong"><i class="fa fa-trash" aria-hidden="true"></i></a>-->
+                                <a href="#" class="btn black-text btn-md"><i class="fa fa-gear" aria-hidden="true"></i>
+                                    Configuración</a>
                             </div>
                         </div>
 
                         <div id="roomsEmptyDiv" class="center-screen text-center">
-                            <h4>No tienes habitaciones registradas</h4>
-                            <h5>¡Presiona el botón rojo para agregar una!</h5>
-                            <h5>¡Recuerda que necesitas una habitación para agregar un dispositivo!</h5>
-                            <a href="#">¿Qué es una habitación?</a>
+                            <h4>No tienes dispositivos en esta habitación</h4>
+                            <h5>¡Presiona el botón rojo para agregar uno!</h5>
                         </div>
 
                         <div class="card-body py-0 mCustomScrollbar" style="overflow:auto;">
-                            <div id="roomsView" class="row">
+                            <div id="devicesView" class="row">
                             </div>
                         </div>
 
@@ -76,8 +80,8 @@
                             </a>
                             <ul>
                                 <li>
-                                    <a class="btn mask rgba-black-strong" href="#" role="button">Agregar nueva
-                                        habitación</a>
+                                    <a class="btn mask rgba-black-strong" href="#" role="button">Agregar nuevo
+                                        dispositivo aquí</a>
                                 </li>
                             </ul>
                         </div>
@@ -92,13 +96,11 @@
                         <div class="pb-0" style="padding: 1.25rem">
                             <h4 class="card-title">Rutinas</h4>
                         </div>
-
                         <div id="routineEmptyDiv" class="center-screen text-center">
                             <h4>No tienes rutinas registradas</h4>
                             <h5>¡Presiona el botón rojo para agregar una!</h5>
                             <a href="#">¿Qué es una rutina?</a>
                         </div>
-
                         <div class="card-body text-center py-0 mCustomScrollbar" style="overflow:auto;">
                             <div id="routineTableDiv">
                                 <table id="routineTable" class="table table-hover">
@@ -160,7 +162,13 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
     <script>
-        function renderRoomCard(id, isFavorite, name, image, deviceCount, powerOnCount) {
+        function getQueryStringParameter(key) {
+            key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+            var match = location.search.match(new RegExp("[?&]" + key + "=([^&]+)(&|$)"));
+            return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+        }
+
+        function renderDeviceCard(id, isFavorite, name, image) {
             return `<div class="col-5 col-lg-4 col-xl-4">
                             <div class="card m-4 hoverable" style="width: 18rem;" data-id="${id}">
                                 <!--Card image-->
@@ -179,18 +187,8 @@
                                         ${name}
                                     </h4>
                                     <!--Text-->
-                                    <div class="card-text ICONOS-EN-CARTA row text-center">
-                                        <div class="col-6">
-                                            <i class="fa fa-hashtag"></i>
-                                            ${deviceCount}
-                                        </div>
-                                        <div class="col-6">
-                                            <i class="fa fa-lightbulb-o"></i>
-                                            ${powerOnCount}
-                                        </div>
-                                    </div>
 
-                                    <a href="#" class="btn btn-primary btn-entrar">Entrar</a>
+                                    <a href="#" class="btn btn-primary">Configuración</a>
                                 </div>
                             </div>
                         </div>`
@@ -234,19 +232,22 @@
             }
         }
 
-        function populateRoomList() {
-            var roomsView = $("#roomsView");
-            $(roomsView).html("");
+        function populateDevicesList(id) {
+            var devicesDiv = $("#devicesView").html("");
 
-            api.rooms.getAll()
+            /*for (i = 0; i < 10; i++)
+                $(devicesDiv).append(renderDeviceCard(0, true, "Dispositivo", null));*/
+
+            api.rooms.getDevices(id)
                 .then((data) => {
 
-                    data["rooms"].forEach(room => {
-                        var meta = JSON.parse(room["meta"]);
-                        $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], meta["deviceCount"], meta["powerOnCount"]));
+                    data["devices"].forEach(device => {
+                        var meta = JSON.parse(device["meta"]);
+                        $(devicesDiv).append(renderDeviceCard(device["id"], meta["isFavorite"], device["name"], meta["image"]));
+                        //$("#roomsView").append(renderRoomCard(meta["isFavorite"], room["name"], meta["image"], meta["deviceCount"], meta["powerOnCount"]));
                     });
 
-                    if (isElementEmpty($(roomsView))) {
+                    if (isElementEmpty($(devicesDiv))) {
                         $("#roomsEmptyDiv").show();
                     } else {
                         $("#roomsEmptyDiv").hide();
@@ -258,27 +259,31 @@
                 });
         }
 
-        function populateOrphanDevicesList() {
-            $("#orphanDevicesView").html("");
-            api.devices.getAll()
+        function fillRoomData(id) {
+            api.rooms.get(id)
                 .then((data) => {
+                    var room = data["room"];
+                    $("#roomName").text(room["name"]);
+                    var meta = JSON.parse(room["meta"]);
 
-                    data["devices"].forEach(device => {
-                        var meta = JSON.parse(device["meta"]);
-                        //alert(device["name"]);
-                        //$("#roomsView").append(renderRoomCard(meta["isFavorite"], room["name"], meta["image"], meta["deviceCount"], meta["powerOnCount"]));
-                    });
+                    $("#isFavorite").addClass("fa fa-2x " + ((meta["isFavorite"] == true) ? "fa-star amber-text" : "fa-star-o"));
 
                 })
                 .catch((error) => {
                     alert('Request failed: ' + error);
                 });
+
         }
 
+        var roomID;
 
         $(document).ready(function () {
 
-            populateRoomList();
+            roomID = getQueryStringParameter("id");
+
+            fillRoomData(roomID);
+
+            populateDevicesList(roomID);
 
             populateRoutineTable();
 
@@ -289,14 +294,11 @@
             $("#loader").fadeOut(2000);
 
             $('#background').addClass('animated fadeIn slower');
-            $('#roomsCard').addClass('animated zoomIn');
+            $('#devicesCard').addClass('animated zoomIn');
             $('#routinesCard').addClass('animated zoomIn');
 
         });
 
-        $('#roomsView').on('click', '.btn-entrar', function (event) {
-            window.location.href = "room.html?id=" + $(event.target).closest(".card").data("id");
-        });
     </script>
 
 </body>

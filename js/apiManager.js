@@ -1,4 +1,4 @@
-class apiManager {
+var api = class {
   static get baseUrl() {
     return "http://127.0.0.1:8080/api/";
   }
@@ -28,15 +28,13 @@ class apiManager {
         });
     });
   }
-}
 
-class apiRoomManager {
-  static get url() {
-    return api.baseUrl + "rooms/";
+  static get(url) {
+    return api.fetch(url);
   }
 
-  static add(room) {
-    return api.fetch(api.room.url, {
+  static post(url, body) {
+    return api.fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8"
@@ -45,8 +43,8 @@ class apiRoomManager {
     });
   }
 
-  static modify(room) {
-    return api.fetch(api.room.url + room.id, {
+  static put(url, body) {
+    return api.fetch(url, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json; charset=utf-8"
@@ -55,19 +53,71 @@ class apiRoomManager {
     });
   }
 
-  static delete(id) {
-    return api.fetch(api.room.url + id, {
+  static delete(url) {
+    return api.fetch(url, {
       method: "DELETE"
+    });
+  }
+};
+
+api.rooms = class {
+  static get url() {
+    return api.baseUrl + "rooms/";
+  }
+
+  static create(room) {
+    return api.post(api.rooms.url, room);
+  }
+
+  static modify(room) {
+    return api.put(api.rooms.url + room.id, room);
+  }
+
+  static delete(id) {
+    return api.delete(api.rooms.url + id);
+  }
+
+  static get(id) {
+    return api.get(api.rooms.url + id);
+  }
+
+  static getDevices(id) {
+    return api.get(api.rooms.url + id + "/devices");
+  }
+
+  static getAll() {
+    return api.get(api.rooms.url);
+  }
+};
+
+api.devices = class {
+  static get url() {
+    return api.baseUrl + "devices/";
+  }
+
+  static getAll() {
+    return api.fetch(api.devices.url);
+  }
+
+  static create(device) {
+    return api.fetch(api.devices.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify(room)
     });
   }
 
   static get(id) {
-    return api.fetch(api.room.url + id);
+    return api.fetch(api.devices.url + id);
   }
 
-  static getAll() {
-    return api.fetch(api.room.url);
+  static modify(device) {
+    return api.put(api.devices.url + device.id);
   }
-}
 
-apiManager.room = apiRoomManager;
+  static delete(id) {
+    return api.delete(api.devices.url + id);
+  }
+};
