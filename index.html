@@ -69,21 +69,63 @@
                         </div>
 
                         <div class="card-body py-0 mCustomScrollbar" style="overflow:auto;">
-                            <div id="roomsView" class="row">
+                            <div id="roomsView" class="row" data-toggle="modal" data-target="#addRoom">
                             </div>
                         </div>
 
 
                         <div class="btn-float-control">
-                            <a href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
+                            <a data-toggle="modal" data-target="#createRoom" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
-                            </a>
+                            </a>	
                             <ul>
                                 <li>
                                     <a class="btn mask rgba-black-strong" href="#" role="button">Agregar nueva
                                         habitación</a>
                                 </li>
                             </ul>
+							<!-- Modal -->
+							<div class="modal fade" id="createRoom" tabindex="-1" role="dialog" aria-labelledby="createRoomTitle" aria-hidden="true" data-backdrop="false">
+							  <div class="modal-dialog modal-dialog-centered" role="document">
+								<div class="modal-content">
+								  <div class="modal-header">
+									<h5 class="modal-title" id="createRoomTitle">Crear habitación</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									  <span aria-hidden="true">&times;</span>
+									</button>
+								  </div>
+								  <div class="modal-body">
+									<form>
+										<div class="row" style="padding-bottom: 10px">
+											<div class="col-md-3">Nombre:</div>
+											<div class="col-md-5">
+												<input id="roomName" type="text" name="roomname"><br>
+											</div>
+										</div>
+										<div class="row" style="padding-bottom: 15px">
+											<div class="col-md-3">Dispositivos:</div>
+											<div class="col-md-5">
+												<div class="h-100 inline-block" style="border:1px solid #cecece;"></div>
+											</div>
+											<div class="col-md-4">
+												<button type="button" class="btn btn-primary">Agregar</button>
+											</div>
+										</div>
+										<div class="row" style="padding-bottom: 10px">
+											<div class="col-md-3">Favorito:</div>
+											<div class="col-md-5 justify-content-center" data-toggle="buttons">
+												<input type="checkbox" name="favorito">
+											</div>
+										</div>
+									</form>
+								  </div>
+								  <div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+									<button type="button" class="btn btn-primary">Guardar</button>
+								  </div>
+								</div>
+							  </div>
+							</div>
                         </div>
 
                     </div>
@@ -136,10 +178,6 @@
                     </div>
                 </div>
             </div>
-
-
-        </div>
-
         <!-- Footer -->
         <footer class="page-footer font-small rgba-black-strong fixed-bottom">
             <div class="footer-copyright text-center py-3">© 2018 Copyright: Pruebita</div>
@@ -366,6 +404,10 @@
 
         };
 
+		$('#createRoom').on('shown.bs.modal', function () {
+			$('#roomName').focus();
+		})
+		
         $('#roomsView').on('click', '.btn-entrar', function (event) {
             window.location.href = "room.html?id=" + $(event.target).closest(".card").data("id");
         });
@@ -397,7 +439,6 @@
                     alert("Request failed: " + error);
                 });
         });
-
 
     </script>
 
