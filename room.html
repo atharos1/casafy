@@ -63,7 +63,7 @@
                             </div>
                         </div>
 
-                        <div id="roomsEmptyDiv" class="center-screen text-center">
+                        <div id="roomsEmptyDiv" class="center-screen text-center" style="width: 90%">
                             <h4>No tienes dispositivos en esta habitación</h4>
                             <h5>¡Presiona el botón rojo para agregar uno!</h5>
                         </div>
@@ -96,7 +96,7 @@
                         <div class="pb-0" style="padding: 1.25rem">
                             <h4 class="card-title">Rutinas</h4>
                         </div>
-                        <div id="routineEmptyDiv" class="center-screen text-center">
+                        <div id="routineEmptyDiv" class="center-screen text-center" style="width: 90%">
                             <h4>No tienes rutinas registradas</h4>
                             <h5>¡Presiona el botón rojo para agregar una!</h5>
                             <a href="#">¿Qué es una rutina?</a>
@@ -183,7 +183,9 @@
                                 <div class="card-body text-center">
                                     <!--Title-->
                                     <h4 class="card-title">
-                                        <i class="fa ${isFavorite ? "fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
+                                        <a class="btn-disp-favorito">
+                                            <i class="fa ${isFavorite ? "fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
+                                        </a>
                                         ${name}
                                     </h4>
                                     <!--Text-->

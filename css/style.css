@@ -14,6 +14,11 @@ html {
   background-attachment: fixed;
 }
 
+.btn-hab-favorito,
+.btn-disp-favorito {
+  cursor: pointer;
+}
+
 /* BOTON FLOTANTE */
 .btn-float-main {
   position: absolute;

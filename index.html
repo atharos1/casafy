@@ -30,7 +30,9 @@
     </div>
 
     <div id="background" class="bg">
-        <!-- Navbar -->
+
+
+        <!--<div data-fragment="fragments/navbar.html"></div>-->
         <nav class="navbar justify-content-between navbar-dark rgba-black-light">
             <a class="navbar-brand font-weight-bold" href="#">Casafy</a>
             <form class="form-inline">
@@ -39,11 +41,13 @@
                         placeholder="Buscar dispositivos, habitaciones y rutinas..." aria-label="Search">
                 </div>
                 <button class="btn btn-outline-white btn-sm my-0" type="submit"><i class="fa fa-question-circle"
-                        aria-hidden="true"></i> Ayuda</button>
+                        aria-hidden="true"></i>
+                    Ayuda</button>
             </form>
         </nav>
 
         <br>
+
 
         <div class="container-fluid">
 
@@ -57,7 +61,7 @@
                             </div>
                         </div>
 
-                        <div id="roomsEmptyDiv" class="center-screen text-center">
+                        <div id="roomsEmptyDiv" class="center-screen text-center" style="width: 90%">
                             <h4>No tienes habitaciones registradas</h4>
                             <h5>¡Presiona el botón rojo para agregar una!</h5>
                             <h5>¡Recuerda que necesitas una habitación para agregar un dispositivo!</h5>
@@ -88,12 +92,13 @@
 
                 <!--Rutinas-->
                 <div class="col-3">
+                    <!--<div data-fragment="fragments/routinePanel.html"></div>-->
                     <div id="routinesCard" class="card mask rgba-white-strong" style="height:85vh">
                         <div class="pb-0" style="padding: 1.25rem">
                             <h4 class="card-title">Rutinas</h4>
                         </div>
 
-                        <div id="routineEmptyDiv" class="center-screen text-center">
+                        <div id="routineEmptyDiv" class="center-screen text-center" style="width: 90%">
                             <h4>No tienes rutinas registradas</h4>
                             <h5>¡Presiona el botón rojo para agregar una!</h5>
                             <a href="#">¿Qué es una rutina?</a>
@@ -104,7 +109,7 @@
                                 <table id="routineTable" class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Rutina</th>
+                                            <th>Nombre</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -157,12 +162,14 @@
 
     <script type="text/javascript" src="js/apiManager.js"></script>
 
+    <!--<script src="js/fragment.js"></script>-->
+
     <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
     <script>
         function renderRoomCard(id, isFavorite, name, image, deviceCount, powerOnCount) {
             return `<div class="col-5 col-lg-4 col-xl-4">
-                            <div class="card m-4 hoverable" style="width: 18rem;" data-id="${id}">
+                            <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
                                 <!--Card image-->
                                 <div class="view overlay hm-white-slight zoom" style="height: 8rem;">
                                     <img src="${'img/' + image}" class="img-fluid" alt="">
@@ -175,7 +182,9 @@
                                 <div class="card-body text-center">
                                     <!--Title-->
                                     <h4 class="card-title">
-                                        <i class="fa ${isFavorite ? "fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
+                                        <a class="btn-hab-favorito">
+                                            <i class="fa ${isFavorite ? "fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
+                                        </a>
                                         ${name}
                                     </h4>
                                     <!--Text-->
@@ -272,35 +281,35 @@
 
             api.rooms.getAll()
                 .then((data) => {
-
-                    compareRooms = function (room1, room2) {
-                        let room1meta = JSON.parse(room1["meta"]);
-                        let room2meta = JSON.parse(room2["meta"]);
-                        let room1IsFavorite = room1meta["isFavorite"];
-                        let room2IsFavorite = room2meta["isFavorite"];
-                        if ((room1IsFavorite && room2IsFavorite) || (!room1IsFavorite && !room2IsFavorite)) {
-                            return function(a, b) {
-                                if(a.toLowerCase() < b.toLowerCase()) return -1;
-                                if(a.toLowerCase() === b.toLowerCase()) return 0;
-                                if(a.toLowerCase() > b.toLowerCase()) return 1;
-                            }(room1["name"], room2["name"]);
-                        }
-                        if (room1IsFavorite) return -1;
-                        if (room2IsFavorite) return 1;
+                    compareRoomsByName = function (room1, room2) {
+                        return room1["name"] < room2["name"];
                     }
 
-                    qSort(data["rooms"], compareRooms);
+                    qSort(data["rooms"], compareRoomsByName);
+
 
                     data["rooms"].forEach(room => {
-                        var meta = JSON.parse(room["meta"]);
-                        $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], meta["deviceCount"], meta["powerOnCount"]));
-                    });
 
-                    if (isElementEmpty($(roomsView))) {
-                        $("#roomsEmptyDiv").show();
-                    } else {
-                        $("#roomsEmptyDiv").hide();
-                    }
+                        api.rooms.getDevices(room["id"])
+                            .then((data) => {
+                                var deviceCount = data["devices"].length;
+                                var meta = JSON.parse(room["meta"]);
+                                $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], deviceCount, meta["powerOnCount"]));
+
+                                if (isElementEmpty($(roomsView))) {
+                                    $("#roomsEmptyDiv").show();
+                                } else {
+                                    $("#roomsEmptyDiv").hide();
+                                }
+
+                            })
+                            .catch((error) => {
+                                alert('Request failed: ' + error);
+                            });
+
+
+
+                    });
 
                 })
                 .catch((error) => {
@@ -326,7 +335,8 @@
         }
 
 
-        $(document).ready(function () {
+        //$(document).ready(
+        window.onload = function () {
 
             populateRoomList();
 
@@ -342,11 +352,41 @@
             $('#roomsCard').addClass('animated zoomIn');
             $('#routinesCard').addClass('animated zoomIn');
 
-        });
+        };
 
         $('#roomsView').on('click', '.btn-entrar', function (event) {
             window.location.href = "room.html?id=" + $(event.target).closest(".card").data("id");
         });
+
+        $('#roomsView').on('click', '.btn-hab-favorito', function (event) {
+            var id = $(event.target).closest(".card").data("id");
+            api.rooms.toggleFavorite(id);
+            api.rooms
+                .get(id)
+                .then(data => {
+                    var room = data["room"];
+                    var meta = JSON.parse(room["meta"]);
+
+                    meta["isFavorite"] = !meta["isFavorite"];
+                    room["meta"] = JSON.stringify(meta);
+
+                    api.rooms.modify(room);
+
+                    api.rooms
+                        .modify(room)
+                        .then(data => {
+                            populateRoomList();
+                        })
+                        .catch(error => {
+                            alert("Request failed: " + error);
+                        });
+                })
+                .catch(error => {
+                    alert("Request failed: " + error);
+                });
+        });
+
+
     </script>
 
 </body>
