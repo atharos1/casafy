@@ -520,19 +520,16 @@
 		api.rooms.getAll()
 			.then(data => {
 				var menu = $("#roomOptions");
-				var added = false;
 				var rooms = data["rooms"];
+				var added = false;
 				for(roomNum in rooms){
 					added = false;
-					for(addedRooms in menu.children){
-						if(addedRooms.text().toLowerCase() === rooms[roomNum]["name"].toLowerCase()){
-								added = true;
-								break;
-						}
-					}
-					if(!added){
+					menu.children(".dropdown-item").each(function(i) { 
+						if($(this).text().toLowerCase() === rooms[roomNum]["name"].toLowerCase())
+							added = true;
+					});
+					if(!added)
 						menu.append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownRoomBtn,this)\">" + rooms[roomNum]["name"] + "</button>");
-					}
 				}
 			}).catch(error => {
 	    			alert("Request failed: " + error);
