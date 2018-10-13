@@ -33,24 +33,13 @@
 					</div>
 					<div class="form-group" style="padding-bottom: 10px">
 						<label for="description">Descripción</label>
-						<textarea class="form-control" id="description" rows="3"></textarea>
-					</div>
-					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-4">Habitación:</div>
-						<div class="dropdown" id="chooseRoomBtn">
-							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownRoomBtn"
-								data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								Seleccionar...
-							</button>
-							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="roomOptions">
-							</div>
-						</div>
+						<textarea class="form-control" id="deviceDescription" rows="3"></textarea>
 					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-primary">Crear</button>
+				<button type="button" class="btn btn-primary" id = "createDeviceBtn" >Crear</button>
 			</div>
 		</div>
 	</div>
@@ -62,7 +51,8 @@
 					.then(data => {
 						var deviceTypes = data["devices"];
 						for (typeNum in deviceTypes) {
-							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownDeviceBtn,this)\">" + deviceTypes[typeNum]["name"] + "</button>");
+							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownDeviceBtn,this)\" id=\"" + 
+								deviceTypes[typeNum]["id"] + "\">" + deviceTypes[typeNum]["name"] + "</button>");
 						}
 					})
 					.catch(error => {
@@ -86,5 +76,23 @@
 				}).catch(error => {
 					alert("Request failed: " + error);
 				});
+	});
+	$('#createDeviceBtn').on('click', function(event) {
+		var type = $('dropdownDeviceBtn').text();
+		var typeId = "";
+		$('#deviceOptions').children(".dropdown-item").each(function(i) {
+			if($(this).text().toLowerCase() === type)
+				typeId = $(this).attr("id");
+		});
+		var name = $('#deviceName').val();
+		var desc = $('#deviceDescription').val();
+		var newDevice = {
+			name: name,
+			typeId: typeId,
+			desc: desc
+		};
+		devicesAdded.push(newDevice);
+		$('#deviceList').append("<a class=\"list-group-item list-group-item-action\" data-toggle=\"list\" style=\"height: 30px; padding: 5px 15px;\">"+ name +"</a>");
+		$('#newDeviceModal').modal('hide')
 	});
 </script>
