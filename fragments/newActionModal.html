@@ -1,0 +1,76 @@
+<div class="modal fade" id="newActionModal" tabindex="-1" role="dialog" aria-labelledby="newActionTitle"
+	aria-hidden="true" data-backdrop="false">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="newActionTitle">Añadir Acción</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<nav aria-label="breadcrumb">
+				  <ol class="breadcrumb" id="routineBreadcrumb">
+					
+				  </ol>
+				</nav>
+				<div class="container">
+					<div class="list-group" id="itemList" role="tablist" style="height: 300px;max-height:300px; border:3px solid #cecece;overflow:auto;">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" id="cancelActionBtn">Cancelar</button>
+				<button type="button" class="btn btn-primary">Añadir</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$('#newActionModal').on('show.bs.modal', function (event) {
+		$('#routineBreadcrumb').append("<li class=\"breadcrumb-item\">Habitaciones</li>");
+		var itemList = $('#itemList');
+		itemList.empty();
+		api.rooms.getAll()
+				.then(data => {
+					var rooms = data["rooms"];
+					for(roomNum in rooms)
+						itemList.append("<a class=\"list-group-item list-group-item-action\" id=\""+ rooms[roomNum]["id"] +"\" data-toggle=\"list\" onClick=\"showDevices(this)\">"+ rooms[roomNum]["name"] +"</a>");
+				}).catch(error => {
+					alert("Request failed: " + error);
+				});
+	});
+	function showDevices(elem) {
+		$('#routineBreadcrumb').append("<li class=\"breadcrumb-item\">Dispositivos</li>");
+		var roomId = $(elem).attr("id");
+		var itemList = $('#itemList');
+		itemList.empty();
+		api.get(api.rooms.url + roomId + "/devices")
+			.then(data => {
+				var devices = data["devices"];
+				for(deviceNum in devices)
+					itemList.append("<a class=\"list-group-item list-group-item-action\" id=\""+ devices[deviceNum]["id"] +
+					"\"typeId=\""+ devices[deviceNum]["typeId"] +"\" data-toggle=\"list\" onClick=\"showActions(this)\">"+ devices[deviceNum]["name"] +"</a>");
+				
+			}).catch(error => {
+				alert("Request failed: " + error);
+			});
+	}
+	
+	function showActions(elem) {
+		$('#routineBreadcrumb').append("<li class=\"breadcrumb-item\">Acciones</li>");
+		var typeId = $(elem).attr("typeId");
+		var deviceId = $(elem).attr("id");
+		var itemList = $('#itemList');
+		itemList.empty();
+		api.get(api.baseUrl + "devicetypes/" + typeId)
+			.then(data => {
+				var deviceActions = data["device"]["actions"];
+				for(actionNum in deviceActions)
+					itemList.append("<a class=\"list-group-item list-group-item-action\"data-toggle=\"list\" deviceId=\""+ deviceId +"\"onClick=\"addAction(this)\">"+ deviceActions[actionNum]["name"] +"</a>");
+			}).catch(error => {
+				alert("Request failed: " + error);
+			});
+	}
+</script>
