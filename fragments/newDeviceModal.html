@@ -1,77 +1,90 @@
-<div class="modal fade" id="newDeviceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-notify modal-warning" role="document">
-        <!--Content-->
-        <div class="modal-content">
-            <!--Header-->
-            <div class="modal-header text-center">
-                <h4 id="newDevice_title" class="modal-title white-text w-100 font-weight-bold py-2">Agregar dispositivo
-                    a HABITACION</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" class="white-text">&times;</span>
-                </button>
-            </div>
-
-            <style type="text/css">
-                .md-form select,
-                .md-form i {
-                    display: inline !important;
-                }
-            </style>
-
-            <!--Body-->
-            <div class="modal-body">
-                <form>
-                    <div class="md-form mb-5">
-                        <i class="fa fa-edit prefix grey-text"></i>
-                        <label data-error="wrong" data-success="right" for="form3">Nombre</label>
-                        <input type="text" id="newDevice_name" class="form-control validate">
-                    </div>
-                    <div class="md-form mb-5">
-                        <i class="fa fa-edit prefix grey-text"></i>
-                        <select class="mdb-select">
-                            <option value="" disabled selected>Choose your option</option>
-                            <option value="1">Option 1</option>
-                            <option value="2">Option 2</option>
-                            <option value="3">Option 3</option>
-                        </select>
-                    </div>
-
-                </form>
-            </div>
-
-            <!--Footer-->
-            <div class="modal-footer justify-content-center">
-                <a type="button" class="btn btn-outline-danger waves-effect" data-dismiss="modal">Cancelar</a>
-                <a type="button" class="btn btn-outline-warning waves-effect" onclick="createNewRoom()">Crear <i class="fa fa-paper-plane-o ml-1"></i></a>
-            </div>
-        </div>
-        <!--/.Content-->
-    </div>
+<div class="modal fade" id="newDeviceModal" tabindex="-1" role="dialog" aria-labelledby="createDeviceTitle"
+							aria-hidden="true" data-backdrop="false">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="createDeviceTitle">Crear dispositivo</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group row" style="padding-bottom: 10px">
+						<div class="col-md-4">Tipo:</div>
+						<div class="col-md-6">
+							<div class="dropdown" id="deviceTypeBtn">
+								<button class="btn btn-secondary dropdown-toggle" type="button"
+									id="dropdownDeviceBtn" data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false">
+									Seleccionar...
+								</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
+									id="deviceOptions">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row" style="padding-bottom: 10px">
+						<div class="col-md-4">Nombre:</div>
+						<div class="col-md-2">
+							<input id="deviceName" type="text" name="devicename"><br>
+						</div>
+					</div>
+					<div class="form-group" style="padding-bottom: 10px">
+						<label for="description">Descripción</label>
+						<textarea class="form-control" id="description" rows="3"></textarea>
+					</div>
+					<div class="form-group row" style="padding-bottom: 10px">
+						<div class="col-md-4">Habitación:</div>
+						<div class="dropdown" id="chooseRoomBtn">
+							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownRoomBtn"
+								data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Seleccionar...
+							</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="roomOptions">
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary">Crear</button>
+			</div>
+		</div>
+	</div>
 </div>
-
 <script>
-    function showNewDeviceModal(roomID) {
-        if (roomID && roomID != 0) {
-            api.rooms.get(roomID)
-                .then((data) => {
-                    var room = data["room"];
-                    $("#newDevice_title").text("Agregar dispositivo a " + room["name"]);
-                    //var meta = JSON.parse(room["meta"]);
-
-                    $('#newDeviceModal').data("roomID", roomID);
-
-                    $('#newDeviceModal').modal('show');
-
-                })
-                .catch((error) => {
-                    alert('Request failed: ' + error);
-                });
-        }
-    }
-
-    /*$('.js-example-basic-single').select2({
-        placeholder: "Buscar dispositivos, habitaciones y rutinas...",
-        templateSelection: formatState,
-        theme: "material"
-    });*/
+	$('#newDeviceModal').on('show.bs.modal', function (event) {
+			if ($('#deviceOptions').children().length == 0) {
+				api.get(api.baseUrl + "devicetypes")
+					.then(data => {
+						var deviceTypes = data["devices"];
+						for (typeNum in deviceTypes) {
+							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownDeviceBtn,this)\">" + deviceTypes[typeNum]["name"] + "</button>");
+						}
+					})
+					.catch(error => {
+						alert("Request failed: " + error);
+					});
+			}
+			api.rooms.getAll()
+				.then(data => {
+					var menu = $("#roomOptions");
+					var rooms = data["rooms"];
+					var added = false;
+					for(roomNum in rooms){
+						added = false;
+						menu.children(".dropdown-item").each(function(i) { 
+							if($(this).text().toLowerCase() === rooms[roomNum]["name"].toLowerCase())
+								added = true;
+						});
+						if(!added)
+							menu.append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownRoomBtn,this)\">" + rooms[roomNum]["name"] + "</button>");
+					}
+				}).catch(error => {
+					alert("Request failed: " + error);
+				});
+	});
 </script>
