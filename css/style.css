@@ -19,6 +19,16 @@ html {
   cursor: pointer;
 }
 
+/* MODALES */
+.modal-header {
+  background-color:CornflowerBlue;
+}
+
+.modal-title {
+  font-weight: bold;
+  color:white;
+}
+
 /* BOTON FLOTANTE */
 .btn-float-main {
   position: absolute;
