@@ -221,13 +221,18 @@
         <!-- MDB core JavaScript -->
         <script type="text/javascript" src="js/mdb.min.js"></script>
 
-        <script type="text/javascript" src="js/apiManager.js"></script>
+        <script type="text/javascript" src="js/apiManager2.js"></script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
         <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
         <script>
+            function fixFieldState(inputField) {
+                $(inputField).trigger("focusin");
+                $(inputField).trigger("blur");
+            }
+
             function renderRoomCard(id, isFavorite, name, image, deviceCount, powerOnCount) {
                 return `<div class="col-5 col-lg-4 col-xl-4">
                             <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
@@ -292,8 +297,8 @@
 
                 $(tableBody).html("");
 
-                for (i = 0; i < 60; i++)
-                    $(tableBody).append(renderRoutine("Votar a Macri"));
+                /*for (i = 0; i < 60; i++)
+                    $(tableBody).append(renderRoutine("Votar a Macri"));*/
 
                 if (isElementEmpty($(tableBody))) {
                     $("#routineTableDiv").hide();
@@ -364,7 +369,7 @@
 
                         data["rooms"].forEach(room => {
 
-                            api.rooms.getDevices(room["id"])
+                            api.rooms.getDevices(room["id"], false)
                                 .then((data) => {
                                     var deviceCount = 0;
                                     var powerOnCount = 0;
@@ -386,8 +391,6 @@
                                         $("#roomsEmptyDiv").hide();
                                     }
 
-                                    completedPromises++;
-
                                 })
                                 .catch((error) => {
                                     alert('Request failed: ' + error);
@@ -396,6 +399,8 @@
 
 
                         });
+
+                        completedPromises++;
 
                     })
                     .catch((error) => {
@@ -409,7 +414,7 @@
                 }
                 var baseUrl = "/user/pages/images/flags";
                 var $state = $(
-                    '<span><img src="' + baseUrl + '/' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text.toUpperCase() + '</span>'
+                    '<span><img src="' + baseUrl + '/' + state.element.value + '.png" class="img-flag" /> ' + state.text + '</span>'
                 );
                 return $state;
             };
@@ -446,6 +451,10 @@
                     setTimeout(finishLoading, 500);
                     return;
                 }
+
+                /*$('input[type=text] .form-control').each(function () {
+                    fixFieldState($(this));
+                })*/
 
                 $(".mCustomScrollbar").mCustomScrollbar({
                     theme: "dark-thick"

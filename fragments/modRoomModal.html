@@ -34,11 +34,6 @@
 
 <script>
 
-    function fixFieldState(inputField) {
-        $(inputField).trigger("focusin");
-        $(inputField).trigger("blur");
-    }
-
     function showUpdateRoomModal(id) {
         if (id && id != 0) {
             api.rooms.get(id)
