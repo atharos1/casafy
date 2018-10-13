@@ -31,23 +31,15 @@
         </svg>
     </div>
 
+    <div id="divNewRoomModal"></div>
+    <div id="divNewDeviceModal"></div>
+
     <div id="background" class="bg">
 
 
         <div id="divNavbar"></div>
 
-        <select class="js-example-basic-single" name="state" style="width: 23em">
-            <option></option>
-            <option value="id1" data-id="1">Una rutina</option>
-            <option value="id2">Una habitación</option>
-            <option value="id3">Un dispositivo</option>
-        </select>
-
-
         <div class="container-fluid">
-
-            <div id="divNewRoomModal"></div>
-            <div id="divNewDeviceModal"></div>
 
             <div class="row">
                 <!--Dispositivos y grupos-->
@@ -84,7 +76,7 @@
                             </ul>
                         </div>
 
-                       
+
                     </div>
 
                 </div>
@@ -352,12 +344,6 @@
                     theme: "dark-thick"
                 });
 
-                $('.js-example-basic-single').select2({
-                    placeholder: "Buscar dispositivos, habitaciones y rutinas...",
-                    templateSelection: formatState,
-                    theme: "material"
-                });
-
                 $("#loader").fadeOut(2000);
 
                 $('#background').addClass('animated fadeIn slower');
@@ -365,12 +351,12 @@
                 $('#routinesCard').addClass('animated zoomIn');
             }
 
-       
+
             $('#roomsView').on('click', '.btn-entrar', function (event) {
                 window.location.href = "room.html?id=" + $(event.target).closest(".card").data("id");
             });
 
-          
+
             $('#roomsView').on('click', '.btn-hab-favorito', function (event) {
                 var id = $(event.target).closest(".card").data("id");
                 api.rooms.toggleFavorite(id);
