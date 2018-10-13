@@ -1,0 +1,77 @@
+<div class="modal fade" id="newDeviceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-warning" role="document">
+        <!--Content-->
+        <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header text-center">
+                <h4 id="newDevice_title" class="modal-title white-text w-100 font-weight-bold py-2">Agregar dispositivo
+                    a HABITACION</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" class="white-text">&times;</span>
+                </button>
+            </div>
+
+            <style type="text/css">
+                .md-form select,
+                .md-form i {
+                    display: inline !important;
+                }
+            </style>
+
+            <!--Body-->
+            <div class="modal-body">
+                <form>
+                    <div class="md-form mb-5">
+                        <i class="fa fa-edit prefix grey-text"></i>
+                        <label data-error="wrong" data-success="right" for="form3">Nombre</label>
+                        <input type="text" id="newDevice_name" class="form-control validate">
+                    </div>
+                    <div class="md-form mb-5">
+                        <i class="fa fa-edit prefix grey-text"></i>
+                        <select class="mdb-select">
+                            <option value="" disabled selected>Choose your option</option>
+                            <option value="1">Option 1</option>
+                            <option value="2">Option 2</option>
+                            <option value="3">Option 3</option>
+                        </select>
+                    </div>
+
+                </form>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+                <a type="button" class="btn btn-outline-danger waves-effect" data-dismiss="modal">Cancelar</a>
+                <a type="button" class="btn btn-outline-warning waves-effect" onclick="createNewRoom()">Crear <i class="fa fa-paper-plane-o ml-1"></i></a>
+            </div>
+        </div>
+        <!--/.Content-->
+    </div>
+</div>
+
+<script>
+    function showNewDeviceModal(roomID) {
+        if (roomID && roomID != 0) {
+            api.rooms.get(roomID)
+                .then((data) => {
+                    var room = data["room"];
+                    $("#newDevice_title").text("Agregar dispositivo a " + room["name"]);
+                    //var meta = JSON.parse(room["meta"]);
+
+                    $('#newDeviceModal').data("roomID", roomID);
+
+                    $('#newDeviceModal').modal('show');
+
+                })
+                .catch((error) => {
+                    alert('Request failed: ' + error);
+                });
+        }
+    }
+
+    /*$('.js-example-basic-single').select2({
+        placeholder: "Buscar dispositivos, habitaciones y rutinas...",
+        templateSelection: formatState,
+        theme: "material"
+    });*/
+</script>

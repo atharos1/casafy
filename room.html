@@ -30,36 +30,29 @@
     </div>
 
     <div id="background" class="bg">
-        <!-- Navbar -->
-        <nav class="navbar justify-content-between navbar-dark rgba-black-light">
-            <a class="navbar-brand font-weight-bold" href="#">Casafy</a>
-            <form class="form-inline">
-                <div class="md-form form-md my-0" style="width: 25em;">
-                    <input class="form-control form-control-xl mr-md-2 mb-2" style="width: 23em;" type="text"
-                        placeholder="Buscar dispositivos, habitaciones y rutinas..." aria-label="Search">
-                </div>
-                <button class="btn btn-outline-white btn-sm my-0" type="submit"><i class="fa fa-question-circle"
-                        aria-hidden="true"></i> Ayuda</button>
-            </form>
-        </nav>
 
-        <br>
+        <div id="divNavbar"></div>
 
         <div class="container-fluid">
+
+            <div id="divModRoomModal"></div>
+            <div id="divNewDeviceModal"></div>
 
             <div class="row">
                 <!--Dispositivos y grupos-->
                 <div class="col-9">
                     <div id="devicesCard" class="card mask rgba-white-strong" style="height:85vh">
                         <div class="pb-0" style="padding: 1.25rem">
-                            <a href="index.html" class="btn black-text btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i></i>
+                            <a href="index.html" class="btn black-text btn-md align-middle"><i class="fa fa-arrow-left"
+                                    aria-hidden="true"></i></i>
                                 Volver al menú</a>
-                            <i id="isFavorite" aria-hidden="true"></i>
-                            <h4 id="roomName" class="d-inline card-title"><a>NOMBRE-HABITACIÓN</a></h4>
-                            <div class="d-inline btn-group" data-toggle="buttons" style="float: right;">
+                            <i id="isFavorite" class="align-middle" aria-hidden="true"></i>
+                            <h4 id="roomName" class="d-inline card-title align-middle"><a>NOMBRE-HABITACIÓN</a></h4>
+                            <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right;">
                                 <!--<a href="#" class="btn black-text rgba-red-strong"><i class="fa fa-trash" aria-hidden="true"></i></a>-->
-                                <a href="#" class="btn black-text btn-md"><i class="fa fa-gear" aria-hidden="true"></i>
-                                    Configuración</a>
+                                <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i
+                                        class="fa fa-pencil-square-o" aria-hidden="true"></i></i>
+                                    Editar ajustes</a>
                             </div>
                         </div>
 
@@ -75,12 +68,14 @@
 
 
                         <div class="btn-float-control">
-                            <a href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
+                            <a href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
+                                onclick="showNewDeviceModal(roomID);" id="menu-share">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
                             </a>
                             <ul>
                                 <li>
-                                    <a class="btn mask rgba-black-strong" href="#" role="button">Agregar nuevo
+                                    <a class="btn mask rgba-black-strong" href="#" role="button" onclick="showNewDeviceModal(roomID);">Agregar
+                                        nuevo
                                         dispositivo aquí</a>
                                 </li>
                             </ul>
@@ -92,55 +87,12 @@
 
                 <!--Rutinas-->
                 <div class="col-3">
-                    <div id="routinesCard" class="card mask rgba-white-strong" style="height:85vh">
-                        <div class="pb-0" style="padding: 1.25rem">
-                            <h4 class="card-title">Rutinas</h4>
-                        </div>
-                        <div id="routineEmptyDiv" class="center-screen text-center" style="width: 90%">
-                            <h4>No tienes rutinas registradas</h4>
-                            <h5>¡Presiona el botón rojo para agregar una!</h5>
-                            <a href="#">¿Qué es una rutina?</a>
-                        </div>
-                        <div class="card-body text-center py-0 mCustomScrollbar" style="overflow:auto;">
-                            <div id="routineTableDiv">
-                                <table id="routineTable" class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Rutina</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-
-                        <div class="btn-float-control">
-                            <a href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a class="btn mask rgba-black-strong" href="#" role="button">Agregar nueva
-                                        rutina</a>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </div>
+                    <div id="divRoutines"></div>
                 </div>
             </div>
-
-
         </div>
 
-        <!-- Footer -->
-        <footer class="page-footer font-small rgba-black-strong fixed-bottom">
-            <div class="footer-copyright text-center py-3">© 2018 Copyright: Pruebita</div>
-        </footer>
+        <div id="divFooter"></div>
 
     </div>
 
@@ -232,6 +184,8 @@
                 $("#routineTableDiv").show();
                 $("#routineEmptyDiv").hide();
             }
+
+            completedPromises++;
         }
 
         function populateDevicesList(id) {
@@ -255,6 +209,8 @@
                         $("#roomsEmptyDiv").hide();
                     }
 
+                    completedPromises++;
+
                 })
                 .catch((error) => {
                     alert('Request failed: ' + error);
@@ -268,7 +224,9 @@
                     $("#roomName").text(room["name"]);
                     var meta = JSON.parse(room["meta"]);
 
-                    $("#isFavorite").addClass("fa fa-2x " + ((meta["isFavorite"] == true) ? "fa-star amber-text" : "fa-star-o"));
+                    $("#isFavorite").addClass("fa fa-2x " + ((meta["isFavorite"] == true) ? "fa-star amber-text" : "fa-star-o black-text"));
+
+                    completedPromises++;
 
                 })
                 .catch((error) => {
@@ -279,15 +237,44 @@
 
         var roomID;
 
-        $(document).ready(function () {
+        var completedPromises = 0;
+        var awaitingPromises = 0;
+        window.onload = function () {
 
             roomID = getQueryStringParameter("id");
 
+            awaitingPromises++;
             fillRoomData(roomID);
 
+            awaitingPromises++;
             populateDevicesList(roomID);
 
-            populateRoutineTable();
+            $("#divNavbar").load("fragments/navbar.html", function () {
+                //Acciones
+            });
+
+            $("#divFooter").load("fragments/footer.html");
+
+            $("#divModRoomModal").load("fragments/modRoomModal.html");
+
+            $("#divNewDeviceModal").load("fragments/newDeviceModal.html");
+
+            awaitingPromises++;
+            $("#divRoutines").load("fragments/routinePanel.html", function () {
+                populateRoutineTable();
+            });
+
+            addEventListener('contextmenu', e => e.preventDefault(), false);
+
+            finishLoading();
+
+        };
+
+        function finishLoading() {
+            if (awaitingPromises > completedPromises) {
+                setTimeout(finishLoading, 500);
+                return;
+            }
 
             $(".mCustomScrollbar").mCustomScrollbar({
                 theme: "dark-thick"
@@ -298,8 +285,7 @@
             $('#background').addClass('animated fadeIn slower');
             $('#devicesCard').addClass('animated zoomIn');
             $('#routinesCard').addClass('animated zoomIn');
-
-        });
+        }
 
     </script>
 
