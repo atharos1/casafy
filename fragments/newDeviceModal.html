@@ -63,10 +63,10 @@
 	});
 
 	$('#createDeviceBtn').on('click', function(event) {
-		var type = document.getElementById('dropdownDeviceBtn').innerText;
+		var type = document.getElementById('dropdownDeviceBtn').innerText.toLowerCase();
 		var typeId = "";
 		$('#deviceOptions').children(".dropdown-item").each(function(i) {
-			if($(this).text().toLowerCase() === type.toLowerCase())
+			if($(this).text().toLowerCase() == type)
 				typeId = $(this).attr("id");
 		});
 
@@ -80,7 +80,7 @@
 		var newDevice = {
 			name: name,
 			typeId: typeId,
-			meta: "{\"desc\":\"" + desc + "\"}"
+			meta: "{\"desc\":\"" + desc + "\",\"image\":\"" + deviceImg[type] + "\"}"
 		};
 
 		api.devices
@@ -99,4 +99,13 @@
 		});
 
 	});
+
+	var deviceImg = {
+		"lamp": "devices/lamp.jpg",
+		"ac": "devices/airconditioner.jpg",
+		"blind": "devices/blinds.jpg",
+		"oven": "devices/oven.jpg",
+		"door": "devices/door.jpg",
+		"refrigerator": "devices/refrigerator.jpg"
+	}
 </script>
