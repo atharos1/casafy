@@ -31,6 +31,7 @@
 
     <div id="divNewDeviceModal"></div>
     <div id="divModRoomModal"></div>
+    <div id="divModDeviceModal"></div>
 
     <div id="background" class="bg">
 
@@ -114,13 +115,28 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
     <script>
+        var deviceId = "";
+
         function getQueryStringParameter(key) {
             key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
             var match = location.search.match(new RegExp("[?&]" + key + "=([^&]+)(&|$)"));
             return match && decodeURIComponent(match[1].replace(/\+/g, " "));
         }
 
-        function renderDeviceCard(id, isFavorite, name, image) {
+        function showModDeviceModal(id, typeId) {
+          deviceId = id;
+          api.get(api.baseUrl + "devicetypes/" + typeId)
+    				.then(data => {
+    					if (data["device"]["name"] == "blind") {
+                $('#modBlindModal').modal('toggle');
+              }
+    				})
+    				.catch(error => {
+    					alert("Request failed: " + error);
+    				});
+        }
+
+        function renderDeviceCard(id, typeId, isFavorite, name, image) {
             return `<div class="col-5 col-lg-4 col-xl-4">
                             <div class="card m-4 hoverable" style="width: 18rem;" data-id="${id}">
                                 <!--Card image-->
@@ -142,7 +158,8 @@
                                     </h4>
                                     <!--Text-->
 
-                                    <a href="#" class="btn btn-primary">Configuración</a>
+                                    <a href="#" class="btn btn-primary btn-configuracion" role="button"
+                                    onclick="showModDeviceModal('${id}', '${typeId}')">Configuración</a>
                                 </div>
                             </div>
                         </div>`
@@ -175,7 +192,7 @@
             $(tableBody).html("");
 
             /*for (i = 0; i < 60; i++)
-                $(tableBody).append(renderRoutine("Votar a Macri"));*/
+                $(tableBody).append(renderRoutine("asd"));*/
 
             if (isElementEmpty($(tableBody))) {
                 $("#routineTableDiv").hide();
@@ -199,7 +216,7 @@
 
                     data["devices"].forEach(device => {
                         var meta = JSON.parse(device["meta"]);
-                        $(devicesDiv).append(renderDeviceCard(device["id"], meta["isFavorite"], device["name"], meta["image"]));
+                        $(devicesDiv).append(renderDeviceCard(device["id"], device["typeId"], meta["isFavorite"], device["name"], meta["image"]));
                         //$("#roomsView").append(renderRoomCard(meta["isFavorite"], room["name"], meta["image"], meta["deviceCount"], meta["powerOnCount"]));
                     });
 
@@ -236,9 +253,9 @@
         }
 
         var roomID;
-
         var completedPromises = 0;
         var awaitingPromises = 0;
+
         window.onload = function () {
 
             roomID = getQueryStringParameter("id");
@@ -258,6 +275,8 @@
             $("#divModRoomModal").load("fragments/modRoomModal.html");
 
             $("#divNewDeviceModal").load("fragments/newDeviceModal.html");
+
+            $("#divModDeviceModal").load("fragments/devices/modDeviceModal.html");
 
             awaitingPromises++;
             $("#divRoutines").load("fragments/routinePanel.html", function () {

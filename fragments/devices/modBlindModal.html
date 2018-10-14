@@ -1,0 +1,62 @@
+<div class="modal fade" id="modBlindModal" tabindex="-1" role="dialog" aria-labelledby="modBlindTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modBlindTitle">Configurar Persiana</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-3">Cerrada</div>
+            <div class="col-md-3">
+              <label class="bs-switch">
+                <input type="checkbox" id="blindSlider">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="col-md-3">Abierta</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateBlindBtn">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $('#modBlindModal').on('show.bs.modal', function(event) {
+    api.actions.put(deviceId, "getState")
+      .then(data => {
+        var result = data["result"];
+        if (result["status"] == "opened") {
+          document.getElementById("blindSlider").checked = true;
+        } else {
+          document.getElementById("blindSlider").checked = false;
+        }
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  });
+
+  $('#updateBlindBtn').on('click', function(event) {
+    if (document.getElementById("blindSlider").checked == true) {
+      api.actions.put(deviceId, "up")
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    } else {
+      api.actions.put(deviceId, "down")
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    }
+  });
+</script>

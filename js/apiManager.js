@@ -172,3 +172,13 @@ api.devices = class {
     return api.delete(api.devices.url + id);
   }
 };
+
+api.actions = class {
+  static get url() {
+    return api.baseUrl + "devices/";
+  }
+
+  static put(id, action) {
+    return api.put(api.actions.url + id + "/" + action);
+  }
+};
