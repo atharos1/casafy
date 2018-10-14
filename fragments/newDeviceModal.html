@@ -52,7 +52,7 @@
 					.then(data => {
 						var deviceTypes = data["devices"];
 						for (typeNum in deviceTypes) {
-							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownDeviceBtn,this)\" id=\"" +
+							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownDeviceBtn.innerText = this.innerText;\" id=\"" +
 								deviceTypes[typeNum]["id"] + "\">" + deviceTypes[typeNum]["name"] + "</button>");
 						}
 					})
@@ -60,50 +60,43 @@
 						alert("Request failed: " + error);
 					});
 			}
-			api.rooms.getAll()
-				.then(data => {
-					var menu = $("#roomOptions");
-					var rooms = data["rooms"];
-					var added = false;
-					for(roomNum in rooms){
-						added = false;
-						menu.children(".dropdown-item").each(function(i) {
-							if($(this).text().toLowerCase() === rooms[roomNum]["name"].toLowerCase())
-								added = true;
-						});
-						if(!added)
-							menu.append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownRoomBtn,this)\">" + rooms[roomNum]["name"] + "</button>");
-					}
-				}).catch(error => {
-					alert("Request failed: " + error);
-				});
 	});
 
 	$('#createDeviceBtn').on('click', function(event) {
-		var type = $('dropdownDeviceBtn').text();
+		var type = document.getElementById('dropdownDeviceBtn').innerText;
 		var typeId = "";
 		$('#deviceOptions').children(".dropdown-item").each(function(i) {
-			if($(this).text().toLowerCase() === type)
+			if($(this).text().toLowerCase() === type.toLowerCase())
 				typeId = $(this).attr("id");
 		});
+
+		if (typeId == "") {
+			alert("Debe seleccionar un dispositivo");
+			return;
+		}
+
 		var name = $('#deviceName').val();
 		var desc = $('#deviceDescription').val();
 		var newDevice = {
 			name: name,
-			typeId: "go46xmbqeomjrsjr",
+			typeId: typeId,
 			meta: "{\"desc\":\"" + desc + "\"}"
 		};
 
 		api.devices
 		.create(newDevice)
 		.then(data => {
-			//TODO: Agregar dispositivo a la habitacion
-			location.reload();
+			api.post(api.baseUrl + "devices/" + data["device"]["id"] + "/rooms/" + getQueryStringParameter("id"), "{}")
+				.then(data => {
+					location.reload();
+				})
+				.catch(error => {
+					alert("Request failed: " + error);
+				});
 		})
 		.catch(error => {
 			alert("Request failed: " + error);
 		});
 
-		//reload
 	});
 </script>
