@@ -157,13 +157,7 @@ api.devices = class {
   }
 
   static create(device) {
-    return api.fetch(api.devices.url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8"
-      },
-      body: JSON.stringify(room)
-    });
+    return api.post(api.devices.url, device);
   }
 
   static get(id) {

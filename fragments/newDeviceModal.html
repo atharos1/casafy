@@ -1,5 +1,5 @@
 <div class="modal fade" id="newDeviceModal" tabindex="-1" role="dialog" aria-labelledby="createDeviceTitle"
-							aria-hidden="true" data-backdrop="false">
+							aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -28,7 +28,7 @@
 					<div class="form-group row" style="padding-bottom: 10px">
 						<div class="col-md-4">Nombre:</div>
 						<div class="col-md-2">
-							<input id="deviceName" type="text" name="devicename"><br>
+							<input id="deviceName" type="text" name="devicename" size=25 maxlength=25><br>
 						</div>
 					</div>
 					<div class="form-group" style="padding-bottom: 10px">
@@ -39,11 +39,12 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-primary" id = "createDeviceBtn" >Crear</button>
+				<button type="button" class="btn btn-primary" id = "createDeviceBtn">Crear</button>
 			</div>
 		</div>
 	</div>
 </div>
+
 <script>
 	$('#newDeviceModal').on('show.bs.modal', function (event) {
 			if ($('#deviceOptions').children().length == 0) {
@@ -51,7 +52,7 @@
 					.then(data => {
 						var deviceTypes = data["devices"];
 						for (typeNum in deviceTypes) {
-							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownDeviceBtn,this)\" id=\"" + 
+							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"copyText(dropdownDeviceBtn,this)\" id=\"" +
 								deviceTypes[typeNum]["id"] + "\">" + deviceTypes[typeNum]["name"] + "</button>");
 						}
 					})
@@ -66,7 +67,7 @@
 					var added = false;
 					for(roomNum in rooms){
 						added = false;
-						menu.children(".dropdown-item").each(function(i) { 
+						menu.children(".dropdown-item").each(function(i) {
 							if($(this).text().toLowerCase() === rooms[roomNum]["name"].toLowerCase())
 								added = true;
 						});
@@ -77,6 +78,7 @@
 					alert("Request failed: " + error);
 				});
 	});
+
 	$('#createDeviceBtn').on('click', function(event) {
 		var type = $('dropdownDeviceBtn').text();
 		var typeId = "";
@@ -88,11 +90,20 @@
 		var desc = $('#deviceDescription').val();
 		var newDevice = {
 			name: name,
-			typeId: typeId,
-			desc: desc
+			typeId: "go46xmbqeomjrsjr",
+			meta: "{\"desc\":\"" + desc + "\"}"
 		};
-		devicesAdded.push(newDevice);
-		$('#deviceList').append("<a class=\"list-group-item list-group-item-action\" data-toggle=\"list\" style=\"height: 30px; padding: 5px 15px;\">"+ name +"</a>");
-		$('#newDeviceModal').modal('hide')
+
+		api.devices
+		.create(newDevice)
+		.then(data => {
+			//TODO: Agregar dispositivo a la habitacion
+			location.reload();
+		})
+		.catch(error => {
+			alert("Request failed: " + error);
+		});
+
+		//reload
 	});
 </script>
