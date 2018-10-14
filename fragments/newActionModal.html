@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" id="cancelActionBtn">Cancelar</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
 	</div>
@@ -30,81 +30,78 @@
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="getParamsTitle">Añadir Acción</h5>
+				<h5 class="modal-title" id="getParamsTitle">Parámetros</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
 				<form id="getParamsForm">
-					<div class="form-group row" style="padding-bottom:10px">
-						<div class="col-md-5">Nombre:</div>
-						<div class="col-md-7">
-							<input id="actionName" type="text"><br>
-						</div>
-					</div>
 				</form>
+				<div class="alert alert-warning alert-dismissible fade" role="alert" id="invalidParamAlert" style="display:none">
+				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" id="cancelActionBtn">Cancelar</button>
-				<button type="button" class="btn btn-primary">Añadir</button>
+				<button type="button" class="btn btn-secondary" id="cancelParamsBtn">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="addActionBtn">Añadir</button>
 			</div>
 		</div>
 	</div>
 </div>
 <script>
+	var chosenRoomId = "";
+	var chosenDeviceId = "";
 	$('#newActionModal').on('show.bs.modal', function (event) {
 		showRooms();
 	});
-	$('#getParamsModal').on('show.bs.modal', function (event) {
-		
-		var actionName = $(event.relatedTarget).text();
-		var deviceId = $(event.relatedTarget).attr("deviceId");
-		var typeId;
-		$('#getParamsForm').empty();
-		$('#getParamsForm').append(
-					"<div class=\"form-group row\" style=\"padding-bottom:10px\">" +
-						"<div class=\"col-md-5\">Nombre:</div>" +
-						"<div class=\"col-md-7\">" +
-							"<input id=\"actionName\" type=\"text\"><br>" +
-						"</div>" +
-					"</div>");
-		api.devices.get(deviceId)
-			.then(data => {
-				typeId = data["device"]["typeId"];
-			}).catch(error => {
-				alert("Request failed: " + error);
-			}).then(data => {
-				api.fetch(api.baseUrl + "devicetypes/" + typeId)
-					.then(data => {
-						var actions = data["device"]["actions"];
-						var params = null;
-						for(actionNum in actions){
-							if (actions[actionNum]["name"].toLowerCase() === actionName.toLowerCase()){
-								params = actions[actionNum]["params"];
-								break;
-							}
-						}
-						console.log(params);
-						if(params != null){
-							for(paramNum in params){
-								$('#getParamsForm').append(
-									"<div class=\"form-group row\">" +
-										"<div class=\"col-md-5\">" + params[paramNum]["name"] + "</div>" + 	
-										"<div class=\"col-md-7\">" +
-											"<input style=\"display:table-cell; width:100%\" id=\"" + params[paramNum]["name"] + "\" type=\"text\" placeholder=\"" + 
-											"Valor max: " + params[paramNum]["maxValue"] + " | Valor min: " + params[paramNum]["minValue"] + "\"><br>" +
-										"</div>" +
-									"</div>");
-							}
-						}
-					}).catch(error => {
-						alert("Request failed: " + error);
-					});
-			}).catch(error => {
-				alert("Request failed: " + error);
-			});
+	$('#cancelParamsBtn').on('click', function (event) {
+		$('#invalidParamAlert').removeClass("show");
+		$('#invalidParamAlert').attr("style","display:none");
+		$('#getParamsModal').modal('hide');
 	});
+	$('#addActionBtn').on('click',function(event) {
+		var actionName = $('#getParamsForm').attr("actionName");
+		var paramNum = $('#getParamsForm').attr("params");
+		var params = [];
+		var valid = true;
+		var alert = "";
+		for(var i=1; i <= paramNum; i++) {
+			var maxDifference = $('#param'+i).val() - $('#param'+i).attr("max");
+			var minDifference = $('#param'+i).val() - $('#param'+i).attr("min");
+			if(maxDifference > 0 || minDifference < 0){
+				alert += "El valor de " + $('#param'+i).attr("name") + " es inválido\n";
+				valid = false;
+			}
+			else{
+				params.push({
+					name: $('#param'+i).attr("name"),
+					value: $('#param'+i).val()
+				});
+			}
+		}
+		if(!valid){
+			$('#invalidParamAlert').text(alert);
+			$('#invalidParamAlert').addClass("show");
+			$('#invalidParamAlert').attr("style","display:block;");
+			return;
+		}
+		$('#getParamsModal').modal('hide');
+		$('#newActionModal').modal('hide');
+		var action = {
+			actionName: actionName,
+			deviceId: chosenDeviceId,
+			params: params,
+			meta: {}
+		}
+		//Funcion en newRoutineModal.html
+		addAction(action);
+	});
+	function chooseAction(actionElem) {
+		var actionName = $(actionElem).text();
+		$('#getParamsForm').empty();
+		$('#getParamsForm').attr("actionName",actionName);
+		showParams(actionName);
+	}
 	function showRooms() {
 		$('#routineBreadcrumb').empty();
 		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showRooms()">Habitaciones</li>');
@@ -120,7 +117,6 @@
 					alert("Request failed: " + error);
 				});
 	}
-	var chosenRoomId = "";
 	function showDevices(roomId) {
 		chosenRoomId = roomId;
 		$('#routineBreadcrumb').empty();
@@ -139,6 +135,7 @@
 			});
 	}
 	function showActions(deviceId) {
+		chosenDeviceId = deviceId;
 		$('#routineBreadcrumb').empty();
 		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showRooms()">Habitaciones</li>');
 		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showDevices(\''+ chosenRoomId +'\')">Dispositivos</li>');
@@ -152,17 +149,72 @@
 			}).then(data => {
 				var itemList = $('#itemList');
 				itemList.empty();
-				api.get(api.baseUrl + "devicetypes/" + typeId,false)
+				api.get(api.baseUrl + "devicetypes/" + typeId)
 					.then(data => {
 						var deviceActions = data["device"]["actions"];
 						for(actionNum in deviceActions)
-							itemList.append('<a class="list-group-item list-group-item-action" data-toggle="modal" data-target="#getParamsModal" deviceId="'+ deviceId +'">'+ deviceActions[actionNum]["name"] +'</a>');
+							itemList.append('<a class="list-group-item list-group-item-action" onClick="chooseAction(this)">'+ deviceActions[actionNum]["name"] +'</a>');
 					}).catch(error => {
 						alert("Request failed: " + error);
 					});
 			}).catch(error => {
 				alert("Request failed: " + error);
 			});
+	}
+	function showParams(actionName) {
+		var typeId;
+		api.devices.get(chosenDeviceId)
+				.then(data => {
+					typeId = data["device"]["typeId"];
+				}).catch(error => {
+					alert("Request failed: " + error);
+				}).then(data => {
+					api.fetch(api.baseUrl + "devicetypes/" + typeId)
+						.then(data => {
+							var actions = data["device"]["actions"];
+							var params = null;
+							for(actionNum in actions){
+								if (actions[actionNum]["name"].toLowerCase() === actionName.toLowerCase()){
+									params = actions[actionNum]["params"];
+									break;
+								}
+							}
+							var i = 0;
+							if(params != null && params.length > 0){
+								for(paramNum in params){
+									var placeholderString = "Valor max: " + params[paramNum]["maxValue"] + " | Valor min: " + params[paramNum]["minValue"];
+									var input = document.createElement('input');
+									input.id = "param" + ++i;
+									if(params[paramNum]["type"] === "integer" || params[paramNum]["type"] === "number")
+										input.setAttribute("type","number");
+									else 
+										input.setAttribute("type","text");
+									input.setAttribute("style","display:table-cell; width:100%");
+									input.setAttribute("max",params[paramNum]["maxValue"]);
+									input.setAttribute("min",params[paramNum]["minValue"]);
+									input.setAttribute("placeholder",placeholderString);
+									input.setAttribute("name",params[paramNum]["name"]);
+									$('#getParamsForm').append(
+										"<div class=\"form-group row\">" +
+											"<div class=\"col-md-4\">" + params[paramNum]["name"] + ":</div>" + 	
+											"<div class=\"col-md-8\" id=\"param"+ i + "container\">" +
+											"</div>" +
+										"</div>");
+									$('#param'+i+'container').append(input);
+								}
+							}
+							$('#getParamsForm').attr('params',i);
+							
+							if(params.length > 0)
+								$('#getParamsModal').modal('show');
+							else
+								$('#addActionBtn').click();
+						}).catch(error => {
+							alert("Request failed: " + error);
+						});
+				}).catch(error => {
+					alert("Request failed: " + error);
+				});
 	}
 	$('#cancelActionBtn').on('click', function(event) {
 		$('#newActionModal').modal('hide')

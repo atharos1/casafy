@@ -9,12 +9,19 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="container">
-					<div class="row">Acciones:</div>
+				<div class="container" style="padding-bottom:30px;">
+					<div class="row">
+						<div class="col-md-3">Nombre: </div>
+						<div class="col-md-9">
+							<input id="routineName"style="display:table-cell; width:100%" type="text" placeholder="Nombre de la rutina">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">Acciones: </div>
+					</div>
 					<div class="row">
 						<div class="col-md-8">
-							<div class="list-group" id="actionList" role="tablist" style="height:300px;max-height:300px; border:3px solid #cecece;overflow:auto;">
-								
+							<div class="accordion" id="actionAccordion" style="height:400px;max-height:400px; border:3px solid #cecece;overflow:auto;background-color: lightblue;">
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -27,8 +34,125 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" id="cancelRoutineBtn">Cancelar</button>
-				<button type="button" class="btn btn-primary">Guardar</button>
+				<button type="button" class="btn btn-primary" id="createRoutineBtn">Guardar</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<script>
+	var actionInfo = [];
+	function getIndex(action) {
+		for(var i=0; i < actionInfo.length; i++){
+			if(actionInfo[i]["actionName"] === action["actionName"] &&
+				actionInfo[i]["deviceId"] === action["deviceId"]){
+					return i;
+				}
+		}
+		return -1;
+	}
+	function removeAction(action) {
+		var cardId = "card" + action["actionName"] + action["deviceId"];
+		$('#'+cardId).remove();
+		var index = getIndex(action);
+		actionInfo.splice(index,1);
+	}
+	function addAction(action){
+		if(getIndex(action) != -1)
+			removeAction(action);
+		actionInfo.push(action);
+		api.devices.get(action["deviceId"])
+			.then(data => {
+				var collapseId = action["actionName"] + action["deviceId"];
+				var headerId = "header" + collapseId;
+				var cardId = "card" + collapseId;
+				$('#actionAccordion').append(
+					'<div class="card" id="'+cardId+'">'+
+						'<div class="card-header" id="'+headerId+'">'+
+							'<h5 class="mb-0">'+
+								'<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#'+collapseId+'" aria-expanded="true" aria-controls="'+collapseId+'">'+
+									data["device"]["name"] + ": " + action["actionName"] +
+								'</button>'+
+							'</h5>'+
+						'</div>'+
+						'<div id="'+collapseId+'" class="collapse" aria-labelledby="'+headerId+'" data-parent="#actionAccordion" '+
+							'actionName="' + action["actionName"]+ '"deviceId="' + action["deviceId"]+ '">'+
+						'</div>'+
+					'</div>');
+				var cardBody = document.createElement("div");
+				cardBody.setAttribute("class","card-body");
+				var container = document.createElement("div");
+				container.setAttribute("class","container");
+				if(action["params"].length > 0){
+					for(paramNum in action["params"]){
+						$(container).append(
+						'<div class="row">' +
+							'<div class="col-md-7">' +
+								action["params"][paramNum]["name"] +
+							'</div>' +
+							'<div class="col-md-5">' +
+								action["params"][paramNum]["value"] +
+							'</div>' +
+						'</div>');
+					}
+				}
+				else
+					container.innerText = "No posee parametros.";
+				$('#'+collapseId).append(cardBody);
+				$(cardBody).append(container)
+			}).catch(error => {
+				alert("Request failed: " + error);
+			});
+	}
+	$('#deleteActionBtn').on('click',function(event) {
+		var selectedDevice = null;
+		$('#actionAccordion').find("div").each(function(i) {
+			console.log(this);
+			if($(this).hasClass("show"))
+				selectedDevice = $(this);
+		});
+		if(selectedDevice == null)
+			return;
+		action = {
+			deviceId: selectedDevice.attr("deviceId"),
+			actionName: selectedDevice.attr("actionName")
+		};
+		removeAction(action);
+	});
+	$('#cancelRoutineBtn').on('click',function(event) {
+		actionInfo = [];
+		$('#actionAccordion').empty();
+		$('#newRoutineModal').modal('hide');
+	});
+	$('#createRoutineBtn').on('click',function(event) {
+		var name = $('#routineName').val();
+		var actions = [];
+		for(var i=0; i < actionInfo.length; i++){
+			var deviceId = actionInfo[i]["deviceId"];
+			var actionName = actionInfo[i]["actionName"];
+			var params = [];
+			for(paramNum in actionInfo[i]["params"])
+				params.push(actionInfo[i]["params"][paramNum]["value"]);
+			
+			actions.push({
+				deviceId: deviceId,
+				actionName: actionName,
+				params: params,
+				meta: "{}"
+			});
+		}
+		var newRoutine = {
+			name: name,
+			actions: actions,
+			meta: "{}"
+		}
+		console.log(JSON.stringify(newRoutine));
+		api.routines.create(newRoutine)
+			.then(data => {
+				alert("Rutina creada satisfactoriamente!");
+				$('#newRoutineModal').modal('hide');
+			}).catch(error => {
+				alert("Request failed: " + error);
+			});
+	});
+</script>
