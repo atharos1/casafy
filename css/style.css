@@ -28,6 +28,12 @@ html {
   font-weight: bold;
   color:white;
 }
+
+.color-box {
+	width:10px;
+	height:10px;
+	margin:8px;
+}
 /* MODAL RUTINAS */
 
 .accordion {
