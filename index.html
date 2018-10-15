@@ -2,121 +2,117 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Casafy</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
-    <!-- Your custom styles (optional) -->
-    <link href="css/style.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Casafy</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="css/mdb.min.css" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="css/style.css" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="css/datatables.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/datatables.min.css" />
 
-    <link rel="stylesheet" href="http://cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.min.css" />
+  <link rel="stylesheet" href="http://cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.min.css" />
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 
 </head>
 
 <body>
 
-    <div id="loader" class="material_block text-center">
-        <svg class="spinner center-screen" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-            <circle class="circle" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
-        </svg>
-    </div>
+  <div id="loader" class="material_block text-center">
+    <svg class="spinner center-screen" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+      <circle class="circle" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+    </svg>
+  </div>
 
-    <div id="divNewRoomModal"></div>
+  <div id="divNewRoomModal"></div>
 
-    <div id="background" class="bg">
+  <div id="background" class="bg">
 
+    <div id="divNavbar"></div>
 
-        <div id="divNavbar"></div>
+    <div class="container-fluid">
 
-        <div class="container-fluid">
-
-            <div class="row">
-                <!--Dispositivos y grupos-->
-                <div class="col-9">
-                    <div id="roomsCard" class="card mask rgba-white-strong" style="height:85vh">
-                        <div class="pb-0" style="padding: 1.25rem">
-                            <h4 class="d-inline card-title"><a>Habitaciones</a></h4>
-                            <div class="d-inline btn-group" data-toggle="buttons" style="float: right;">
-                            </div>
-                        </div>
-
-                        <div id="roomsEmptyDiv" class="center-screen text-center" style="width: 90%">
-                            <h4>No tienes habitaciones registradas</h4>
-                            <h5>¡Presiona el botón rojo para agregar una!</h5>
-                            <h5>¡Recuerda que necesitas una habitación para agregar un dispositivo!</h5>
-                            <a href="#">¿Qué es una habitación?</a>
-                        </div>
-
-                        <div class="card-body py-0 mCustomScrollbar" style="overflow:auto;">
-                            <div id="roomsView" class="row" data-toggle="modal" data-target="#addRoom">
-                            </div>
-                        </div>
-                        <div class="btn-float-control">
-                            <a data-toggle="modal" data-target="#newRoomModal" href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
-                                id="menu-share">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a class="btn mask rgba-black-strong" href="#" role="button" data-toggle="modal"
-                                        data-target="#newRoomModal">Agregar nueva
-                                        habitación</a>
-                                </li>
-                            </ul>
-                        </div>
-
-
-                    </div>
-
-                </div>
-
-                <!--Rutinas-->
-                <div class="col-3">
-                    <div id="divRoutines"></div>
-                </div>
+      <div class="row">
+        <!--Dispositivos y grupos-->
+        <div class="col-9">
+          <div id="roomsCard" class="card mask rgba-white-strong" style="height:85vh">
+            <div class="pb-0" style="padding: 1.25rem">
+              <h4 class="d-inline card-title"><a>Habitaciones</a></h4>
+              <div class="d-inline btn-group" data-toggle="buttons" style="float: right;">
+              </div>
             </div>
 
-            <div id="divFooter"></div>
+            <div id="roomsEmptyDiv" class="center-screen text-center" style="width: 90%">
+              <h4>No tienes habitaciones registradas</h4>
+              <h5>¡Presiona el botón rojo para agregar una!</h5>
+              <h5>¡Recuerda que necesitas una habitación para agregar un dispositivo!</h5>
+              <a href="#">¿Qué es una habitación?</a>
+            </div>
+
+            <div class="card-body py-0 mCustomScrollbar" style="overflow:auto;">
+              <div id="roomsView" class="row" data-toggle="modal" data-target="#addRoom">
+              </div>
+            </div>
+            <div class="btn-float-control">
+              <a data-toggle="modal" data-target="#newRoomModal" href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+              </a>
+              <ul>
+                <li>
+                  <a class="btn mask rgba-black-strong" href="#" role="button" data-toggle="modal" data-target="#newRoomModal">Agregar nueva
+                    habitación</a>
+                </li>
+              </ul>
+            </div>
+
+          </div>
 
         </div>
 
+        <!--Rutinas-->
+        <div class="col-3">
+          <div id="divRoutines"></div>
+        </div>
+      </div>
 
-        <!-- SCRIPTS -->
-        <!-- JQuery -->
-        <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-        <!-- Bootstrap tooltips -->
-        <script type="text/javascript" src="js/popper.min.js"></script>
-        <!-- Bootstrap core JavaScript -->
-        <script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <!-- MDB core JavaScript -->
-        <script type="text/javascript" src="js/mdb.min.js"></script>
+      <div id="divFooter"></div>
 
-        <script type="text/javascript" src="js/apiManager.js"></script>
+    </div>
 
-        <script type="text/javascript" src="js/qSort.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
 
-        <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="js/apiManager.js"></script>
 
-        <script>
-            function fixFieldState(inputField) {
-                $(inputField).trigger("focusin");
-                $(inputField).trigger("blur");
-            }
+    <script type="text/javascript" src="js/qSort.js"></script>
 
-            function renderRoomCard(id, isFavorite, name, image, deviceCount, powerOnCount) {
-                return `<div class="col-5 col-lg-4 col-xl-4">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
+
+    <script>
+      function fixFieldState(inputField) {
+        $(inputField).trigger("focusin");
+        $(inputField).trigger("blur");
+      }
+
+      function renderRoomCard(id, isFavorite, name, image, deviceCount, powerOnCount) {
+        return `<div class="col-5 col-lg-4 col-xl-4">
                             <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
                                 <!--Card image-->
                                 <div class="view overlay hm-white-slight zoom" style="height: 8rem;">
@@ -151,10 +147,10 @@
                                 </div>
                             </div>
                         </div>`
-            }
+      }
 
-            function renderRoutine(nombre) {
-                return `<tr>
+      function renderRoutine(nombre) {
+        return `<tr>
                         <td>${nombre}</td>
                         <td>
                             <a class="btn btn-sm" href="#" role="button">
@@ -168,167 +164,166 @@
                             </a>
                         </td>
                     </tr>`
-            }
+      }
 
-            function isElementEmpty(el) {
-                return !$.trim(el.html())
-            }
+      function isElementEmpty(el) {
+        return !$.trim(el.html())
+      }
 
-            function populateRoutineTable() {
-                var tableBody = $("#routineTable").children("tbody");
-                $(tableBody).html("");
+      function populateRoutineTable() {
+        var tableBody = $("#routineTable").children("tbody");
+        $(tableBody).html("");
 
-                if (isElementEmpty($(tableBody))) {
-                    $("#routineTableDiv").hide();
-                    $("#routineEmptyDiv").show();
-                } else {
-                    $("#routineTableDiv").show();
-                    $("#routineEmptyDiv").hide();
-                }
+        if (isElementEmpty($(tableBody))) {
+          $("#routineTableDiv").hide();
+          $("#routineEmptyDiv").show();
+        } else {
+          $("#routineTableDiv").show();
+          $("#routineEmptyDiv").hide();
+        }
 
-                completedPromises++;
-            }
+        completedPromises++;
+      }
 
-            function populateRoomList() {
-                var roomsView = $("#roomsView");
-                $(roomsView).html("");
+      function populateRoomList() {
+        var roomsView = $("#roomsView");
+        $(roomsView).html("");
 
-                api.rooms.getAll()
-                    .then((data) => {
-                        qSort(data["rooms"], compareElements);
-                        loadRoomCard(data["rooms"], 0);
-                    })
-                    .catch((error) => {
-                        alert('Request failed: ' + error);
-                    });
-            }
+        api.rooms.getAll()
+          .then((data) => {
+            qSort(data["rooms"], compareElements);
+            loadRoomCard(data["rooms"], 0);
+          })
+          .catch((error) => {
+            alert('Request failed: ' + error);
+          });
+      }
 
-            function loadRoomCard(rooms, index) {
-              if (index < rooms.length) {
-                var room = rooms[index];
+      function loadRoomCard(rooms, index) {
+        if (index < rooms.length) {
+          var room = rooms[index];
 
-                api.rooms.getDevices(room["id"])
-                    .then((data) => {
-                        var deviceCount = 0;
-                        var powerOnCount = 0;
+          api.rooms.getDevices(room["id"])
+            .then((data) => {
+              var deviceCount = 0;
+              var powerOnCount = 0;
 
-                        data["devices"].forEach(function (device) {
-                            deviceCount++;
+              data["devices"].forEach(function(device) {
+                deviceCount++;
 
-                            var meta = JSON.parse(room["meta"]);
-                            if (meta["powerOn"] == true)
-                                powerOnCount++;
-                        });
+                var meta = JSON.parse(room["meta"]);
+                if (meta["powerOn"] == true)
+                  powerOnCount++;
+              });
 
-                        var meta = JSON.parse(room["meta"]);
-                        $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], deviceCount, powerOnCount));
+              var meta = JSON.parse(room["meta"]);
+              $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], deviceCount, powerOnCount));
 
-                        if (isElementEmpty($(roomsView))) {
-                            $("#roomsEmptyDiv").show();
-                        } else {
-                            $("#roomsEmptyDiv").hide();
-                        }
-
-                        loadRoomCard(rooms, index+1);
-                    })
-                    .catch((error) => {
-                        alert('Request failed: ' + error);
-                    });
+              if (isElementEmpty($(roomsView))) {
+                $("#roomsEmptyDiv").show();
               } else {
-                  completedPromises++;
+                $("#roomsEmptyDiv").hide();
               }
-            }
 
-            function formatState(state) {
-                if (!state.id) {
-                    return state.text;
-                }
-                var baseUrl = "/user/pages/images/flags";
-                var $state = $(
-                    '<span><img src="' + baseUrl + '/' + state.element.value + '.png" class="img-flag" /> ' + state.text + '</span>'
-                );
-                return $state;
-            };
+              loadRoomCard(rooms, index + 1);
+            })
+            .catch((error) => {
+              alert('Request failed: ' + error);
+            });
+        } else {
+          completedPromises++;
+        }
+      }
 
-            var completedPromises = 0;
-            var awaitingPromises = 0;
+      function formatState(state) {
+        if (!state.id) {
+          return state.text;
+        }
+        var baseUrl = "/user/pages/images/flags";
+        var $state = $(
+          '<span><img src="' + baseUrl + '/' + state.element.value + '.png" class="img-flag" /> ' + state.text + '</span>'
+        );
+        return $state;
+      };
 
-            window.onload = function () {
-                awaitingPromises++
+      var completedPromises = 0;
+      var awaitingPromises = 0;
+
+      window.onload = function() {
+        awaitingPromises++
+        populateRoomList();
+
+        $("#divNavbar").load("fragments/navbar.html", function() {
+          //Acciones
+        });
+
+        $("#divFooter").load("fragments/footer.html");
+
+        awaitingPromises++;
+        $("#divRoutines").load("fragments/routinePanel.html", function() {
+          populateRoutineTable();
+        });
+
+        $("#divNewRoomModal").load("fragments/newRoomModal.html");
+
+        finishLoading();
+
+        addEventListener('contextmenu', e => e.preventDefault(), false);
+
+      };
+
+      function finishLoading() {
+        if (awaitingPromises > completedPromises) {
+          setTimeout(finishLoading, 500);
+          return;
+        }
+
+        $(".mCustomScrollbar").mCustomScrollbar({
+          theme: "dark-thick"
+        });
+
+        $("#loader").fadeOut(2000);
+
+        $('#background').addClass('animated fadeIn slower');
+        $('#roomsCard').addClass('animated zoomIn');
+        $('#routinesCard').addClass('animated zoomIn');
+      }
+
+
+      $('#roomsView').on('click', '.btn-entrar', function(event) {
+        window.location.href = "room.html?id=" + $(event.target).closest(".card").data("id");
+      });
+
+
+      $('#roomsView').on('click', '.btn-hab-favorito', function(event) {
+        var id = $(event.target).closest(".card").data("id");
+        api.rooms
+          .get(id)
+          .then(data => {
+            var room = data["room"];
+            var meta = JSON.parse(room["meta"]);
+
+            meta["isFavorite"] = !meta["isFavorite"];
+            room["meta"] = JSON.stringify(meta);
+
+            api.rooms
+              .modify(room)
+              .then(data => {
                 populateRoomList();
+              })
+              .catch(error => {
+                alert("Request failed: " + error);
+              });
+          })
+          .catch(error => {
+            alert("Request failed: " + error);
+          });
+      });
 
-                $("#divNavbar").load("fragments/navbar.html", function () {
-                    //Acciones
-                });
-
-                $("#divFooter").load("fragments/footer.html");
-
-                awaitingPromises++;
-                $("#divRoutines").load("fragments/routinePanel.html", function () {
-                    populateRoutineTable();
-                });
-
-                $("#divNewRoomModal").load("fragments/newRoomModal.html");
-
-                finishLoading();
-
-                addEventListener('contextmenu', e => e.preventDefault(), false);
-
-            };
-
-            function finishLoading() {
-                if (awaitingPromises > completedPromises) {
-                    setTimeout(finishLoading, 500);
-                    return;
-                }
-
-                $(".mCustomScrollbar").mCustomScrollbar({
-                    theme: "dark-thick"
-                });
-
-                $("#loader").fadeOut(2000);
-
-                $('#background').addClass('animated fadeIn slower');
-                $('#roomsCard').addClass('animated zoomIn');
-                $('#routinesCard').addClass('animated zoomIn');
-            }
-
-
-            $('#roomsView').on('click', '.btn-entrar', function (event) {
-                window.location.href = "room.html?id=" + $(event.target).closest(".card").data("id");
-            });
-
-
-            $('#roomsView').on('click', '.btn-hab-favorito', function (event) {
-                var id = $(event.target).closest(".card").data("id");
-                api.rooms
-                  .get(id)
-                  .then(data => {
-                    var room = data["room"];
-                    var meta = JSON.parse(room["meta"]);
-
-                    meta["isFavorite"] = !meta["isFavorite"];
-                    room["meta"] = JSON.stringify(meta);
-
-                    api.rooms
-                      .modify(room)
-                      .then(data => {
-                        populateRoomList();
-                      })
-                      .catch(error => {
-                        alert("Request failed: " + error);
-                      });
-                  })
-                  .catch(error => {
-                    alert("Request failed: " + error);
-                  });
-            });
-
-            function copyText(elem1, elem2) {
-                $(elem1).text($(elem2).text());
-            }
-
-        </script>
+      function copyText(elem1, elem2) {
+        $(elem1).text($(elem2).text());
+      }
+    </script>
 
 </body>
 

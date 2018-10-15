@@ -41,7 +41,6 @@
 </div>
 
 <script>
-
   $('#modDoorModal').on('show.bs.modal', function(event) {
     api.actions.put(deviceId, "getState")
       .then(data => {
@@ -63,32 +62,59 @@
       });
   });
 
+  var doorUpdateIndex = -1;
+
   $('#updateDoorBtn').on('click', function(event) {
-    /*status*/
+    doorUpdateIndex = -1;
+    doorUpdate();
+  });
+
+  var doorUpdateFunctions = [doorUpdateStatus, doorUpdateLock];
+
+  function doorUpdate() {
+    doorUpdateIndex++;
+    if (doorUpdateIndex < doorUpdateFunctions.length) {
+      doorUpdateFunctions[doorUpdateIndex]();
+    }
+  }
+
+  function doorUpdateStatus() {
     if (document.getElementById("doorStatusSwitch").checked == true) {
       api.actions.put(deviceId, "open")
+        .then((data) => {
+          doorUpdate();
+        })
         .catch(error => {
           alert("Request failed: " + error);
         });
     } else {
       api.actions.put(deviceId, "close")
+        .then((data) => {
+          doorUpdate();
+        })
         .catch(error => {
           alert("Request failed: " + error);
         });
     }
+  }
 
-    /*lock*/
+  function doorUpdateLock() {
     if (document.getElementById("doorLockSwitch").checked == true) {
       api.actions.put(deviceId, "unlock")
+        .then((data) => {
+          doorUpdate();
+        })
         .catch(error => {
           alert("Request failed: " + error);
         });
     } else {
       api.actions.put(deviceId, "lock")
+        .then((data) => {
+          doorUpdate();
+        })
         .catch(error => {
           alert("Request failed: " + error);
         });
     }
-
-  });
+  }
 </script>

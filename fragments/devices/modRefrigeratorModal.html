@@ -111,33 +111,57 @@
     document.getElementById('freezerTemp').innerText = document.getElementById('freezerTempSlider').value;
   }
 
-  $('#updateRefrigeratorBtn').on('click', function(event) {
-    var body = new Array(1);
+  var body = new Array(1);
+  var refrigeratorUpdateIndex = -1;
 
-    /*temperature*/
+  $('#updateRefrigeratorBtn').on('click', function(event) {
+    refrigeratorUpdateIndex = -1;
+    refrigeratorUpdate();
+  });
+
+  var refrigeratorUpdateFunctions = [refrigeratorUpdateTemperature, refrigeratorUpdateFreezerTemperature, refrigeratorUpdateMode];
+
+  function refrigeratorUpdate() {
+    refrigeratorUpdateIndex++;
+    if (refrigeratorUpdateIndex < refrigeratorUpdateFunctions.length) {
+      refrigeratorUpdateFunctions[refrigeratorUpdateIndex]();
+    }
+  }
+
+  function refrigeratorUpdateTemperature() {
     body[0] = document.getElementById('refrigeratorTempSlider').value;
     api.actions.put(deviceId, "setTemperature", body)
+      .then((data) => {
+        refrigeratorUpdate();
+      })
       .catch(error => {
         alert("Request failed: " + error);
       });
+  }
 
-    /*freezer temperature*/
+  function refrigeratorUpdateFreezerTemperature() {
     body[0] = document.getElementById('freezerTempSlider').value;
     api.actions.put(deviceId, "setFreezerTemperature", body)
+      .then((data) => {
+        refrigeratorUpdate();
+      })
       .catch(error => {
         alert("Request failed: " + error);
       });
+  }
 
-    /*mode*/
+  function refrigeratorUpdateMode() {
     for (var key in regrigeratorModeTranslation) {
       if (regrigeratorModeTranslation[key] == document.getElementById('dropdownRefrigeratorModeBtn').innerText.toLowerCase()) {
-          body[0] = key;
+        body[0] = key;
       }
     }
     api.actions.put(deviceId, "setMode", body)
+      .then((data) => {
+        refrigeratorUpdate();
+      })
       .catch(error => {
         alert("Request failed: " + error);
       });
-
-  });
+  }
 </script>

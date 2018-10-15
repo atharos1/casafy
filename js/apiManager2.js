@@ -98,13 +98,13 @@ api.rooms = class {
           .then(data => {
             var room = data["room"];
             var meta = JSON.parse(room["meta"]);
-    
+
             if (name) room["name"] = name;
-    
+
             if (isFavorite) meta["isFavorite"] = isFavorite;
             if (image) meta["image"] = image;
             room["meta"] = JSON.stringify(meta);
-    
+
             api.rooms
               .modify(room)
               .then(data => {
