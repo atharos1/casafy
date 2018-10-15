@@ -51,7 +51,7 @@
               <a href="index.html" class="btn black-text btn-md align-middle" id="goBackButton"><i class="fa fa-arrow-left"
                   aria-hidden="true"></i></i>
                 Volver al menú</a>
-              <i id="isFavorite" class="align-middle fa fa-2x fa-star amber-text" aria-hidden="true" onclick="changeStateOfFavourite()"></i>
+              <i id="isFavorite" class="align-middle" aria-hidden="true" onclick="changeStateOfFavourite()"></i>
               <h4 id="roomName" class="d-inline card-title align-middle"><a>NOMBRE-HABITACIÓN</a></h4>
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right;">
                 <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i class="fa fa-pencil-square-o"
@@ -195,7 +195,6 @@
           var room = data["room"];
           $("#roomName").text(room["name"]);
           var meta = JSON.parse(room["meta"]);
-          alert(meta["isFavorite"]);
           document.getElementById("isFavorite").classList.add("fa", "fa-2x");
           if (meta["isFavorite"] == "true") {
             document.getElementById("isFavorite").classList.add("fa-star", "amber-text");
