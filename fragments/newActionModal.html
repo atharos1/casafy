@@ -109,7 +109,9 @@
 		"conventional": "Convencional",
 		"top": "Arriba",
 		"bottom": "Abajo",
-		
+		"cool": "Frío",
+		"heat": "Calor",
+		"fan": "Ventilador"
 	}
 	$('#newActionModal').on('show.bs.modal', function (event) {
 		showRooms();
@@ -134,7 +136,7 @@
 				else{
 					params.push({
 						name: paramsTranslation[$('#param'+i).attr("name")],
-						value: $('#param'+i).text()
+						value: $('#param'+i).attr("chosen")
 					});
 				}
 				continue;
@@ -274,7 +276,7 @@
 										for(var j=0 ; j < params[paramNum]["supportedValues"].length; j++){
 											var value = params[paramNum]["supportedValues"][j];
 											$('#supportedValues').append(
-												"<button class=\"dropdown-item btn-sm\" id=\""+ value +"\"type=\"button\" onClick=\"param"+i+".innerText = this.id;\">" + 
+												"<button class=\"dropdown-item btn-sm\" id=\""+ value +"\"type=\"button\" onClick=\"updateDropdown(this,"+i+")\">" + 
 													(isNaN(value) ? supportedValuesTranslation[value] : value) + "</button>");
 										}
 										continue;
@@ -312,6 +314,10 @@
 				}).catch(error => {
 					alert("Request failed: " + error);
 				});
+	}
+	function updateDropdown(chosenElem,paramNum){
+		$('#param'+paramNum).attr('chosen',$(chosenElem).attr('id'));
+		$('#param'+paramNum).text($(chosenElem).text());
 	}
 	$('#cancelActionBtn').on('click', function(event) {
 		$('#newActionModal').modal('hide')
