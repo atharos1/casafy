@@ -28,7 +28,22 @@ html {
   font-weight: bold;
   color:white;
 }
+/* MODAL RUTINAS */
 
+.accordion {
+	height:400px;
+	max-height:400px; 
+	border:3px solid #cecece;
+	overflow:auto;
+	background-color: lightblue;
+}
+
+.list-group {
+	height: 300px;
+	max-height:300px; 
+	border:3px solid #cecece;
+	overflow:auto;
+}
 /* BOTON FLOTANTE */
 .btn-float-main {
   position: absolute;
