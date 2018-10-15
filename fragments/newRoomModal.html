@@ -44,7 +44,7 @@
 	document.getElementById("saveRoomBtn").disabled = true;
 	let nameInput = document.getElementById("newRoomName");
 	nameInput.oninput = ((event) => {
-		if(nameInput.value.length < 3) { 
+		if(nameInput.value.length < 3) {
 			document.getElementById("illegalNameText").style.visibility = "visible";
 			document.getElementById("saveRoomBtn").disabled = true;
 		} else {
@@ -56,7 +56,7 @@
 	function createNewRoom() {
 			var room = {
 				name: $("#newRoomName").val(),
-				meta: "{\"isFavorite\":\"" + document.getElementById("favourite").checked + "\",\"image\":\"rooms/kitchen.jpg\"}"
+				meta: "{\"isFavorite\":" + document.getElementById("favourite").checked + ",\"image\":\"rooms/room.jpg\"}"
 			};
 
 			//TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
