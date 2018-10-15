@@ -9,17 +9,16 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="container" style="padding-bottom:30px;">
+				<div class="container" style="padding-bottom:10px;">
 					<div class="row">
 						<div class="col-md-3">*Nombre:
 						</div>
 						<div class="col-md-9">
-							<input id="routineName" style="display:table-cell; width:100%" type="text" maxlength="25" placeholder="Nombre de la rutina" oninput="checkCorrectName()">
+							<input id="routineName" style="display:table-cell; width:100%" type="text" maxlength="25" placeholder="Nombre de la rutina" oninput="updateCreateButton()">
 						</div>
 					</div>
 					<div class="row">
-						<p id="wrongNameText" style="color: red; margin-left: 15px; margin-top: 5px;">El
-							nombre debe contener al menos tres letras</p>
+						<p class="input-warning" id="wrongNameText">El nombre debe contener al menos tres letras.</p>
 					</div>
 					<div class="row">
 						<div class="col-md-4">*Acciones: </div>
@@ -34,6 +33,9 @@
 							<button type="button" class="btn btn-primary btn-sm" id="deleteActionBtn">Eliminar</button>
 						</div>
 					</div>
+					<div class="row">
+						<p class="input-warning" id="actionsWarning">Debe haber por lo menos haber una acción para crear la rutina.</p>
+					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -47,22 +49,13 @@
 <script>
 	var actionInfo = [];
 
-	function checkCorrectName() {
-		let input = document.getElementById("routineName");
-		let p = document.getElementById("wrongNameText");
-		if (input.value.length < 3) {
-			p.style.visibility = "visible";
-		} else {
-			p.style.visibility = "hidden";
-		}
-	}
-
-	$('#routineName').on('input', function (event) {
-		if ($('#routineName').val().length > 0 && $('#routineName').val().length < $('#routineName').attr("maxlength"))
+	function updateCreateButton() {
+		if($('#routineName').val().length >= 3 && $('#routineName').val().length < $('#routineName').attr("maxlength") &&
+				$('#actionAccordion').children().length > 0)
 			$("#createRoutineBtn").prop('disabled', false);
 		else
 			$("#createRoutineBtn").prop('disabled', true);
-	});
+	}
 	function getIndex(action) {
 		for (var i = 0; i < actionInfo.length; i++) {
 			if (actionInfo[i]["actionName"] === action["actionName"] &&
@@ -127,6 +120,7 @@
 					container.innerText = "No posee parametros.";
 				$('#' + collapseId).append(cardBody);
 				$(cardBody).append(container)
+				updateCreateButton();
 			}).catch(error => {
 				alert("Request failed: " + error);
 			});
@@ -146,6 +140,7 @@
 			actionName: selectedDevice.attr("actionName")
 		};
 		removeAction(action);
+		updateCreateButton();
 	});
 
 	$('#cancelRoutineBtn').on('click', function (event) {
