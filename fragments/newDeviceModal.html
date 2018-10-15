@@ -1,5 +1,4 @@
-<div class="modal fade" id="newDeviceModal" tabindex="-1" role="dialog" aria-labelledby="createDeviceTitle"
-							aria-hidden="true">
+<div class="modal fade" id="newDeviceModal" tabindex="-1" role="dialog" aria-labelledby="createDeviceTitle" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -48,7 +47,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-primary" data-dismiss="modal" id="createDeviceBtn">Crear</button>
+				<button type="button" class="btn btn-primary" id="createDeviceBtn">Crear</button>
 			</div>
 		</div>
 	</div>
@@ -78,10 +77,9 @@
 			if($(this).text().toLowerCase() === type)
 				typeId = $(this).attr("id");
 		});
-		console.log(typeId);
 
 		if (typeId == "") {
-			alert("Debe seleccionar un dispositivo");
+			alert("Debe seleccionar un tipo de dispositivo");
 			return;
 		}
 
@@ -92,8 +90,6 @@
 			typeId: typeId,
 			meta: "{\"desc\":\"" + desc + "\",\"image\":\"" + deviceImg[type] + "\", \"isFavorite\":" + document.getElementById("favouriteDevice").checked + "}"
 		};
-
-		console.log(document.getElementById("favouriteDevice").checked);
 
 		api.devices
 		.create(newDevice)
@@ -111,7 +107,16 @@
 			alert("Request failed: " + error);
 		});
 
+		$('#newDeviceModal').modal('toggle');
+		clearNewDeviceModal();
 	});
+
+	function clearNewDeviceModal() {
+		document.getElementById("deviceName").value = "";
+		document.getElementById("dropdownDeviceBtn").innerText = "Seleccionar...";
+		document.getElementById("favouriteDevice").checked = false;
+		document.getElementById("deviceDescription").value = "";
+	}
 
 	var deviceNameTranslation = {
 		"blind": "persiana",

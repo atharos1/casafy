@@ -1,0 +1,234 @@
+<div class="modal fade" id="modOvenModal" tabindex="-1" role="dialog" aria-labelledby="modOvenTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modOvenTitle">Configurar Aire Acondicionado</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-3">Apagado</div>
+            <div class="col-md-3">
+              <label class="bs-switch">
+                <input type="checkbox" id="ovenStatusSwitch">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="col-md-3">Prendido</div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Temperatura:</div>
+            <div class="col-md-5">
+              <input type="range" class="custom-range" id="ovenTemperatureSlider" onchange="updateOvenTemperature()">
+            </div>
+            <div class="col-md-3" id="ovenTemperature">...</div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Calor:</div>
+            <div class="col-md-6">
+              <div class="dropdown" id="ovenHeatBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenHeatBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargando...
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenHeat">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Grill:</div>
+            <div class="col-md-6">
+              <div class="dropdown" id="ovenGrillBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenGrillBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargando...
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenGrill">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Convección:</div>
+            <div class="col-md-6">
+              <div class="dropdown" id="ovenConvectionBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenConvectionBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargando...
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenConvection">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateOvenBtn">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var loadedOvenModal = false;
+
+  $('#modOvenModal').on('show.bs.modal', function(event) {
+    if (!loadedOvenModal) {
+      api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
+        .then(data => {
+          var actions = data["device"]["actions"];
+          for (action in actions) {
+            if (actions[action]["name"] == "setTemperature") {
+              var minValue = actions[action]["params"][0]["minValue"];
+              var maxValue = actions[action]["params"][0]["maxValue"];
+              document.getElementById('ovenTemperatureSlider').min = minValue;
+              document.getElementById('ovenTemperatureSlider').max = maxValue;
+            }
+            if (actions[action]["name"] == "setHeat") {
+              var values = actions[action]["params"][0]["supportedValues"];
+              for (value in values) {
+                $('#ovenHeat').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenHeatBtn.innerText = this.innerText;\">" +
+                  ovenHeatTranslation[values[value].toLowerCase()] + "</button>");
+              }
+            }
+            if (actions[action]["name"] == "setGrill") {
+              var values = actions[action]["params"][0]["supportedValues"];
+              for (value in values) {
+                $('#ovenGrill').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenGrillBtn.innerText = this.innerText;\">" +
+                  values[value].toLowerCase() + "</button>");
+              }
+            }
+            if (actions[action]["name"] == "setConvection") {
+              var values = actions[action]["params"][0]["supportedValues"];
+              for (value in values) {
+                $('#ovenConvection').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenConvectionBtn.innerText = this.innerText;\">" +
+                  values[value].toLowerCase() + "</button>");
+              }
+            }
+          }
+        })
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+
+      loadedOvenModal = true;
+    }
+
+    api.actions.put(deviceId, "getState")
+      .then(data => {
+        var result = data["result"];
+        if (result["status"] == "on") {
+          document.getElementById("ovenStatusSwitch").checked = true;
+        } else {
+          document.getElementById("ovenStatusSwitch").checked = false;
+        }
+        document.getElementById('ovenTemperatureSlider').value = result["temperature"];
+        document.getElementById('dropdownOvenHeatBtn').innerText = ovenHeatTranslation[result["heat"].toLowerCase()];
+        document.getElementById('dropdownOvenGrillBtn').innerText = result["grill"].toLowerCase();
+        document.getElementById('dropdownOvenConvectionBtn').innerText = result["convection"].toLowerCase();
+        updateOvenTemperature();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  });
+
+  function updateOvenTemperature() {
+    document.getElementById('ovenTemperature').innerText = document.getElementById('ovenTemperatureSlider').value;
+  }
+
+  var ovenHeatTranslation = {
+    "conventional": "convencional",
+    "top": "superior",
+    "bottom": "inferior"
+  }
+
+  var body = new Array(1);
+  var ovenUpdateIndex = -1;
+
+  $('#updateOvenBtn').on('click', function(event) {
+    ovenUpdateIndex = -1;
+    ovenUpdate();
+  });
+
+  var ovenUpdateFunctions = [ovenUpdateStatus, ovenUpdateTemperature, ovenUpdateHeat, ovenUpdateGrill, ovenUpdateConvection];
+
+  function ovenUpdate() {
+    ovenUpdateIndex++;
+    if (ovenUpdateIndex < ovenUpdateFunctions.length) {
+      ovenUpdateFunctions[ovenUpdateIndex]();
+    }
+  }
+
+  function ovenUpdateStatus() {
+    if (document.getElementById("ovenStatusSwitch").checked == true) {
+      api.actions.put(deviceId, "turnOn")
+        .then((data) => {
+          ovenUpdate();
+        })
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    } else {
+      api.actions.put(deviceId, "turnOff")
+        .then((data) => {
+          ovenUpdate();
+        })
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    }
+  }
+
+  function ovenUpdateTemperature() {
+    body[0] = document.getElementById('ovenTemperatureSlider').value;
+    api.actions.put(deviceId, "setTemperature", body)
+      .then((data) => {
+        ovenUpdate();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  }
+
+  function ovenUpdateHeat() {
+    for (var key in ovenHeatTranslation) {
+      if (ovenHeatTranslation[key] == document.getElementById('dropdownOvenHeatBtn').innerText.toLowerCase()) {
+        body[0] = key;
+      }
+    }
+    api.actions.put(deviceId, "setHeat", body)
+      .then((data) => {
+        ovenUpdate();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  }
+
+  function ovenUpdateGrill() {
+    body[0] = document.getElementById('dropdownOvenGrillBtn').innerText.toLowerCase();
+    api.actions.put(deviceId, "setGrill", body)
+      .then((data) => {
+        ovenUpdate();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  }
+
+  function ovenUpdateConvection() {
+    body[0] = document.getElementById('dropdownOvenConvectionBtn').innerText.toLowerCase();
+    api.actions.put(deviceId, "setConvection", body)
+      .then((data) => {
+        ovenUpdate();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  }
+</script>
