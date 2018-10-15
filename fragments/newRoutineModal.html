@@ -11,13 +11,13 @@
 			<div class="modal-body">
 				<div class="container" style="padding-bottom:30px;">
 					<div class="row">
-						<div class="col-md-3">Nombre: </div>
+						<div class="col-md-3">*Nombre: </div>
 						<div class="col-md-9">
 							<input id="routineName"style="display:table-cell; width:100%" type="text" maxlength="25" placeholder="Nombre de la rutina">
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-4">Acciones: </div>
+						<div class="col-md-4">*Acciones: </div>
 					</div>
 					<div class="row">
 						<div class="col-md-8">
@@ -34,7 +34,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" id="cancelRoutineBtn">Cancelar</button>
-				<button type="button" class="btn btn-primary" id="createRoutineBtn">Guardar</button>
+				<button type="button" class="btn btn-primary" id="createRoutineBtn" disabled>Guardar</button>
 			</div>
 		</div>
 	</div>
@@ -42,6 +42,13 @@
 
 <script>
 	var actionInfo = [];
+	
+	$('#routineName').on('input',function(event) {
+		if($('#routineName').val().length > 0 && $('#routineName').val().length < $('#routineName').attr("maxlength"))
+			$("#createRoutineBtn").prop('disabled', false);
+		else
+			$("#createRoutineBtn").prop('disabled', true);
+	});
 	function getIndex(action) {
 		for(var i=0; i < actionInfo.length; i++){
 			if(actionInfo[i]["actionName"] === action["actionName"] &&
@@ -51,7 +58,6 @@
 		}
 		return -1;
 	}
-
 	function removeAction(action) {
 		var cardId = "card" + action["actionName"] + action["deviceId"];
 		$('#'+cardId).remove();
@@ -87,7 +93,11 @@
 				container.setAttribute("class","container");
 				if(action["params"].length > 0){
 					for(paramNum in action["params"]){
-						var value = isNaN(action["params"][paramNum]["value"]) ? supportedValuesTranslation[action["params"][paramNum]["value"]] : action["params"][paramNum]["value"];
+						var value;
+						if(/^#[0-9A-F]{6}$/i.test(action["params"][paramNum]["value"]))
+							value = '<div class="color-box" style="background-color:'+action["params"][paramNum]["value"]+'"></div>';
+						else
+							value = supportedValuesTranslation[action["params"][paramNum]["value"]] !== undefined ? supportedValuesTranslation[action["params"][paramNum]["value"]] : action["params"][paramNum]["value"];
 						$(container).append(
 						'<div class="row">' +
 							'<div class="col-md-7">' +
@@ -127,15 +137,12 @@
 	$('#cancelRoutineBtn').on('click',function(event) {
 		actionInfo = [];
 		$('#actionAccordion').empty();
+		$('#routineName').val("");
 		$('#newRoutineModal').modal('hide');
 	});
 
 	$('#createRoutineBtn').on('click',function(event) {
 		var name = $('#routineName').val();
-		if(name.length == 0 || name.length > $('#routineName').attr("maxlength")){
-			alert("El nombre ingresado no es válido. Por favor escoja un nombre entre 1 y 25 letras.")
-			return;
-		}
 		var actions = [];
 		for(var i=0; i < actionInfo.length; i++){
 			var deviceId = actionInfo[i]["deviceId"];
@@ -161,6 +168,7 @@
 			.then(data => {
 				alert("Rutina creada satisfactoriamente!");
 				$('#newRoutineModal').modal('hide');
+				$('#routineName').val("");
 				populateRoutineTable();
 			}).catch(error => {
 				alert("Request failed: " + error);

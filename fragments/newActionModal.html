@@ -43,7 +43,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" id="cancelParamsBtn">Cancelar</button>
-				<button type="button" class="btn btn-primary" id="addActionBtn">Añadir</button>
+				<button type="button" class="btn btn-primary" id="addActionBtn" disabled>Añadir</button>
 			</div>
 		</div>
 	</div>
@@ -113,14 +113,44 @@
 		"heat": "Calor",
 		"fan": "Ventilador"
 	}
+	function updateDropdown(chosenElem,paramNum){
+		$('#param'+paramNum).attr('chosen',$(chosenElem).attr('id'));
+		$('#param'+paramNum).text($(chosenElem).text());
+		$('#addActionBtn').prop("disabled",false);
+	}
+	function isValid(input) {
+		if(input === undefined || input === null)
+			return false;
+		if(input.attr("type") === "color")
+			return true;
+		else if(input.val() === undefined || input.val().length === 0 || 
+			input.val() > parseInt(input.attr("max")) || input.val() < parseInt(input.attr("min")))
+			return false;
+		else
+			return true;
+	}
 	$('#newActionModal').on('show.bs.modal', function (event) {
 		showRooms();
+	});
+	$('#getParamsModal').on('shown.bs.modal', function () {
+		var disabled = false;
+		var i = 0;
+		console.log("asd");
+		while($('#param'+ ++i).length > 0 && !disabled){
+			//Apenas carga no puede estar ya estar elegida la opción del botón.
+			if(!$('#param'+i).is("input"))
+				disabled = true;
+			else if(!isValid($('#param'+i)))
+				disabled = true;
+		}
+		$('#addActionBtn').prop("disabled",disabled);
 	});
 	$('#cancelParamsBtn').on('click', function (event) {
 		$('#invalidParamAlert').removeClass("show");
 		$('#invalidParamAlert').attr("style","display:none");
+		$('#addActionBtn').prop("disabled",true);
 		$('#getParamsModal').modal('hide');
-	})
+	});
 	$('#addActionBtn').on('click',function(event) {
 		var actionName = $('#getParamsForm').attr("actionName");
 		var paramNum = $('#getParamsForm').attr("params");
@@ -128,38 +158,18 @@
 		var valid = true;
 		var alert = "";
 		for(var i=1; i <= paramNum; i++) {
-			if(!$('#param'+i).is("input")){
-				if($('#param'+i).text() === "Seleccionar..."){
-					alert += "Escoja el valor de " + $('#param'+i).attr("name") + "\n";
-					valid = false;
-				}
-				else{
-					params.push({
-						name: paramsTranslation[$('#param'+i).attr("name")],
-						value: $('#param'+i).attr("chosen")
-					});
-				}
-				continue;
-			}
-			var maxDifference = $('#param'+i).val() - $('#param'+i).attr("max");
-			var minDifference = $('#param'+i).val() - $('#param'+i).attr("min");
-			if(maxDifference > 0 || minDifference < 0){
-				alert += "El valor de " + $('#param'+i).attr("name") + " es inválido\n";
-				valid = false;
-			}
-			else{
-				params.push({
-					name: paramsTranslation[$('#param'+i).attr("name")],
-					value: $('#param'+i).val()
-				});
-			}
+			var value;
+			if(!$('#param'+i).is("input"))
+				value = $('#param'+i).attr("chosen");
+			else
+				value = $('#param'+i).val();
+			
+			params.push({
+				name: paramsTranslation[$('#param'+i).attr("name")],
+				value: value
+			});
 		}
-		if(!valid){
-			$('#invalidParamAlert').text(alert);
-			$('#invalidParamAlert').addClass("show");
-			$('#invalidParamAlert').attr("style","display:block;");
-			return;
-		}
+		$('#addActionBtn').prop("disabled",true);
 		$('#getParamsModal').modal('hide');
 		$('#newActionModal').modal('hide');
 		var action = {
@@ -286,13 +296,28 @@
 									input.id = "param" + i;
 									if(params[paramNum]["type"] === "integer" || params[paramNum]["type"] === "number")
 										input.setAttribute("type","number");
-									else 
+									else if(params[paramNum]["name"] === "color"){
+										input.setAttribute("type","color");
+										input.setAttribute("value","#ffffff");
+									}
+									else
 										input.setAttribute("type","text");
-									input.setAttribute("style","display:table-cell; width:100%");
 									input.setAttribute("max",params[paramNum]["maxValue"]);
 									input.setAttribute("min",params[paramNum]["minValue"]);
-									input.setAttribute("placeholder",placeholderString);
 									input.setAttribute("name",params[paramNum]["name"]);
+									input.setAttribute("style","display:table-cell; width:100%");
+									if(params[paramNum]["name"] !== "color"){
+										input.setAttribute("placeholder",placeholderString);
+										input.oninput = ((event) => {
+											console.log("asd");
+											var disabled = false;
+											for(var i=1; i <= params.length && !disabled; i++) {
+												if($('#param'+i).is("input") && !isValid($('#param'+i)))
+													disabled = true;
+											}
+											$('#addActionBtn').prop("disabled",disabled);
+										});
+									}
 									$('#getParamsForm').append(
 										"<div class=\"form-group row\">" +
 											"<div class=\"col-md-4\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" + 	
@@ -315,11 +340,8 @@
 					alert("Request failed: " + error);
 				});
 	}
-	function updateDropdown(chosenElem,paramNum){
-		$('#param'+paramNum).attr('chosen',$(chosenElem).attr('id'));
-		$('#param'+paramNum).text($(chosenElem).text());
-	}
 	$('#cancelActionBtn').on('click', function(event) {
+		$('#addActionBtn').prop("disabled",true);
 		$('#newActionModal').modal('hide')
 	});
 </script>
