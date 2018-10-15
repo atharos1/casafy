@@ -11,8 +11,8 @@
 			<div class="modal-body">
 				<form>
 					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-4">Tipo:</div>
-						<div class="col-md-6">
+						<div class="col-md-3">Tipo:</div>
+						<div class="col-md-7">
 							<div class="dropdown" id="deviceTypeBtn">
 								<button class="btn btn-secondary dropdown-toggle" type="button"
 									id="dropdownDeviceBtn" data-toggle="dropdown" aria-haspopup="true"
@@ -26,9 +26,18 @@
 						</div>
 					</div>
 					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-4">Nombre:</div>
+						<div class="col-md-3">Nombre:</div>
 						<div class="col-md-2">
 							<input id="deviceName" type="text" name="devicename" size=25 maxlength=25><br>
+						</div>
+					</div>
+					<div class="form-group row" style="padding-bottom: 10px">
+						<div class="col-md-3">Favorito:</div>
+						<div class="col-md-1">
+							<div class="form-group form-check">
+								<input type="checkbox" class="form-check-input" id="favouriteDevice">
+								<label class="form-check-label" for="favouriteDevice"></label>
+							</div>
 						</div>
 					</div>
 					<div class="form-group" style="padding-bottom: 10px">
@@ -53,7 +62,7 @@
 						var deviceTypes = data["devices"];
 						for (typeNum in deviceTypes) {
 							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownDeviceBtn.innerText = this.innerText;\" id=\"" +
-								deviceTypes[typeNum]["id"] + "\">" + deviceTypes[typeNum]["name"] + "</button>");
+								deviceTypes[typeNum]["id"] + "\">" + deviceNameTranslation[deviceTypes[typeNum]["name"].toLowerCase()] + "</button>");
 						}
 					})
 					.catch(error => {
@@ -66,9 +75,10 @@
 		var type = document.getElementById('dropdownDeviceBtn').innerText.toLowerCase();
 		var typeId = "";
 		$('#deviceOptions').children(".dropdown-item").each(function(i) {
-			if($(this).text().toLowerCase() == type)
+			if($(this).text().toLowerCase() === type)
 				typeId = $(this).attr("id");
 		});
+		console.log(typeId);
 
 		if (typeId == "") {
 			alert("Debe seleccionar un dispositivo");
@@ -80,8 +90,10 @@
 		var newDevice = {
 			name: name,
 			typeId: typeId,
-			meta: "{\"desc\":\"" + desc + "\",\"image\":\"" + deviceImg[type] + "\"}"
+			meta: "{\"desc\":\"" + desc + "\",\"image\":\"" + deviceImg[type] + "\", \"isFavorite\":" + document.getElementById("favouriteDevice").checked + "}"
 		};
+
+		console.log(document.getElementById("favouriteDevice").checked);
 
 		api.devices
 		.create(newDevice)
@@ -101,12 +113,23 @@
 
 	});
 
+	var deviceNameTranslation = {
+		"blind": "persiana",
+		"lamp": "lámpara",
+		"oven": "horno",
+		"ac": "aire acondicionado",
+		"door": "puerta",
+		"alarm": "alarma",
+		"timer": "temporizador",
+		"refrigerator": "refrigerador"
+	}
+
 	var deviceImg = {
-		"lamp": "devices/lamp.jpg",
-		"ac": "devices/airconditioner.jpg",
-		"blind": "devices/blinds.jpg",
-		"oven": "devices/oven.jpg",
-		"door": "devices/door.jpg",
-		"refrigerator": "devices/refrigerator.jpg"
+		"lámpara": "devices/lamp.jpg",
+		"aire acondicionado": "devices/airconditioner.jpg",
+		"persiana": "devices/blinds.jpg",
+		"horno": "devices/oven.jpg",
+		"puerta": "devices/door.jpg",
+		"refrigerador": "devices/refrigerator.jpg"
 	}
 </script>

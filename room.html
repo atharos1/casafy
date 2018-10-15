@@ -2,130 +2,128 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Casafy</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
-    <!-- Your custom styles (optional) -->
-    <link href="css/style.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Casafy</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="css/mdb.min.css" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="css/style.css" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="css/datatables.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/datatables.min.css" />
 
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.min.css" />
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.min.css" />
 
 </head>
 
 <body>
 
-    <div id="loader" class="material_block text-center">
-        <svg class="spinner center-screen" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-            <circle class="circle" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
-        </svg>
-    </div>
+  <div id="loader" class="material_block text-center">
+    <svg class="spinner center-screen" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+      <circle class="circle" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+    </svg>
+  </div>
 
-    <div id="divNewDeviceModal"></div>
-    <div id="divModRoomModal"></div>
-    <div id="divModDeviceModal"></div>
+  <div id="divNewDeviceModal"></div>
+  <div id="divModRoomModal"></div>
+  <div id="divModDeviceModal"></div>
 
-    <div id="background" class="bg">
+  <div id="background" class="bg">
 
-        <div id="divNavbar"></div>
+    <div id="divNavbar"></div>
 
-        <div class="container-fluid">
+    <div class="container-fluid">
 
-            <div class="row">
-                <!--Dispositivos y grupos-->
-                <div class="col-9">
-                    <div id="devicesCard" class="card mask rgba-white-strong" style="height:85vh">
-                        <div class="pb-0" style="padding: 1.25rem">
-                            <a href="index.html" class="btn black-text btn-md align-middle"><i class="fa fa-arrow-left"
-                                    aria-hidden="true"></i></i>
-                                Volver al menú</a>
-                            <i id="isFavorite" class="align-middle" aria-hidden="true"></i>
-                            <h4 id="roomName" class="d-inline card-title align-middle"><a>NOMBRE-HABITACIÓN</a></h4>
-                            <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right;">
-                                <!--<a href="#" class="btn black-text rgba-red-strong"><i class="fa fa-trash" aria-hidden="true"></i></a>-->
-                                <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i
-                                        class="fa fa-pencil-square-o" aria-hidden="true"></i></i>
-                                    Editar ajustes</a>
-                            </div>
-                        </div>
-
-                        <div id="roomsEmptyDiv" class="center-screen text-center" style="width: 90%">
-                            <h4>No tienes dispositivos en esta habitación</h4>
-                            <h5>¡Presiona el botón rojo para agregar uno!</h5>
-                        </div>
-
-                        <div class="card-body py-0 mCustomScrollbar" style="overflow:auto;">
-                            <div id="devicesView" class="row">
-                            </div>
-                        </div>
-
-
-                        <div class="btn-float-control">
-                            <a data-toggle="modal" data-target="#newDeviceModal" href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
-                             id="menu-share">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a class="btn mask rgba-black-strong" href="#" role="button" data-toggle="modal"
-                                        data-target="#newDeviceModal">Agregar
-                                        nuevo dispositivo aquí</a>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!--Rutinas-->
-                <div class="col-3">
-                    <div id="divRoutines"></div>
-                </div>
+      <div class="row">
+        <!--Dispositivos y grupos-->
+        <div class="col-9">
+          <div id="devicesCard" class="card mask rgba-white-strong" style="height:85vh">
+            <div class="pb-0" style="padding: 1.25rem">
+              <a href="index.html" class="btn black-text btn-md align-middle"><i class="fa fa-arrow-left" aria-hidden="true"></i></i>
+                Volver al menú</a>
+              <i id="isFavorite" class="align-middle" aria-hidden="true"></i>
+              <h4 id="roomName" class="d-inline card-title align-middle"><a>NOMBRE-HABITACIÓN</a></h4>
+              <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right;">
+                <!--<a href="#" class="btn black-text rgba-red-strong"><i class="fa fa-trash" aria-hidden="true"></i></a>-->
+                <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></i>
+                  Editar ajustes</a>
+              </div>
             </div>
+
+            <div id="roomsEmptyDiv" class="center-screen text-center" style="width: 90%">
+              <h4>No tienes dispositivos en esta habitación</h4>
+              <h5>¡Presiona el botón rojo para agregar uno!</h5>
+            </div>
+
+            <div class="card-body py-0 mCustomScrollbar" style="overflow:auto;">
+              <div id="devicesView" class="row">
+              </div>
+            </div>
+
+
+            <div class="btn-float-control">
+              <a data-toggle="modal" data-target="#newDeviceModal" href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+              </a>
+              <ul>
+                <li>
+                  <a class="btn mask rgba-black-strong" href="#" role="button" data-toggle="modal" data-target="#newDeviceModal">Agregar
+                    nuevo dispositivo aquí</a>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
         </div>
 
-        <div id="divFooter"></div>
-
+        <!--Rutinas-->
+        <div class="col-3">
+          <div id="divRoutines"></div>
+        </div>
+      </div>
     </div>
 
+    <div id="divFooter"></div>
+
+  </div>
 
 
 
-    <!-- SCRIPTS -->
-    <!-- JQuery -->
-    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="js/popper.min.js"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="js/mdb.min.js"></script>
 
-    <script type="text/javascript" src="js/apiManager.js"></script>
+  <!-- SCRIPTS -->
+  <!-- JQuery -->
+  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="js/mdb.min.js"></script>
 
-    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script type="text/javascript" src="js/apiManager.js"></script>
 
-    <script>
-        var deviceId = "";
-        var deviceTypeId = "";
+  <script type="text/javascript" src="js/qSort.js"></script>
 
-        function getQueryStringParameter(key) {
-            key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
-            var match = location.search.match(new RegExp("[?&]" + key + "=([^&]+)(&|$)"));
-            return match && decodeURIComponent(match[1].replace(/\+/g, " "));
-        }
+  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
-        function renderDeviceCard(id, typeId, isFavorite, name, image) {
-            return `<div class="col-5 col-lg-4 col-xl-4">
+  <script>
+    var deviceId = "";
+    var deviceTypeId = "";
+
+    function getQueryStringParameter(key) {
+      key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+      var match = location.search.match(new RegExp("[?&]" + key + "=([^&]+)(&|$)"));
+      return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+    }
+
+    function renderDeviceCard(id, typeId, isFavorite, name, image) {
+      return `<div class="col-5 col-lg-4 col-xl-4">
                             <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
                                 <!--Card image-->
                                 <div class="view overlay hm-white-slight zoom" style="height: 8rem;">
@@ -151,10 +149,10 @@
                                 </div>
                             </div>
                         </div>`
-        }
+    }
 
-        function renderRoutine(nombre) {
-            return `<tr>
+    function renderRoutine(nombre) {
+      return `<tr>
                         <td>${nombre}</td>
                         <td>
                             <a class="btn btn-sm" href="#" role="button">
@@ -168,127 +166,151 @@
                             </a>
                         </td>
                     </tr>`
-        }
+    }
 
-        function isElementEmpty(el) {
-            return !$.trim(el.html())
-        }
+    function isElementEmpty(el) {
+      return !$.trim(el.html())
+    }
 
-        function populateRoutineTable() {
-            var tableBody = $("#routineTable").children("tbody");
-            $(tableBody).html("");
+    function populateRoutineTable() {
+      var tableBody = $("#routineTable").children("tbody");
+      $(tableBody).html("");
 
-            /*for (i = 0; i < 60; i++)
-                $(tableBody).append(renderRoutine("asd"));*/
+      if (isElementEmpty($(tableBody))) {
+        $("#routineTableDiv").hide();
+        $("#routineEmptyDiv").show();
+      } else {
+        $("#routineTableDiv").show();
+        $("#routineEmptyDiv").hide();
+      }
 
-            if (isElementEmpty($(tableBody))) {
-                $("#routineTableDiv").hide();
-                $("#routineEmptyDiv").show();
-            } else {
-                $("#routineTableDiv").show();
-                $("#routineEmptyDiv").hide();
-            }
+      completedPromises++;
+    }
 
-            completedPromises++;
-        }
+    function populateDevicesList(id) {
+      var devicesDiv = $("#devicesView");
+      $(devicesDiv).html("");
 
-        function populateDevicesList(id) {
-            var devicesDiv = $("#devicesView");
-            $(devicesDiv).html("");
+      api.rooms.getDevices(id)
+        .then((data) => {
 
-            api.rooms.getDevices(id)
-                .then((data) => {
+          qSort(data["devices"], compareElements);
 
-                    data["devices"].forEach(device => {
-                        var meta = JSON.parse(device["meta"]);
-                        $(devicesDiv).append(renderDeviceCard(device["id"], device["typeId"], meta["isFavorite"], device["name"], meta["image"]));
-                        //$("#roomsView").append(renderRoomCard(meta["isFavorite"], room["name"], meta["image"], meta["deviceCount"], meta["powerOnCount"]));
-                    });
+          data["devices"].forEach(device => {
+            var meta = JSON.parse(device["meta"]);
+            $(devicesDiv).append(renderDeviceCard(device["id"], device["typeId"], meta["isFavorite"], device["name"], meta["image"]));
+          });
 
-                    if (isElementEmpty($(devicesDiv))) {
-                        $("#roomsEmptyDiv").show();
-                    } else {
-                        $("#roomsEmptyDiv").hide();
-                    }
+          if (isElementEmpty($(devicesDiv))) {
+            $("#roomsEmptyDiv").show();
+          } else {
+            $("#roomsEmptyDiv").hide();
+          }
 
-                    completedPromises++;
+          completedPromises++;
 
-                })
-                .catch((error) => {
-                    alert('Request failed: ' + error);
-                });
-        }
+        })
+        .catch((error) => {
+          alert('Request failed: ' + error);
+        });
+    }
 
-        function fillRoomData(id) {
-            api.rooms.get(id)
-                .then((data) => {
-                    var room = data["room"];
-                    $("#roomName").text(room["name"]);
-                    var meta = JSON.parse(room["meta"]);
+    function fillRoomData(id) {
+      api.rooms.get(id)
+        .then((data) => {
+          var room = data["room"];
+          $("#roomName").text(room["name"]);
+          var meta = JSON.parse(room["meta"]);
 
-                    $("#isFavorite").addClass("fa fa-2x " + ((meta["isFavorite"] == true) ? "fa-star amber-text" : "fa-star-o black-text"));
+          $("#isFavorite").addClass("fa fa-2x " + ((meta["isFavorite"] == true) ? "fa-star amber-text" : "fa-star-o black-text"));
 
-                    completedPromises++;
+          completedPromises++;
 
-                })
-                .catch((error) => {
-                    alert('Request failed: ' + error);
-                });
+        })
+        .catch((error) => {
+          alert('Request failed: ' + error);
+        });
 
-        }
+    }
 
-        var roomID;
-        var completedPromises = 0;
-        var awaitingPromises = 0;
+    var roomID;
+    var completedPromises = 0;
+    var awaitingPromises = 0;
 
-        window.onload = function () {
+    window.onload = function() {
 
-            roomID = getQueryStringParameter("id");
+      roomID = getQueryStringParameter("id");
 
-            awaitingPromises++;
-            fillRoomData(roomID);
+      awaitingPromises++;
+      fillRoomData(roomID);
 
-            awaitingPromises++;
-            populateDevicesList(roomID);
+      awaitingPromises++;
+      populateDevicesList(roomID);
 
-            $("#divNavbar").load("fragments/navbar.html", function () {
-                //Acciones
+      $("#divNavbar").load("fragments/navbar.html", function() {
+        //Acciones
+      });
+
+      $("#divFooter").load("fragments/footer.html");
+      $("#divModRoomModal").load("fragments/modRoomModal.html");
+      $("#divNewDeviceModal").load("fragments/newDeviceModal.html");
+      $("#divModDeviceModal").load("fragments/devices/modDeviceModal.html");
+
+      awaitingPromises++;
+      $("#divRoutines").load("fragments/routinePanel.html", function() {
+        populateRoutineTable();
+      });
+
+      addEventListener('contextmenu', e => e.preventDefault(), false);
+
+      finishLoading();
+
+    };
+
+    function finishLoading() {
+      if (awaitingPromises > completedPromises) {
+        setTimeout(finishLoading, 500);
+        return;
+      }
+
+      $(".mCustomScrollbar").mCustomScrollbar({
+        theme: "dark-thick"
+      });
+
+      $("#loader").fadeOut(2000);
+
+      $('#background').addClass('animated fadeIn slower');
+      $('#devicesCard').addClass('animated zoomIn');
+      $('#routinesCard').addClass('animated zoomIn');
+    }
+
+    $('#devicesView').on('click', '.btn-disp-favorito', function(event) {
+      var id = $(event.target).closest(".card").data("id");
+
+      api.devices
+        .get(id)
+        .then(data => {
+
+          var device = data["device"];
+          var meta = JSON.parse(device["meta"]);
+
+          meta["isFavorite"] = !meta["isFavorite"];
+          device["meta"] = JSON.stringify(meta);
+
+          api.devices
+            .modify(device)
+            .then(data => {
+              populateDevicesList(getQueryStringParameter("id"));
+            })
+            .catch(error => {
+              alert("Request failed: " + error);
             });
-
-            $("#divFooter").load("fragments/footer.html");
-            $("#divModRoomModal").load("fragments/modRoomModal.html");
-            $("#divNewDeviceModal").load("fragments/newDeviceModal.html");
-            $("#divModDeviceModal").load("fragments/devices/modDeviceModal.html");
-
-            awaitingPromises++;
-            $("#divRoutines").load("fragments/routinePanel.html", function () {
-                populateRoutineTable();
-            });
-
-            addEventListener('contextmenu', e => e.preventDefault(), false);
-
-            finishLoading();
-
-        };
-
-        function finishLoading() {
-            if (awaitingPromises > completedPromises) {
-                setTimeout(finishLoading, 500);
-                return;
-            }
-
-            $(".mCustomScrollbar").mCustomScrollbar({
-                theme: "dark-thick"
-            });
-
-            $("#loader").fadeOut(2000);
-
-            $('#background').addClass('animated fadeIn slower');
-            $('#devicesCard').addClass('animated zoomIn');
-            $('#routinesCard').addClass('animated zoomIn');
-        }
-
-    </script>
+        })
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    });
+  </script>
 
 </body>
 

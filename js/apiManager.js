@@ -137,7 +137,7 @@ api.devices = class {
   }
 
   static modify(device) {
-    return api.put(api.devices.url + device.id);
+    return api.put(api.devices.url + device.id, device);
   }
 
   static delete(id) {

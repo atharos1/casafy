@@ -103,6 +103,8 @@
 
         <script type="text/javascript" src="js/apiManager.js"></script>
 
+        <script type="text/javascript" src="js/qSort.js"></script>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
         <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
@@ -187,63 +189,13 @@
                 completedPromises++;
             }
 
-            qSort = function (data, comparator) {
-                qSortRec(data, comparator, 0, data.length - 1);
-            }
-
-            qSortRec = function (data, comparator, minIndex, maxIndex) {
-                if (maxIndex - minIndex <= 0) return;
-                let pivotIndex = generateRandomPivot(minIndex, maxIndex);
-                let k = minIndex;
-                swap(data, k, pivotIndex);
-                for (let i = minIndex + 1; i <= maxIndex; i++) {
-                    if (comparator(data[i], data[minIndex]) <= 0) {
-                        swap(data, k + 1, i);
-                        k = k + 1;
-                    }
-                }
-                swap(data, k, minIndex);
-                qSortRec(data, comparator, minIndex, k - 1);
-                qSortRec(data, comparator, k + 1, maxIndex);
-            }
-
-            generateRandomPivot = function (minIndex, maxIndex) {
-                let retValue = Math.random() * (maxIndex - minIndex + 1) + minIndex;
-                return Math.floor(retValue);
-            }
-
-            swap = function (data, i, j) {
-                let aux = data[i];
-                data[i] = data[j];
-                data[j] = aux;
-            }
-
-
             function populateRoomList() {
                 var roomsView = $("#roomsView");
                 $(roomsView).html("");
 
                 api.rooms.getAll()
                     .then((data) => {
-                        compareRooms = function (room1, room2) {
-                            let room1meta = JSON.parse(room1["meta"]);
-                            let room2meta = JSON.parse(room2["meta"]);
-                            let room1IsFavorite = room1meta["isFavorite"];
-                            let room2IsFavorite = room2meta["isFavorite"];
-                            if ((room1IsFavorite && room2IsFavorite) || (!room1IsFavorite && !room2IsFavorite)) {
-                                return function (a, b) {
-                                    if (a.toLowerCase() < b.toLowerCase()) return -1;
-                                    if (a.toLowerCase() === b.toLowerCase()) return 0;
-                                    if (a.toLowerCase() > b.toLowerCase()) return 1;
-                                }(room1["name"], room2["name"]);
-                            }
-                            if (room1IsFavorite) return -1;
-                            if (room2IsFavorite) return 1;
-                        }
-
-                        qSort(data["rooms"], compareRooms);
-                        data["rooms"].sort(compareRooms);
-
+                        qSort(data["rooms"], compareElements);
                         loadRoomCard(data["rooms"], 0);
                     })
                     .catch((error) => {
