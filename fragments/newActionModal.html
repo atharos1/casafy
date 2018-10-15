@@ -189,7 +189,7 @@
 	}
 	function showRooms() {
 		$('#routineBreadcrumb').empty();
-		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showRooms()">Habitaciones</li>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showRooms()">Habitaciones</a>');
 		var itemList = $('#itemList');
 		itemList.empty();
 		api.rooms.getAll()
@@ -205,8 +205,8 @@
 	function showDevices(roomId) {
 		chosenRoomId = roomId;
 		$('#routineBreadcrumb').empty();
-		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showRooms()">Habitaciones</li>');
-		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showDevices(\''+ roomId +'\')">Dispositivos</li>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showRooms()">Habitaciones</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\''+ roomId +'\')">Dispositivos</a>');
 		var itemList = $('#itemList');
 		itemList.empty();
 		api.get(api.rooms.url + roomId + "/devices")
@@ -222,9 +222,9 @@
 	function showActions(deviceId) {
 		chosenDeviceId = deviceId;
 		$('#routineBreadcrumb').empty();
-		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showRooms()">Habitaciones</li>');
-		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showDevices(\''+ chosenRoomId +'\')">Dispositivos</li>');
-		$('#routineBreadcrumb').append('<li class="breadcrumb-item" onClick="showActions(\'' + deviceId + '\')">Acciones</li>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showRooms()">Habitaciones</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\''+ chosenRoomId +'\')">Dispositivos</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showActions(\'' + deviceId + '\')">Acciones</a>');
 		var typeId;
 		api.devices.get(deviceId)
 			.then(data => {
