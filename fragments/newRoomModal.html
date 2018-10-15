@@ -16,6 +16,7 @@
 						<div class="col-md-3">
 							<input id="newRoomName" type="text" name="roomname" size=25 maxlength=25><br>
 						</div>
+						<p style="color:red; margin-left: 15px;" id="illegalNameText">El nombre debe contener al menos tres letras</p>
 					</div>
 					<div class="form-group row" style="padding-bottom: 10px">
 						<div class="col-md-3">Favorito:</div>
@@ -34,12 +35,23 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" id="cancelRoomBtn">Cancelar</button>
-				<button type="button" class="btn btn-primary" onclick="createNewRoom()">Guardar</button>
+				<button type="button" class="btn btn-primary" onclick="createNewRoom()" id="saveRoomBtn">Guardar</button>
 			</div>
 		</div>
 	</div>
 </div>
 <script>
+	document.getElementById("saveRoomBtn").disabled = true;
+	let nameInput = document.getElementById("newRoomName");
+	nameInput.oninput = ((event) => {
+		if(nameInput.value.length < 3) { 
+			document.getElementById("illegalNameText").style.visibility = "visible";
+			document.getElementById("saveRoomBtn").disabled = true;
+		} else {
+			document.getElementById("illegalNameText").style.visibility = "hidden";
+			document.getElementById("saveRoomBtn").disabled = false;
+		}
+	});
 	var devicesAdded = [];
 	function createNewRoom() {
 			var room = {
@@ -64,5 +76,5 @@
 		$('#deviceList').empty();
 		$('#newRoomModal').modal('hide')
 	});
-	
+
 </script>
