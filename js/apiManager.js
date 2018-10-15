@@ -161,13 +161,13 @@ api.routines = class {
   static get(id) {
     return api.fetch(api.routines.url + id);
   }
-  
+
   static delete(id) {
     return api.delete(api.routines.url + id);
   }
 
   static execute(id) {
-	return api.put(api.routines.url + id + "/execute");
+	   return api.put(api.routines.url + id + "/execute");
   }
 }
 

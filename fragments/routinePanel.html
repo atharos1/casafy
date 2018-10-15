@@ -48,7 +48,7 @@
                 <a class="btn btn-sm btn-delete-routine" href="#" role="button">
                   <i class="fa fa-trash" aria-hidden="true"></i>
                 </a>
-                <a class="btn btn-sm" href="#" role="button">
+                <a class="btn btn-sm btn-exec-routine" href="#" role="button">
                   <i class="fa fa-play" aria-hidden="true"></i>
                 </a>
               </td>
@@ -86,6 +86,19 @@
       .delete(id)
       .then(data => {
         populateRoutineTable();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  });
+
+  $("#routineTable").on('click', '.btn-exec-routine', function(event) {
+    var id = $(event.target).closest(".routineRow").data("id");
+
+    api.routines
+      .execute(id)
+      .then(data => {
+        alert("Rutina ejecutada exitosamente");
       })
       .catch(error => {
         alert("Request failed: " + error);
