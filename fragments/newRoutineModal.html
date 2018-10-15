@@ -73,7 +73,7 @@
 						'<div class="card-header" id="'+headerId+'">'+
 							'<h5 class="mb-0">'+
 								'<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#'+collapseId+'" aria-expanded="true" aria-controls="'+collapseId+'">'+
-									data["device"]["name"] + ": " + action["actionName"] +
+									data["device"]["name"] + ": " + actionsTranslation[action["actionName"]] +
 								'</button>'+
 							'</h5>'+
 						'</div>'+
@@ -91,7 +91,7 @@
 						'<div class="row">' +
 							'<div class="col-md-7">' +
 								action["params"][paramNum]["name"] +
-							'</div>' +
+							':</div>' +
 							'<div class="col-md-5">' +
 								action["params"][paramNum]["value"] +
 							'</div>' +
@@ -131,6 +131,10 @@
 
 	$('#createRoutineBtn').on('click',function(event) {
 		var name = $('#routineName').val();
+		if(name.length == 0 || name.length > $('#routineName').attr("maxlength")){
+			alert("El nombre ingresado no es válido. Por favor escoja un nombre entre 1 y 25 letras.")
+			return;
+		}
 		var actions = [];
 		for(var i=0; i < actionInfo.length; i++){
 			var deviceId = actionInfo[i]["deviceId"];
@@ -151,6 +155,7 @@
 			actions: actions,
 			meta: "{}"
 		}
+		console.log(newRoutine);
 		api.routines.create(newRoutine)
 			.then(data => {
 				alert("Rutina creada satisfactoriamente!");

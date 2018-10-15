@@ -51,6 +51,66 @@
 <script>
 	var chosenRoomId = "";
 	var chosenDeviceId = "";
+	var actionsTranslation = {
+		"up": "Subir",
+		"down": "Bajar",
+		"getState": "Ver estado",
+		"turnOn": "Encender",
+		"turnOff": "Apagar",
+		"setColor": "Cambiar color",
+		"setBrightness": "Cambiar brillo",
+		"setTemperature": "Cambiar temperatura",
+		"setHeat": "Elegir modo de calor",
+		"setGrill": "Modo Grill",
+		"setConvection": "Elegir convección",
+		"setMode": "Elegir modo",
+		"setVerticalSwing": "Oscilación vertical",
+		"setHorizontalSwing": "Oscilación horizontal",
+		"setFanSpeed": "Cambiar velocidad",
+		"open": "Abrir",
+		"close": "Cerrar",
+		"lock": "Cerrar con llave",
+		"unlock": "Abrir llave",
+		"changeSecurityCode": "Cambiar código",
+		"armStay": "Activar con personas dentro",
+		"armAway": "Activar con personas fuera",
+		"disarm": "Desactivar",
+		"setInterval": "Tiempo de espera",
+		"start": "Empezar",
+		"stop": "Detener",
+		"setFreezerTemperature": "Cambiar temperatura del congelador",
+		
+	}
+	var paramsTranslation = {
+		"brightness": "Brillo",
+		"color": "Color",
+		"temperature": "Temperatura",
+		"heat": "Calor",
+		"grill": "Grill",
+		"convection": "Convección",
+		"mode": "Modo",
+		"verticalSwing": "Oscilación vertical",
+		"horizontalSwing": "Oscilación horizontal",
+		"fanSpeed": "Velocidad del ventilador",
+		"oldSecurityCode": "Código viejo",
+		"newSecurityCode": "Código nuevo",
+		"securityCode": "Código de seguridad",
+		"interval": "Intervalo"
+	}
+	var supportedValuesTranslation = {
+		"auto": "Automático",
+		"default": "Por defecto",
+		"vacation": "Vacaciones",
+		"party": "Fiesta",
+		"normal": "Normal",
+		"eco": "Ecológico",
+		"off": "Apagado",
+		"large": "Grande",
+		"conventional": "Convencional",
+		"top": "Arriba",
+		"bottom": "Abajo",
+		
+	}
 	$('#newActionModal').on('show.bs.modal', function (event) {
 		showRooms();
 	});
@@ -58,7 +118,7 @@
 		$('#invalidParamAlert').removeClass("show");
 		$('#invalidParamAlert').attr("style","display:none");
 		$('#getParamsModal').modal('hide');
-	});
+	})
 	$('#addActionBtn').on('click',function(event) {
 		var actionName = $('#getParamsForm').attr("actionName");
 		var paramNum = $('#getParamsForm').attr("params");
@@ -66,6 +126,19 @@
 		var valid = true;
 		var alert = "";
 		for(var i=1; i <= paramNum; i++) {
+			if(!$('#param'+i).is("input")){
+				if($('#param'+i).text() === "Seleccionar..."){
+					alert += "Escoja el valor de " + $('#param'+i).attr("name") + "\n";
+					valid = false;
+				}
+				else{
+					params.push({
+						name: paramsTranslation[$('#param'+i).attr("name")],
+						value: $('#param'+i).text()
+					});
+				}
+				continue;
+			}
 			var maxDifference = $('#param'+i).val() - $('#param'+i).attr("max");
 			var minDifference = $('#param'+i).val() - $('#param'+i).attr("min");
 			if(maxDifference > 0 || minDifference < 0){
@@ -97,7 +170,7 @@
 		addAction(action);
 	});
 	function chooseAction(actionElem) {
-		var actionName = $(actionElem).text();
+		var actionName = $(actionElem).attr("actionName");
 		$('#getParamsForm').empty();
 		$('#getParamsForm').attr("actionName",actionName);
 		showParams(actionName);
@@ -153,7 +226,8 @@
 					.then(data => {
 						var deviceActions = data["device"]["actions"];
 						for(actionNum in deviceActions)
-							itemList.append('<a class="list-group-item list-group-item-action" onClick="chooseAction(this)">'+ deviceActions[actionNum]["name"] +'</a>');
+							itemList.append('<a class="list-group-item list-group-item-action" actionName="'+ deviceActions[actionNum]["name"]+
+								'"onClick="chooseAction(this)">'+ actionsTranslation[deviceActions[actionNum]["name"]] +'</a>');
 					}).catch(error => {
 						alert("Request failed: " + error);
 					});
@@ -182,9 +256,32 @@
 							var i = 0;
 							if(params != null && params.length > 0){
 								for(paramNum in params){
+									++i;
+									if(params[paramNum]["supportedValues"] !== undefined){
+										$('#getParamsForm').append(
+											"<div class=\"form-group-row\">" +
+												"<div class=\"col-md-6\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" + 	
+												"<div class=\"col-md-6\">"  +
+													"<div class=\"d-inline dropdown\" id=\"deviceTypeBtn\">" +
+														"<button class=\"btn btn-secondary dropdown-toggle btn-sm\" type=\"button\"" +
+															"id=\"param"+i+"\" name=\""+params[paramNum]["name"]+"\" data-toggle=\"dropdown\" aria-haspopup=\"true\"" +
+															"aria-expanded=\"false\" style=\"display:inline;\">Seleccionar...</button>" +
+														"<div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton\" id=\"supportedValues\">" +
+														"</div>" +
+													"</div>" +
+												"</div>" +
+											"</div>");
+										for(var j=0 ; j < params[paramNum]["supportedValues"].length; j++){
+											var value = params[paramNum]["supportedValues"][j];
+											$('#supportedValues').append(
+												"<button class=\"dropdown-item btn-sm\" id=\""+ value +"\"type=\"button\" onClick=\"param"+i+".innerText = this.id;\">" + 
+													(isNaN(value) ? supportedValuesTranslation[value] : value) + "</button>");
+										}
+										continue;
+									}
 									var placeholderString = "Valor max: " + params[paramNum]["maxValue"] + " | Valor min: " + params[paramNum]["minValue"];
 									var input = document.createElement('input');
-									input.id = "param" + ++i;
+									input.id = "param" + i;
 									if(params[paramNum]["type"] === "integer" || params[paramNum]["type"] === "number")
 										input.setAttribute("type","number");
 									else 
@@ -196,7 +293,7 @@
 									input.setAttribute("name",params[paramNum]["name"]);
 									$('#getParamsForm').append(
 										"<div class=\"form-group row\">" +
-											"<div class=\"col-md-4\">" + params[paramNum]["name"] + ":</div>" + 	
+											"<div class=\"col-md-4\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" + 	
 											"<div class=\"col-md-8\" id=\"param"+ i + "container\">" +
 											"</div>" +
 										"</div>");
@@ -205,7 +302,7 @@
 							}
 							$('#getParamsForm').attr('params',i);
 							
-							if(params.length > 0)
+							if(params != null && params.length > 0)
 								$('#getParamsModal').modal('show');
 							else
 								$('#addActionBtn').click();
