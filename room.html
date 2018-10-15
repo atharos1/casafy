@@ -48,17 +48,19 @@
         <div class="col-9">
           <div id="devicesCard" class="card mask rgba-white-strong" style="height:85vh">
             <div class="pb-0" style="padding: 1.25rem">
-              <a href="index.html" class="btn black-text btn-md align-middle"><i class="fa fa-arrow-left" aria-hidden="true"></i></i>
+              <a href="index.html" class="btn black-text btn-md align-middle" id="goBackButton"><i class="fa fa-arrow-left"
+                  aria-hidden="true"></i></i>
                 Volver al menú</a>
               <i id="isFavorite" class="align-middle" aria-hidden="true"></i>
               <h4 id="roomName" class="d-inline card-title align-middle"><a>NOMBRE-HABITACIÓN</a></h4>
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right;">
-                <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></i>
+                <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i class="fa fa-pencil-square-o"
+                    aria-hidden="true"></i></i>
                   Editar ajustes</a>
               </div>
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right; margin-right: 5px">
-                  <a href="#" class="btn red-text btn-md"><i class="mdi mdi-delete"></i></i>
-                    Elimnar habitacion</a>
+                <a href="#" class="btn red-text btn-md" onclick="eliminateRoom(roomID)"><i class="mdi mdi-delete"></i></i>
+                  Elimnar habitacion</a>
               </div>
             </div>
 
@@ -73,7 +75,8 @@
             </div>
 
             <div class="btn-float-control">
-              <a data-toggle="modal" data-target="#newDeviceModal" href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
+              <a data-toggle="modal" data-target="#newDeviceModal" href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
+                id="menu-share">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </a>
               <ul>
@@ -141,7 +144,7 @@
                     <!--Title-->
                     <h4 class="card-title">
                       <a class="btn-disp-favorito">
-                        <i class="fa ${isFavorite ? " fa-star amber-text" : "fa-star-o" }" aria-hidden="true"></i>
+                        <i class="fa ${isFavorite ? " fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
                       </a>
                       ${name}
                     </h4>
@@ -206,7 +209,7 @@
     var completedPromises = 0;
     var awaitingPromises = 0;
 
-    window.onload = function() {
+    window.onload = function () {
 
       roomID = getQueryStringParameter("id");
 
@@ -216,7 +219,7 @@
       awaitingPromises++;
       populateDevicesList(roomID);
 
-      $("#divNavbar").load("fragments/navbar.html", function() {
+      $("#divNavbar").load("fragments/navbar.html", function () {
         //Acciones
       });
 
@@ -226,7 +229,7 @@
       $("#divModDeviceModal").load("fragments/devices/modDeviceModal.html");
 
       awaitingPromises++;
-      $("#divRoutines").load("fragments/routinePanel.html", function() {
+      $("#divRoutines").load("fragments/routinePanel.html", function () {
         populateRoutineTable();
       });
 
@@ -253,7 +256,7 @@
       $('#routinesCard').addClass('animated zoomIn');
     }
 
-    $('#devicesView').on('click', '.btn-disp-favorito', function(event) {
+    $('#devicesView').on('click', '.btn-disp-favorito', function (event) {
       var id = $(event.target).closest(".card").data("id");
 
       api.devices
@@ -279,6 +282,24 @@
           alert("Request failed: " + error);
         });
     });
+    function eliminateRoom(roomID) {
+      // alert(roomID);
+      api.rooms.getDevices(roomID)
+        .then((data) => {
+          data["devices"].forEach(device => {
+            api.devices.delete(device["id"])
+              .then(() => { })
+              .catch(error => {
+                alert("Failure to delete device: " + error);
+              });
+            completedPromises++;
+          })
+        }).catch((error) => {
+          alert('Failure to get devices list: ' + error);
+        });
+      api.rooms.delete(roomID).then(() => {window.location.href = "index.html#"; completedPromises++;}).catch(error => alert("Request failed: " + error));
+    };
+
   </script>
 
 </body>
