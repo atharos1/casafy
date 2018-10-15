@@ -28,7 +28,11 @@ html {
   font-weight: bold;
   color:white;
 }
-
+.input-warning {
+	color: red;
+	margin-left: 15px;
+	margin-top: 5px;
+}
 .color-box {
 	width:10px;
 	height:10px;
