@@ -89,34 +89,6 @@ api.rooms = class {
     return api.get(api.rooms.url);
   }
 
-  static toggleFavorite(id) {
-    api.rooms
-      .get(id)
-      .then(data => {
-        var room = data["room"];
-        var meta = JSON.parse(room["meta"]);
-
-        meta["isFavorite"] = !meta["isFavorite"];
-        room["meta"] = JSON.stringify(meta);
-
-        api.rooms.modify(room);
-
-        api.rooms
-          .modify(room)
-          .then(data => {
-            return true;
-          })
-          .catch(error => {
-            alert("Request failed: " + error);
-            return false;
-          });
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-        return false;
-      });
-  }
-
   static updateData(id, name, isFavorite, image) {
     /*api.rooms
       .get(id)

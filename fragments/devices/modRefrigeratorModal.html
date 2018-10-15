@@ -71,7 +71,7 @@
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#refrigeratorMode').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownRefrigeratorModeBtn.innerText = this.innerText;\">" +
-                  values[value] + "</button>");
+                  regrigeratorModeTranslation[values[value].toLowerCase()] + "</button>");
               }
             }
           }
@@ -88,7 +88,7 @@
         var result = data["result"];
         document.getElementById('refrigeratorTempSlider').value = result["temperature"];
         document.getElementById('freezerTempSlider').value = result["freezerTemperature"];
-        document.getElementById('dropdownRefrigeratorModeBtn').innerText = result["mode"];
+        document.getElementById('dropdownRefrigeratorModeBtn').innerText = regrigeratorModeTranslation[result["mode"].toLowerCase()];
         updateRefrigeratorTemp();
         updateFreezerTemp();
       })
@@ -96,6 +96,12 @@
         alert("Request failed: " + error);
       });
   });
+
+  var regrigeratorModeTranslation = {
+    "default": "defecto",
+    "vacation": "vacaciones",
+    "party": "fiesta"
+  }
 
   function updateRefrigeratorTemp() {
     document.getElementById('refrigeratorTemp').innerText = document.getElementById('refrigeratorTempSlider').value;
@@ -123,7 +129,11 @@
       });
 
     /*mode*/
-    body[0] = document.getElementById('dropdownRefrigeratorModeBtn').innerText;
+    for (var key in regrigeratorModeTranslation) {
+      if (regrigeratorModeTranslation[key] == document.getElementById('dropdownRefrigeratorModeBtn').innerText.toLowerCase()) {
+          body[0] = key;
+      }
+    }
     api.actions.put(deviceId, "setMode", body)
       .catch(error => {
         alert("Request failed: " + error);

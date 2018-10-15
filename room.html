@@ -126,7 +126,7 @@
 
         function renderDeviceCard(id, typeId, isFavorite, name, image) {
             return `<div class="col-5 col-lg-4 col-xl-4">
-                            <div class="card m-4 hoverable" style="width: 18rem;" data-id="${id}">
+                            <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
                                 <!--Card image-->
                                 <div class="view overlay hm-white-slight zoom" style="height: 8rem;">
                                     <img src="${'img/' + image}" class="img-fluid" alt="">
@@ -176,7 +176,6 @@
 
         function populateRoutineTable() {
             var tableBody = $("#routineTable").children("tbody");
-
             $(tableBody).html("");
 
             /*for (i = 0; i < 60; i++)
@@ -194,10 +193,8 @@
         }
 
         function populateDevicesList(id) {
-            var devicesDiv = $("#devicesView").html("");
-
-            /*for (i = 0; i < 10; i++)
-                $(devicesDiv).append(renderDeviceCard(0, true, "Dispositivo", null));*/
+            var devicesDiv = $("#devicesView");
+            $(devicesDiv).html("");
 
             api.rooms.getDevices(id)
                 .then((data) => {
@@ -259,11 +256,8 @@
             });
 
             $("#divFooter").load("fragments/footer.html");
-
             $("#divModRoomModal").load("fragments/modRoomModal.html");
-
             $("#divNewDeviceModal").load("fragments/newDeviceModal.html");
-
             $("#divModDeviceModal").load("fragments/devices/modDeviceModal.html");
 
             awaitingPromises++;

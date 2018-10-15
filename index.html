@@ -174,11 +174,7 @@
 
             function populateRoutineTable() {
                 var tableBody = $("#routineTable").children("tbody");
-
                 $(tableBody).html("");
-
-                /*for (i = 0; i < 60; i++)
-                    $(tableBody).append(renderRoutine("Votar a Macri"));*/
 
                 if (isElementEmpty($(tableBody))) {
                     $("#routineTableDiv").hide();
@@ -222,6 +218,7 @@
                 data[j] = aux;
             }
 
+
             function populateRoomList() {
                 var roomsView = $("#roomsView");
                 $(roomsView).html("");
@@ -245,47 +242,49 @@
                         }
 
                         qSort(data["rooms"], compareRooms);
+                        data["rooms"].sort(compareRooms);
 
-
-                        data["rooms"].forEach(room => {
-
-                            api.rooms.getDevices(room["id"], false)
-                                .then((data) => {
-                                    var deviceCount = 0;
-                                    var powerOnCount = 0;
-
-                                    data["devices"].forEach(function (device) {
-                                        deviceCount++;
-
-                                        var meta = JSON.parse(room["meta"]);
-                                        if (meta["powerOn"] == true)
-                                            powerOnCount++;
-                                    });
-
-                                    var meta = JSON.parse(room["meta"]);
-                                    $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], deviceCount, powerOnCount));
-
-                                    if (isElementEmpty($(roomsView))) {
-                                        $("#roomsEmptyDiv").show();
-                                    } else {
-                                        $("#roomsEmptyDiv").hide();
-                                    }
-
-                                })
-                                .catch((error) => {
-                                    alert('Request failed: ' + error);
-                                });
-
-
-
-                        });
-
-                        completedPromises++;
-
+                        loadRoomCard(data["rooms"], 0);
                     })
                     .catch((error) => {
                         alert('Request failed: ' + error);
                     });
+            }
+
+            function loadRoomCard(rooms, index) {
+              if (index < rooms.length) {
+                var room = rooms[index];
+
+                api.rooms.getDevices(room["id"])
+                    .then((data) => {
+                        var deviceCount = 0;
+                        var powerOnCount = 0;
+
+                        data["devices"].forEach(function (device) {
+                            deviceCount++;
+
+                            var meta = JSON.parse(room["meta"]);
+                            if (meta["powerOn"] == true)
+                                powerOnCount++;
+                        });
+
+                        var meta = JSON.parse(room["meta"]);
+                        $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], deviceCount, powerOnCount));
+
+                        if (isElementEmpty($(roomsView))) {
+                            $("#roomsEmptyDiv").show();
+                        } else {
+                            $("#roomsEmptyDiv").hide();
+                        }
+
+                        loadRoomCard(rooms, index+1);
+                    })
+                    .catch((error) => {
+                        alert('Request failed: ' + error);
+                    });
+              } else {
+                  completedPromises++;
+              }
             }
 
             function formatState(state) {
@@ -301,11 +300,10 @@
 
             var completedPromises = 0;
             var awaitingPromises = 0;
-            //$(document).ready(
-            window.onload = function () {
 
+            window.onload = function () {
+                awaitingPromises++
                 populateRoomList();
-                awaitingPromises++;
 
                 $("#divNavbar").load("fragments/navbar.html", function () {
                     //Acciones
@@ -332,10 +330,6 @@
                     return;
                 }
 
-                /*$('input[type=text] .form-control').each(function () {
-                    fixFieldState($(this));
-                })*/
-
                 $(".mCustomScrollbar").mCustomScrollbar({
                     theme: "dark-thick"
                 });
@@ -355,31 +349,29 @@
 
             $('#roomsView').on('click', '.btn-hab-favorito', function (event) {
                 var id = $(event.target).closest(".card").data("id");
-                api.rooms.toggleFavorite(id);
                 api.rooms
-                    .get(id)
-                    .then(data => {
-                        var room = data["room"];
-                        var meta = JSON.parse(room["meta"]);
+                  .get(id)
+                  .then(data => {
+                    var room = data["room"];
+                    var meta = JSON.parse(room["meta"]);
 
-                        meta["isFavorite"] = !meta["isFavorite"];
-                        room["meta"] = JSON.stringify(meta);
+                    meta["isFavorite"] = !meta["isFavorite"];
+                    room["meta"] = JSON.stringify(meta);
 
-                        api.rooms.modify(room);
-
-                        api.rooms
-                            .modify(room)
-                            .then(data => {
-                                populateRoomList();
-                            })
-                            .catch(error => {
-                                alert("Request failed: " + error);
-                            });
-                    })
-                    .catch(error => {
+                    api.rooms
+                      .modify(room)
+                      .then(data => {
+                        populateRoomList();
+                      })
+                      .catch(error => {
                         alert("Request failed: " + error);
-                    });
+                      });
+                  })
+                  .catch(error => {
+                    alert("Request failed: " + error);
+                  });
             });
+
             function copyText(elem1, elem2) {
                 $(elem1).text($(elem2).text());
             }
