@@ -1,50 +1,99 @@
 <div id="routinesCard" class="card mask rgba-white-strong" style="height:85vh">
-    <div class="pb-0" style="padding: 1.25rem">
-        <h4 class="card-title">Rutinas</h4>
+  <div class="pb-0" style="padding: 1.25rem">
+    <h4 class="card-title">Rutinas</h4>
+  </div>
+
+  <div id="routineEmptyDiv" class="center-screen text-center" style="width: 90%">
+    <h4>No tienes rutinas registradas</h4>
+    <h5>¡Presiona el botón rojo para agregar una!</h5>
+    <a href="#">¿Qué es una rutina?</a>
+  </div>
+
+  <div class="card-body text-center py-0 mCustomScrollbar" style="overflow:auto;">
+    <div id="routineTableDiv">
+      <table id="routineTable" class="table table-hover">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
     </div>
+  </div>
 
-    <div id="routineEmptyDiv" class="center-screen text-center" style="width: 90%">
-        <h4>No tienes rutinas registradas</h4>
-        <h5>¡Presiona el botón rojo para agregar una!</h5>
-        <a href="#">¿Qué es una rutina?</a>
-    </div>
-
-    <div class="card-body text-center py-0 mCustomScrollbar" style="overflow:auto;">
-        <div id="routineTableDiv">
-            <table id="routineTable" class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-
-    <div class="btn-float-control">
-        <a href="#" data-toggle="modal" data-target="#newRoutineModal" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-        </a>
-        <ul>
-            <li>
-                <a class="btn mask rgba-black-strong" data-toggle="modal" data-target="#newRoutineModal" href="#" role="button">Agregar nueva
-                    rutina</a>
-            </li>
-        </ul>
-    </div>
+  <div class="btn-float-control">
+    <a href="#" data-toggle="modal" data-target="#newRoutineModal" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
+      <i class="fa fa-plus" aria-hidden="true"></i>
+    </a>
+    <ul>
+      <li>
+        <a class="btn mask rgba-black-strong" data-toggle="modal" data-target="#newRoutineModal" href="#" role="button">Agregar nueva
+          rutina</a>
+      </li>
+    </ul>
+  </div>
 </div>
 <div id="divNewRoutineModal"></div>
 <div id="divNewActionModal"></div>
 
 <script>
+  function renderRoutine(id, nombre) {
+    return `<tr class="routineRow" data-id="${id}">
+              <td>${nombre}</td>
+              <td>
+                <a class="btn btn-sm btn-delete-routine" href="#" role="button">
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                </a>
+                <a class="btn btn-sm" href="#" role="button">
+                  <i class="fa fa-play" aria-hidden="true"></i>
+                </a>
+              </td>
+            </tr>`
+  }
 
-	$(document).ready(function() {
-        $("#divNewRoutineModal").load("fragments/newRoutineModal.html");
-        $("#divNewActionModal").load("fragments/newActionModal.html");
-	});
+  function populateRoutineTable() {
+    var tableBody = $("#routineTable").children("tbody");
+    $(tableBody).html("");
+
+    api.routines.getAll()
+      .then((data) => {
+        data["routines"].forEach(device => {
+          $(tableBody).append(renderRoutine(device["id"], device["name"]));
+        });
+
+        if (isElementEmpty($(tableBody))) {
+          $("#routineTableDiv").hide();
+          $("#routineEmptyDiv").show();
+        } else {
+          $("#routineTableDiv").show();
+          $("#routineEmptyDiv").hide();
+        }
+        completedPromises++;
+      })
+      .catch((error) => {
+        alert('Request failed: ' + error);
+      })
+  }
+
+  $("#routineTable").on('click', '.btn-delete-routine', function(event) {
+    var id = $(event.target).closest(".routineRow").data("id");
+
+    api.routines
+      .delete(id)
+      .then(data => {
+        populateRoutineTable();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  });
+
+  $(document).ready(function() {
+    $("#divNewRoutineModal").load("fragments/newRoutineModal.html");
+    $("#divNewActionModal").load("fragments/newActionModal.html");
+  });
 </script>

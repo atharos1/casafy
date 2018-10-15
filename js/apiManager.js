@@ -161,11 +161,7 @@ api.routines = class {
   static get(id) {
     return api.fetch(api.routines.url + id);
   }
-
-  static modify(routine) {
-    return api.put(api.routines.url + id);
-  }
-
+  
   static delete(id) {
     return api.delete(api.routines.url + id);
   }
@@ -174,6 +170,7 @@ api.routines = class {
 	return api.put(api.routines.url + id + "/execute");
   }
 }
+
 api.actions = class {
   static get url() {
     return api.baseUrl + "devices/";

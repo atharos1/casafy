@@ -13,7 +13,7 @@
 					<div class="row">
 						<div class="col-md-3">Nombre: </div>
 						<div class="col-md-9">
-							<input id="routineName"style="display:table-cell; width:100%" type="text" placeholder="Nombre de la rutina">
+							<input id="routineName"style="display:table-cell; width:100%" type="text" maxlength=25 placeholder="Nombre de la rutina">
 						</div>
 					</div>
 					<div class="row">
@@ -51,12 +51,14 @@
 		}
 		return -1;
 	}
+
 	function removeAction(action) {
 		var cardId = "card" + action["actionName"] + action["deviceId"];
 		$('#'+cardId).remove();
 		var index = getIndex(action);
 		actionInfo.splice(index,1);
 	}
+
 	function addAction(action){
 		if(getIndex(action) != -1)
 			removeAction(action);
@@ -104,6 +106,7 @@
 				alert("Request failed: " + error);
 			});
 	}
+
 	$('#deleteActionBtn').on('click',function(event) {
 		var selectedDevice = null;
 		$('#actionAccordion').find("div").each(function(i) {
@@ -119,11 +122,13 @@
 		};
 		removeAction(action);
 	});
+
 	$('#cancelRoutineBtn').on('click',function(event) {
 		actionInfo = [];
 		$('#actionAccordion').empty();
 		$('#newRoutineModal').modal('hide');
 	});
+
 	$('#createRoutineBtn').on('click',function(event) {
 		var name = $('#routineName').val();
 		var actions = [];
@@ -133,7 +138,7 @@
 			var params = [];
 			for(paramNum in actionInfo[i]["params"])
 				params.push(actionInfo[i]["params"][paramNum]["value"]);
-			
+
 			actions.push({
 				deviceId: deviceId,
 				actionName: actionName,
@@ -146,11 +151,11 @@
 			actions: actions,
 			meta: "{}"
 		}
-		console.log(JSON.stringify(newRoutine));
 		api.routines.create(newRoutine)
 			.then(data => {
 				alert("Rutina creada satisfactoriamente!");
 				$('#newRoutineModal').modal('hide');
+				populateRoutineTable();
 			}).catch(error => {
 				alert("Request failed: " + error);
 			});

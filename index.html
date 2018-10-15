@@ -29,6 +29,11 @@
     <svg class="spinner center-screen" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
       <circle class="circle" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
     </svg>
+    <noscript>
+      <p>Bienvenido a Casafy</p>
+      <p>La página que estás viendo requiere para su funcionamiento el uso de JavaScript.
+        Si lo has deshabilitado intencionadamente, por favor vuelve a activarlo.</p>
+    </noscript>
   </div>
 
   <div id="divNewRoomModal"></div>
@@ -113,76 +118,44 @@
 
       function renderRoomCard(id, isFavorite, name, image, deviceCount, powerOnCount) {
         return `<div class="col-5 col-lg-4 col-xl-4">
-                            <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
-                                <!--Card image-->
-                                <div class="view overlay hm-white-slight zoom" style="height: 8rem;">
-                                    <img src="${'img/' + image}" class="img-fluid" alt="">
-                                    <a href="#">
-                                        <div class="mask"></div>
-                                    </a>
-                                </div>
+                  <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
+                    <!--Card image-->
+                    <div class="view overlay hm-white-slight zoom" style="height: 8rem;">
+                      <img src="${'img/' + image}" class="img-fluid" alt="">
+                      <a href="#">
+                        <div class="mask"></div>
+                      </a>
+                    </div>
 
-                                <!--Card content-->
-                                <div class="card-body text-center">
-                                    <!--Title-->
-                                    <h4 class="card-title">
-                                        <a class="btn-hab-favorito">
-                                            <i class="fa ${isFavorite ? "fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
-                                        </a>
-                                        ${name}
-                                    </h4>
-                                    <!--Text-->
-                                    <div class="card-text ICONOS-EN-CARTA row text-center">
-                                        <div class="col-6">
-                                            <i class="fa fa-hashtag"></i>
-                                            ${deviceCount}
-                                        </div>
-                                        <div class="col-6">
-                                            <i class="fa fa-lightbulb-o"></i>
-                                            ${powerOnCount}
-                                        </div>
-                                    </div>
+                    <!--Card content-->
+                    <div class="card-body text-center">
+                      <!--Title-->
+                      <h4 class="card-title">
+                        <a class="btn-hab-favorito">
+                          <i class="fa ${isFavorite ? " fa-star amber-text" : "fa-star-o" }" aria-hidden="true"></i>
+                        </a>
+                        ${name}
+                      </h4>
+                      <!--Text-->
+                      <div class="card-text ICONOS-EN-CARTA row text-center">
+                        <div class="col-6">
+                          <i class="fa fa-hashtag"></i>
+                          ${deviceCount}
+                        </div>
+                        <div class="col-6">
+                          <i class="fa fa-lightbulb-o"></i>
+                          ${powerOnCount}
+                        </div>
+                      </div>
 
-                                    <a href="#" class="btn btn-primary btn-entrar">Entrar</a>
-                                </div>
-                            </div>
-                        </div>`
-      }
-
-      function renderRoutine(nombre) {
-        return `<tr>
-                        <td>${nombre}</td>
-                        <td>
-                            <a class="btn btn-sm" href="#" role="button">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </a>
-                            <a class="btn btn-sm" href="#" role="button">
-                                <i class="fa fa-gear" aria-hidden="true"></i>
-                            </a>
-                            <a class="btn btn-sm" href="#" role="button">
-                                <i class="fa fa-play" aria-hidden="true"></i>
-                            </a>
-                        </td>
-                    </tr>`
+                      <a href="#" class="btn btn-primary btn-entrar">Entrar</a>
+                    </div>
+                  </div>
+                </div>`
       }
 
       function isElementEmpty(el) {
         return !$.trim(el.html())
-      }
-
-      function populateRoutineTable() {
-        var tableBody = $("#routineTable").children("tbody");
-        $(tableBody).html("");
-
-        if (isElementEmpty($(tableBody))) {
-          $("#routineTableDiv").hide();
-          $("#routineEmptyDiv").show();
-        } else {
-          $("#routineTableDiv").show();
-          $("#routineEmptyDiv").hide();
-        }
-
-        completedPromises++;
       }
 
       function populateRoomList() {
