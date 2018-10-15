@@ -51,7 +51,7 @@
               <a href="index.html" class="btn black-text btn-md align-middle" id="goBackButton"><i class="fa fa-arrow-left"
                   aria-hidden="true"></i></i>
                 Volver al menú</a>
-              <i id="isFavorite" class="align-middle" aria-hidden="true"></i>
+              <i id="isFavorite" class="align-middle fa fa-2x fa-star amber-text" aria-hidden="true" onclick="changeStateOfFavourite()"></i>
               <h4 id="roomName" class="d-inline card-title align-middle"><a>NOMBRE-HABITACIÓN</a></h4>
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right;">
                 <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i class="fa fa-pencil-square-o"
@@ -119,8 +119,10 @@
   <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
   <script>
+
     var deviceId = "";
     var deviceTypeId = "";
+    var roomIsFavorite;
 
     function getQueryStringParameter(key) {
       key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
@@ -193,8 +195,17 @@
           var room = data["room"];
           $("#roomName").text(room["name"]);
           var meta = JSON.parse(room["meta"]);
+          alert(meta["isFavorite"]);
+          document.getElementById("isFavorite").classList.add("fa", "fa-2x");
+          if (meta["isFavorite"] == "true") {
+            document.getElementById("isFavorite").classList.add("fa-star", "amber-text");
+            roomIsFavorite = true;
+          } else {
+            document.getElementById("isFavorite").classList.add("fa-star-o");
+            roomIsFavorite = false;
+          }
 
-          $("#isFavorite").addClass("fa fa-2x " + ((meta["isFavorite"] == true) ? "fa-star amber-text" : "fa-star-o black-text"));
+          document.getElementById("isFavorite").setAttribute("aria-hidden", "true");
 
           completedPromises++;
 
@@ -297,8 +308,43 @@
         }).catch((error) => {
           alert('Failure to get devices list: ' + error);
         });
-      api.rooms.delete(roomID).then(() => {window.location.href = "index.html#"; completedPromises++;}).catch(error => alert("Request failed: " + error));
+      api.rooms.delete(roomID).then(() => { window.location.href = "index.html#"; completedPromises++; }).catch(error => alert("Request failed: " + error));
     };
+
+    function changeStateOfFavourite() {
+      let star = document.getElementById("isFavorite");
+      if (roomIsFavorite) {
+        star.classList.remove("amber-text");
+        star.classList.remove("fa-star");
+        star.classList.add("fa-star-o");
+        roomIsFavorite = false;
+      } else {
+        star.classList.remove("fa-star-o");
+        star.classList.add("fa-star");
+        star.classList.add("amber-text");
+        roomIsFavorite = true;
+      }
+      api.rooms
+          .get(roomID)
+          .then(data => {
+            var room = data["room"];
+            var meta = JSON.parse(room["meta"]);
+
+            meta["isFavorite"] = !meta["isFavorite"];
+            room["meta"] = JSON.stringify(meta);
+
+            api.rooms
+              .modify(room)
+              .then(data => {})
+              .catch(error => {
+                alert("Request failed: " + error);
+              });
+          })
+          .catch(error => {
+            alert("Request failed: " + error);
+          });
+
+    }
 
   </script>
 
