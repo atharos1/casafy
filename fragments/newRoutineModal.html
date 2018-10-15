@@ -87,13 +87,14 @@
 				container.setAttribute("class","container");
 				if(action["params"].length > 0){
 					for(paramNum in action["params"]){
+						var value = isNaN(action["params"][paramNum]["value"]) ? supportedValuesTranslation[action["params"][paramNum]["value"]] : action["params"][paramNum]["value"];
 						$(container).append(
 						'<div class="row">' +
 							'<div class="col-md-7">' +
 								action["params"][paramNum]["name"] +
 							':</div>' +
 							'<div class="col-md-5">' +
-								supportedValuesTranslation[action["params"][paramNum]["value"]] +
+								value +
 							'</div>' +
 						'</div>');
 					}
