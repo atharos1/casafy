@@ -1,0 +1,123 @@
+<div class="modal fade" id="modLampModal" tabindex="-1" role="dialog" aria-labelledby="modLampTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modLampTitle">Configurar Lámpara</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-3">Apagada</div>
+            <div class="col-md-3">
+              <label class="bs-switch">
+                <input type="checkbox" id="lampStatusSwitch">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="col-md-3">Prendida</div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-3">Color:</div>
+            <div class="col-md-3">
+              <input id="lampColorPicker" value="#ffffff" style="width:85%;" type="color">
+            </div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-3">Brillo:</div>
+            <div class="col-md-5">
+              <input type="range" class="custom-range" id="lampBrightnessSlider" onchange="updateLampBrightness()">
+            </div>
+            <div class="col-md-3" id="lampBrightness">...</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateLampBtn">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var loadedLampModal = false;
+
+  $('#modLampModal').on('show.bs.modal', function(event) {
+    if (!loadedLampModal) {
+      api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
+        .then(data => {
+          var actions = data["device"]["actions"];
+          for (action in actions) {
+            if (actions[action]["name"] == "setBrightness") {
+              var minValue = actions[action]["params"][0]["minValue"];
+              var maxValue = actions[action]["params"][0]["maxValue"];
+              document.getElementById('lampBrightnessSlider').min = minValue;
+              document.getElementById('lampBrightnessSlider').max = maxValue;
+            }
+          }
+        })
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+
+      loadedLampModal = true;
+    }
+
+    api.actions.put(deviceId, "getState")
+      .then(data => {
+        var result = data["result"];
+        if (result["status"] == "on") {
+          document.getElementById("lampStatusSwitch").checked = true;
+        } else {
+          document.getElementById("lampStatusSwitch").checked = false;
+        }
+
+        document.getElementById('lampColorPicker').value = "#" + result["color"];
+        document.getElementById('lampBrightnessSlider').value = result["brightness"];
+        updateLampBrightness();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  });
+
+  function updateLampBrightness() {
+    document.getElementById('lampBrightness').innerText = document.getElementById('lampBrightnessSlider').value;
+  }
+
+  $('#updateLampBtn').on('click', function(event) {
+    /*status*/
+    if (document.getElementById("lampStatusSwitch").checked == true) {
+      api.actions.put(deviceId, "turnOn")
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    } else {
+      api.actions.put(deviceId, "turnOff")
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    }
+
+    var body = new Array(1);
+
+    /*color*/
+    body[0] = document.getElementById('lampColorPicker').value.substring(1, 7);
+    api.actions.put(deviceId, "setColor", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+    /*brightness*/
+    body[0] = document.getElementById('lampBrightnessSlider').value;
+    api.actions.put(deviceId, "setBrightness", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+  });
+</script>

@@ -116,24 +116,12 @@
 
     <script>
         var deviceId = "";
+        var deviceTypeId = "";
 
         function getQueryStringParameter(key) {
             key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
             var match = location.search.match(new RegExp("[?&]" + key + "=([^&]+)(&|$)"));
             return match && decodeURIComponent(match[1].replace(/\+/g, " "));
-        }
-
-        function showModDeviceModal(id, typeId) {
-          deviceId = id;
-          api.get(api.baseUrl + "devicetypes/" + typeId)
-    				.then(data => {
-    					if (data["device"]["name"] == "blind") {
-                $('#modBlindModal').modal('toggle');
-              }
-    				})
-    				.catch(error => {
-    					alert("Request failed: " + error);
-    				});
         }
 
         function renderDeviceCard(id, typeId, isFavorite, name, image) {

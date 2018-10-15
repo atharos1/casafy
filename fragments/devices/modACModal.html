@@ -1,0 +1,216 @@
+<div class="modal fade" id="modACModal" tabindex="-1" role="dialog" aria-labelledby="modACTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modACTitle">Configurar Aire Acondicionado</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-3">Apagado</div>
+            <div class="col-md-3">
+              <label class="bs-switch">
+                <input type="checkbox" id="acStatusSwitch">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="col-md-3">Prendido</div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Modo:</div>
+            <div class="col-md-6">
+              <div class="dropdown" id="acModeBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownACModeBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargando...
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="acMode">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Temperatura:</div>
+            <div class="col-md-5">
+              <input type="range" class="custom-range" id="acTemperatureSlider" onchange="updateACTemperature()">
+            </div>
+            <div class="col-md-3" id="acTemperature">...</div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Velocidad del ventilador:</div>
+            <div class="col-md-6">
+              <div class="dropdown" id="acFanSpeedBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownFanSpeedBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargando...
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="fanSpeed">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Swing horizontal:</div>
+            <div class="col-md-6">
+              <div class="dropdown" id="acHorizontalSwingBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownACHorizontalSwingBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargando...
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="horizontalSwing">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Swing vertical:</div>
+            <div class="col-md-6">
+              <div class="dropdown" id="acVerticalSwingBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownACVerticalSwingBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargando...
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="verticalSwing">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateACBtn">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var loadedACModal = false;
+
+  $('#modACModal').on('show.bs.modal', function(event) {
+    if (!loadedACModal) {
+      api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
+        .then(data => {
+          var actions = data["device"]["actions"];
+          for (action in actions) {
+            if (actions[action]["name"] == "setMode") {
+              var values = actions[action]["params"][0]["supportedValues"];
+              for (value in values) {
+                $('#acMode').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownACModeBtn.innerText = this.innerText;\">" +
+                  values[value] + "</button>");
+              }
+            }
+            if (actions[action]["name"] == "setTemperature") {
+              var minValue = actions[action]["params"][0]["minValue"];
+              var maxValue = actions[action]["params"][0]["maxValue"];
+              document.getElementById('acTemperatureSlider').min = minValue;
+              document.getElementById('acTemperatureSlider').max = maxValue;
+            }
+            if (actions[action]["name"] == "setFanSpeed") {
+              var values = actions[action]["params"][0]["supportedValues"];
+              for (value in values) {
+                $('#fanSpeed').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownFanSpeedBtn.innerText = this.innerText;\">" +
+                  values[value] + "</button>");
+              }
+            }
+            if (actions[action]["name"] == "setHorizontalSwing") {
+              var values = actions[action]["params"][0]["supportedValues"];
+              for (value in values) {
+                $('#horizontalSwing').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownACHorizontalSwingBtn.innerText = this.innerText;\">" +
+                  values[value] + "</button>");
+              }
+            }
+            if (actions[action]["name"] == "setVerticalSwing") {
+              var values = actions[action]["params"][0]["supportedValues"];
+              for (value in values) {
+                $('#verticalSwing').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownACVerticalSwingBtn.innerText = this.innerText;\">" +
+                  values[value] + "</button>");
+              }
+            }
+          }
+        })
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+
+      loadedACModal = true;
+    }
+
+    api.actions.put(deviceId, "getState")
+      .then(data => {
+        var result = data["result"];
+        if (result["status"] == "on") {
+          document.getElementById("acStatusSwitch").checked = true;
+        } else {
+          document.getElementById("acStatusSwitch").checked = false;
+        }
+        document.getElementById('acTemperatureSlider').value = result["temperature"];
+        document.getElementById('dropdownACModeBtn').innerText = result["mode"];
+        document.getElementById('dropdownFanSpeedBtn').innerText = result["fanSpeed"];
+        document.getElementById('dropdownACHorizontalSwingBtn').innerText = result["horizontalSwing"];
+        document.getElementById('dropdownACVerticalSwingBtn').innerText = result["verticalSwing"];
+        updateACTemperature();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  });
+
+  function updateACTemperature() {
+    document.getElementById('acTemperature').innerText = document.getElementById('acTemperatureSlider').value;
+  }
+
+  $('#updateACBtn').on('click', function(event) {
+    /*status*/
+    if (document.getElementById("acStatusSwitch").checked == true) {
+      api.actions.put(deviceId, "turnOn")
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    } else {
+      api.actions.put(deviceId, "turnOff")
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+    }
+
+    var body = new Array(1);
+
+    /*temperature*/
+    body[0] = document.getElementById('acTemperatureSlider').value;
+    api.actions.put(deviceId, "setTemperature", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+    /*mode*/
+    body[0] = document.getElementById('dropdownACModeBtn').innerText;
+    api.actions.put(deviceId, "setMode", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+    /*fan speed*/
+    body[0] = document.getElementById('dropdownFanSpeedBtn').innerText;
+    api.actions.put(deviceId, "setFanSpeed", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+    /*horizontal swing*/
+    body[0] = document.getElementById('dropdownACHorizontalSwingBtn').innerText;
+    api.actions.put(deviceId, "setHorizontalSwing", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+    /*vertical swing*/
+    body[0] = document.getElementById('dropdownACVerticalSwingBtn').innerText;
+    api.actions.put(deviceId, "setVerticalSwing", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+  });
+</script>

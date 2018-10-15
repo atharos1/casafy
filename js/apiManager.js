@@ -197,7 +197,7 @@ api.routines = class {
   static delete(id) {
     return api.delete(api.routines.url + id);
   }
-  
+
   static execute(id) {
 	return api.put(api.routines.url + id + "/execute");
   }
@@ -207,7 +207,7 @@ api.actions = class {
     return api.baseUrl + "devices/";
   }
 
-  static put(id, action) {
-    return api.put(api.actions.url + id + "/" + action);
+  static put(id, action, body) {
+    return api.put(api.actions.url + id + "/" + action, body);
   }
 };

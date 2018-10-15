@@ -14,7 +14,7 @@
             <div class="col-md-3">Cerrada</div>
             <div class="col-md-3">
               <label class="bs-switch">
-                <input type="checkbox" id="blindSlider">
+                <input type="checkbox" id="blindSwitch">
                 <span class="slider round"></span>
               </label>
             </div>
@@ -36,9 +36,9 @@
       .then(data => {
         var result = data["result"];
         if (result["status"] == "opened") {
-          document.getElementById("blindSlider").checked = true;
+          document.getElementById("blindSwitch").checked = true;
         } else {
-          document.getElementById("blindSlider").checked = false;
+          document.getElementById("blindSwitch").checked = false;
         }
       })
       .catch(error => {
@@ -47,7 +47,8 @@
   });
 
   $('#updateBlindBtn').on('click', function(event) {
-    if (document.getElementById("blindSlider").checked == true) {
+    /*status*/
+    if (document.getElementById("blindSwitch").checked == true) {
       api.actions.put(deviceId, "up")
         .catch(error => {
           alert("Request failed: " + error);

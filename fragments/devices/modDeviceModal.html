@@ -1,7 +1,39 @@
 <div id="divModBlindModal"></div>
+<div id="divModACModal"></div>
+<div id="divModDoorModal"></div>
+<div id="divModLampModal"></div>
+<div id="divModRefrigeratorModal"></div>
 
 <script>
-  var deviceId;
-
   $("#divModBlindModal").load("fragments/devices/modBlindModal.html");
+  $("#divModACModal").load("fragments/devices/modACModal.html");
+  $("#divModDoorModal").load("fragments/devices/modDoorModal.html");
+  $("#divModLampModal").load("fragments/devices/modLampModal.html");
+  $("#divModRefrigeratorModal").load("fragments/devices/modRefrigeratorModal.html");
+
+  function showModDeviceModal(id, typeId) {
+    deviceId = id;
+    deviceTypeId = typeId;
+    api.get(api.baseUrl + "devicetypes/" + typeId)
+      .then(data => {
+        var name = data["device"]["name"];
+
+        if (name == "blind") {
+          $('#modBlindModal').modal('toggle');
+        } else if (name == "ac") {
+          $('#modACModal').modal('toggle');
+        } else if (name == "door") {
+          $('#modDoorModal').modal('toggle');
+        } else if (name == "lamp") {
+          $('#modLampModal').modal('toggle');
+        } else if (name == "refrigerator") {
+          $('#modRefrigeratorModal').modal('toggle');
+        } else {
+          alert("Dispositivo no soportado aún");
+        }
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  }
 </script>

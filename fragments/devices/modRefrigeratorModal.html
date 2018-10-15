@@ -1,0 +1,133 @@
+<div class="modal fade" id="modRefrigeratorModal" tabindex="-1" role="dialog" aria-labelledby="modRefrigeratorTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modRefrigeratorTitle">Configurar Refrigerador</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Temperatura:</div>
+            <div class="col-md-5">
+              <input type="range" class="custom-range" id="refrigeratorTempSlider" onchange="updateRefrigeratorTemp()">
+            </div>
+            <div class="col-md-3" id="refrigeratorTemp">...</div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Temperatura del congelador:</div>
+            <div class="col-md-5">
+              <input type="range" class="custom-range" id="freezerTempSlider" onchange="updateFreezerTemp()">
+            </div>
+            <div class="col-md-3" id="freezerTemp">...</div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Modo:</div>
+            <div class="col-md-6">
+              <div class="dropdown" id="refrigeratorModeBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownRefrigeratorModeBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargando...
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="refrigeratorMode">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateRefrigeratorBtn">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var loadedRefrigeratorModal = false;
+
+  $('#modRefrigeratorModal').on('show.bs.modal', function(event) {
+    if (!loadedRefrigeratorModal) {
+      api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
+        .then(data => {
+          var actions = data["device"]["actions"];
+          for (action in actions) {
+            if (actions[action]["name"] == "setFreezerTemperature") {
+              var minValue = actions[action]["params"][0]["minValue"];
+              var maxValue = actions[action]["params"][0]["maxValue"];
+              document.getElementById('freezerTempSlider').min = minValue;
+              document.getElementById('freezerTempSlider').max = maxValue;
+            }
+            if (actions[action]["name"] == "setTemperature") {
+              var minValue = actions[action]["params"][0]["minValue"];
+              var maxValue = actions[action]["params"][0]["maxValue"];
+              document.getElementById('refrigeratorTempSlider').min = minValue;
+              document.getElementById('refrigeratorTempSlider').max = maxValue;
+            }
+            if (actions[action]["name"] == "setMode") {
+              var values = actions[action]["params"][0]["supportedValues"];
+              for (value in values) {
+                $('#refrigeratorMode').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownRefrigeratorModeBtn.innerText = this.innerText;\">" +
+                  values[value] + "</button>");
+              }
+            }
+          }
+        })
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
+
+      loadedRefrigeratorModal = true;
+    }
+
+    api.actions.put(deviceId, "getState")
+      .then(data => {
+        var result = data["result"];
+        document.getElementById('refrigeratorTempSlider').value = result["temperature"];
+        document.getElementById('freezerTempSlider').value = result["freezerTemperature"];
+        document.getElementById('dropdownRefrigeratorModeBtn').innerText = result["mode"];
+        updateRefrigeratorTemp();
+        updateFreezerTemp();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+  });
+
+  function updateRefrigeratorTemp() {
+    document.getElementById('refrigeratorTemp').innerText = document.getElementById('refrigeratorTempSlider').value;
+  }
+
+  function updateFreezerTemp() {
+    document.getElementById('freezerTemp').innerText = document.getElementById('freezerTempSlider').value;
+  }
+
+  $('#updateRefrigeratorBtn').on('click', function(event) {
+    var body = new Array(1);
+
+    /*temperature*/
+    body[0] = document.getElementById('refrigeratorTempSlider').value;
+    api.actions.put(deviceId, "setTemperature", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+    /*freezer temperature*/
+    body[0] = document.getElementById('freezerTempSlider').value;
+    api.actions.put(deviceId, "setFreezerTemperature", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+    /*mode*/
+    body[0] = document.getElementById('dropdownRefrigeratorModeBtn').innerText;
+    api.actions.put(deviceId, "setMode", body)
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
+
+  });
+</script>
