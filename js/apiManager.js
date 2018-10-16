@@ -161,7 +161,9 @@ api.routines = class {
   static get(id) {
     return api.fetch(api.routines.url + id);
   }
-
+  static update(routineId, routine) {
+    return api.put(api.routines.url + routineId, routine);
+  }
   static delete(id) {
     return api.delete(api.routines.url + id);
   }
