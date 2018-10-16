@@ -21,6 +21,8 @@
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 
+  <link rel="stylesheet" type="text/css" href="css/snackbar.min.css" />
+
 </head>
 
 <body>
@@ -67,12 +69,14 @@
               </div>
             </div>
             <div class="btn-float-control">
-              <a data-toggle="modal" data-target="#newRoomModal" href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2" id="menu-share">
+              <a data-toggle="modal" data-target="#newRoomModal" href="#" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
+                id="menu-share">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </a>
               <ul>
                 <li>
-                  <a class="btn mask rgba-black-strong" href="#" role="button" data-toggle="modal" data-target="#newRoomModal">Agregar nueva
+                  <a class="btn mask rgba-black-strong" href="#" role="button" data-toggle="modal" data-target="#newRoomModal">Agregar
+                    nueva
                     habitación</a>
                 </li>
               </ul>
@@ -103,7 +107,7 @@
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="js/mdb.min.js"></script>
 
-    <script type="text/javascript" src="js/apiManager.js"></script>
+    <script type="text/javascript" src="js/apiManager2.js"></script>
 
     <script type="text/javascript" src="js/qSort.js"></script>
 
@@ -111,12 +115,9 @@
 
     <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
-    <script>
-      function fixFieldState(inputField) {
-        $(inputField).trigger("focusin");
-        $(inputField).trigger("blur");
-      }
+    <script src="js/snackbar.min.js"></script>
 
+    <script>
       function renderRoomCard(id, isFavorite, name, image, deviceCount, powerOnCount) {
         return `<div class="col-5 col-lg-4 col-xl-4">
                   <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
@@ -133,7 +134,7 @@
                       <!--Title-->
                       <h4 class="card-title">
                         <a class="btn-hab-favorito">
-                          <i class="fa ${isFavorite ? " fa-star amber-text" : "fa-star-o" }" aria-hidden="true"></i>
+                          <i class="fa ${isFavorite ? " fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
                         </a>
                         ${name}
                       </h4>
@@ -163,51 +164,72 @@
         var roomsView = $("#roomsView");
         $(roomsView).html("");
 
-        api.rooms.getAll()
+        api.rooms.getAll(false)
           .then((data) => {
             qSort(data["rooms"], compareElements);
-            loadRoomCard(data["rooms"], 0);
+
+
+            data["rooms"].forEach(room => {
+
+              var deviceCount = 0;
+              var powerOnCount = 0;
+
+              api.rooms.getDevices(room["id"], false)
+                .then(async (data) => {
+
+                  for (const device of data["devices"]) {
+                    deviceCount++;
+
+                    //const state = await $.ajax('http://127.0.0.1:8080/api/devices/9b35ca8bafbf2ccd/getState');
+
+                    if (device.typeId != "rnizejqr2di0okho") {
+                      try {
+                        var state = await api.actions.put(device.id, "getState", null, true);
+                      } catch (e) {
+                        alert("Error");
+                      }
+
+                      if (state["result"]["status"] != null)
+                        if (state["result"]["status"] == "on")
+                          powerOnCount++;
+                    } else {
+                      powerOnCount++;
+                    }
+
+
+                    /*await api.actions.put(device.id, "getState", null, true).then((state) => {
+                      if (state["result"]["status"] != null)
+                        if (state["result"]["status"] == "on")
+                          powerOnCount++;
+
+                      alert(powerOnCount);
+                    }) */
+                  }
+
+
+                  var meta = JSON.parse(room["meta"]);
+                  $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], deviceCount, powerOnCount));
+
+                  if (isElementEmpty($(roomsView))) {
+                    $("#roomsEmptyDiv").show();
+                  } else {
+                    $("#roomsEmptyDiv").hide();
+                  }
+
+                })
+                .catch((error) => {
+                  alert('Request failed: ' + error);
+                });
+            });
+
+            completedPromises++;
+
           })
           .catch((error) => {
             alert('Request failed: ' + error);
           });
       }
 
-      function loadRoomCard(rooms, index) {
-        if (index < rooms.length) {
-          var room = rooms[index];
-
-          api.rooms.getDevices(room["id"])
-            .then((data) => {
-              var deviceCount = 0;
-              var powerOnCount = 0;
-
-              data["devices"].forEach(function(device) {
-                deviceCount++;
-
-                var meta = JSON.parse(room["meta"]);
-                if (meta["powerOn"] == true)
-                  powerOnCount++;
-              });
-
-              var meta = JSON.parse(room["meta"]);
-              $(roomsView).append(renderRoomCard(room["id"], meta["isFavorite"], room["name"], meta["image"], deviceCount, powerOnCount));
-
-              if (isElementEmpty($(roomsView))) {
-                $("#roomsEmptyDiv").show();
-              } else {
-                $("#roomsEmptyDiv").hide();
-              }
-
-              loadRoomCard(rooms, index + 1);
-            })
-            .catch((error) => {
-              alert('Request failed: ' + error);
-            });
-        } else {
-          completedPromises++;
-        }
-      }
 
       function formatState(state) {
         if (!state.id) {
@@ -223,18 +245,18 @@
       var completedPromises = 0;
       var awaitingPromises = 0;
 
-      window.onload = function() {
+      window.onload = function () {
         awaitingPromises++
         populateRoomList();
 
-        $("#divNavbar").load("fragments/navbar.html", function() {
+        $("#divNavbar").load("fragments/navbar.html", function () {
           //Acciones
         });
 
         $("#divFooter").load("fragments/footer.html");
 
         awaitingPromises++;
-        $("#divRoutines").load("fragments/routinePanel.html", function() {
+        $("#divRoutines").load("fragments/routinePanel.html", function () {
           populateRoutineTable();
         });
 
@@ -265,12 +287,12 @@
       }
 
 
-      $('#roomsView').on('click', '.btn-entrar', function(event) {
+      $('#roomsView').on('click', '.btn-entrar', function (event) {
         window.location.href = "room.html?id=" + $(event.target).closest(".card").data("id");
       });
 
 
-      $('#roomsView').on('click', '.btn-hab-favorito', function(event) {
+      $('#roomsView').on('click', '.btn-hab-favorito', function (event) {
         var id = $(event.target).closest(".card").data("id");
         api.rooms
           .get(id)

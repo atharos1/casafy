@@ -14,7 +14,11 @@ var api = class {
       async: async,
       method: method,
       timeout: api.timeout,
-      data: data
+      data: data,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      dataType: "json"
     });
   }
 
@@ -45,7 +49,7 @@ api.rooms = class {
   }
 
   static modify(room, async) {
-    return api.put(api.rooms.url + id, room, async);
+    return api.put(api.rooms.url + room.id, room, async);
   }
 
   static delete(id, async) {
@@ -91,35 +95,6 @@ api.rooms = class {
         return false;
       });
   }
-
-  static updateData(id, name, isFavorite, image) {
-    /*api.rooms
-          .get(id)
-          .then(data => {
-            var room = data["room"];
-            var meta = JSON.parse(room["meta"]);
-
-            if (name) room["name"] = name;
-
-            if (isFavorite) meta["isFavorite"] = isFavorite;
-            if (image) meta["image"] = image;
-            room["meta"] = JSON.stringify(meta);
-
-            api.rooms
-              .modify(room)
-              .then(data => {
-                return true;
-              })
-              .catch(error => {
-                alert("Request failed: " + error);
-                return false;
-              });
-          })
-          .catch(error => {
-            alert("Request failed: " + error);
-            return false;
-          });*/
-  }
 };
 
 api.devices = class {
@@ -145,5 +120,43 @@ api.devices = class {
 
   static delete(id, async) {
     return api.delete(api.devices.url + id, async);
+  }
+};
+
+api.routines = class {
+  static get url() {
+    return api.baseUrl + "routines/";
+  }
+
+  static getAll(async) {
+    return api.get(api.routines.url, async);
+  }
+
+  static create(routine, async) {
+    return api.post(api.routines.url, routine, async);
+  }
+
+  static get(id, async) {
+    return api.get(api.routines.url + id);
+  }
+  static update(routineId, routine, async) {
+    return api.put(api.routines.url + routineId, routine, async);
+  }
+  static delete(id, async) {
+    return api.delete(api.routines.url + id, async);
+  }
+
+  static execute(id, async) {
+    return api.put(api.routines.url + id + "/execute", async);
+  }
+};
+
+api.actions = class {
+  static get url() {
+    return api.baseUrl + "devices/";
+  }
+
+  static put(id, action, body, async) {
+    return api.put(api.actions.url + id + "/" + action, body, async);
   }
 };

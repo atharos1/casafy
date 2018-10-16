@@ -1,5 +1,5 @@
-<div class="modal fade" id="newActionModal" tabindex="-1" role="dialog" aria-labelledby="newActionTitle"
-	aria-hidden="true" data-backdrop="false">
+<div class="modal fade" id="newActionModal" tabindex="-1" role="dialog" aria-labelledby="newActionTitle" aria-hidden="true"
+ data-backdrop="false">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -10,9 +10,9 @@
 			</div>
 			<div class="modal-body">
 				<nav aria-label="breadcrumb">
-				  <ol class="breadcrumb" id="routineBreadcrumb">
-					
-				  </ol>
+					<ol class="breadcrumb" id="routineBreadcrumb">
+
+					</ol>
 				</nav>
 				<div class="container">
 					<div class="list-group" id="itemList" role="tablist">
@@ -25,8 +25,8 @@
 		</div>
 	</div>
 </div>
-<div class="modal fade" id="getParamsModal" tabindex="-1" role="dialog" aria-labelledby="getParamsTitle"
-	aria-hidden="true" data-backdrop="false">
+<div class="modal fade" id="getParamsModal" tabindex="-1" role="dialog" aria-labelledby="getParamsTitle" aria-hidden="true"
+ data-backdrop="false">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -79,7 +79,7 @@
 		"start": "Empezar",
 		"stop": "Detener",
 		"setFreezerTemperature": "Cambiar temperatura del congelador",
-		
+
 	}
 	var paramsTranslation = {
 		"brightness": "Brillo",
@@ -113,22 +113,22 @@
 		"heat": "Calor",
 		"fan": "Ventilador"
 	}
-	function resetActionModal(){
+	function resetActionModal() {
 		chosenRoomId = "";
 		chosenDeviceId = "";
-		$('#addActionBtn').prop("disabled",true);
+		$('#addActionBtn').prop("disabled", true);
 	}
-	function updateDropdown(chosenElem,paramNum){
-		$('#param'+paramNum).attr('chosen',$(chosenElem).attr('id'));
-		$('#param'+paramNum).text($(chosenElem).text());
-		$('#addActionBtn').prop("disabled",false);
+	function updateDropdown(chosenElem, paramNum) {
+		$('#param' + paramNum).attr('chosen', $(chosenElem).attr('id'));
+		$('#param' + paramNum).text($(chosenElem).text());
+		$('#addActionBtn').prop("disabled", false);
 	}
 	function isValid(input) {
-		if(input === undefined || input === null)
+		if (input === undefined || input === null)
 			return false;
-		if(input.attr("type") === "color")
+		if (input.attr("type") === "color")
 			return true;
-		else if(input.val() === undefined || input.val().length === 0 || 
+		else if (input.val() === undefined || input.val().length === 0 ||
 			input.val() > parseInt(input.attr("max")) || input.val() < parseInt(input.attr("min")))
 			return false;
 		else
@@ -141,40 +141,45 @@
 		var disabled = false;
 		var i = 0;
 		console.log("asd");
-		while($('#param'+ ++i).length > 0 && !disabled){
+		while ($('#param' + ++i).length > 0 && !disabled) {
 			//Apenas carga no puede estar ya estar elegida la opción del botón.
-			if(!$('#param'+i).is("input"))
+			if (!$('#param' + i).is("input"))
 				disabled = true;
-			else if(!isValid($('#param'+i)))
+			else if (!isValid($('#param' + i)))
 				disabled = true;
 		}
-		$('#addActionBtn').prop("disabled",disabled);
+		$('#addActionBtn').prop("disabled", disabled);
 	});
 	$('#cancelParamsBtn').on('click', function (event) {
 		$('#invalidParamAlert').removeClass("show");
-		$('#invalidParamAlert').attr("style","display:none");
-		$('#addActionBtn').prop("disabled",true);
+		$('#invalidParamAlert').attr("style", "display:none");
+		$('#addActionBtn').prop("disabled", true);
 		$('#getParamsModal').modal('hide');
 	});
-	$('#addActionBtn').on('click',function(event) {
+	$('#addActionBtn').on('click', function (event) {
 		var actionName = $('#getParamsForm').attr("actionName");
 		var paramNum = $('#getParamsForm').attr("params");
 		var paramValues = [];
-		for(var i=1; i <= paramNum; i++) {
+		for (var i = 1; i <= paramNum; i++) {
 			var value;
-			if(!$('#param'+i).is("input"))
-				value = $('#param'+i).attr("chosen");
-			else
-				value = $('#param'+i).val();
+			if (!$('#param' + i).is("input"))
+				value = $('#param' + i).attr("chosen");
+			else {
+				if ($('#param' + i).attr("type") == "color")
+					value = $('#param' + i).val().substring(1, 7);
+				else
+					value = $('#param' + i).val();
+			}
+
 			paramValues.push(value);
 		}
-		$('#addActionBtn').prop("disabled",true);
+		$('#addActionBtn').prop("disabled", true);
 		$('#getParamsModal').modal('hide');
 		$('#newActionModal').modal('hide');
-		createAction(actionName,chosenDeviceId,paramValues);
+		createAction(actionName, chosenDeviceId, paramValues);
 		//Funcion en newRoutineModal.html
 	});
-	function createAction(actionName,deviceId,paramValues){
+	function createAction(actionName, deviceId, paramValues) {
 		var params = [];
 		api.devices.get(deviceId)
 			.then(data => {
@@ -182,10 +187,10 @@
 				api.fetch(api.baseUrl + "devicetypes/" + typeId)
 					.then(data => {
 						var actions = data["device"]["actions"];
-						for(var i=0; i < data["device"]["actions"].length; i++){
+						for (var i = 0; i < data["device"]["actions"].length; i++) {
 							var action = data["device"]["actions"][i];
-							if(action["name"] === actionName){
-								for(var j=0; j < action["params"].length; j++){
+							if (action["name"] === actionName) {
+								for (var j = 0; j < action["params"].length; j++) {
 									params.push({
 										name: paramsTranslation[action["params"][j]["name"]],
 										value: paramValues[j]
@@ -211,7 +216,7 @@
 	function chooseAction(actionElem) {
 		var actionName = $(actionElem).attr("actionName");
 		$('#getParamsForm').empty();
-		$('#getParamsForm').attr("actionName",actionName);
+		$('#getParamsForm').attr("actionName", actionName);
 		showParams(actionName);
 	}
 	function showRooms() {
@@ -220,28 +225,28 @@
 		var itemList = $('#itemList');
 		itemList.empty();
 		api.rooms.getAll()
-				.then(data => {
-					var rooms = data["rooms"];
-					for(roomNum in rooms)
-						itemList.append('<a class="list-group-item list-group-item-action" onClick="showDevices(\'' + rooms[roomNum]["id"] + '\')" data-toggle="list">'+ rooms[roomNum]["name"] +'</a>');
-						
-				}).catch(error => {
-					alert("Request failed: " + error);
-				});
+			.then(data => {
+				var rooms = data["rooms"];
+				for (roomNum in rooms)
+					itemList.append('<a class="list-group-item list-group-item-action" onClick="showDevices(\'' + rooms[roomNum]["id"] + '\')" data-toggle="list">' + rooms[roomNum]["name"] + '</a>');
+
+			}).catch(error => {
+				alert("Request failed: " + error);
+			});
 	}
 	function showDevices(roomId) {
 		chosenRoomId = roomId;
 		$('#routineBreadcrumb').empty();
 		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showRooms()">Habitaciones</a>');
-		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\''+ roomId +'\')">Dispositivos</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\'' + roomId + '\')">Dispositivos</a>');
 		var itemList = $('#itemList');
 		itemList.empty();
 		api.get(api.rooms.url + roomId + "/devices")
 			.then(data => {
 				var devices = data["devices"];
-				for(deviceNum in devices)
-					itemList.append('<a class="list-group-item list-group-item-action" onClick="showActions(\'' + devices[deviceNum]["id"] +'\')"data-toggle="list">'+ devices[deviceNum]["name"] +'</a>');
-			
+				for (deviceNum in devices)
+					itemList.append('<a class="list-group-item list-group-item-action" onClick="showActions(\'' + devices[deviceNum]["id"] + '\')"data-toggle="list">' + devices[deviceNum]["name"] + '</a>');
+
 			}).catch(error => {
 				alert("Request failed: " + error);
 			});
@@ -250,7 +255,7 @@
 		chosenDeviceId = deviceId;
 		$('#routineBreadcrumb').empty();
 		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showRooms()">Habitaciones</a>');
-		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\''+ chosenRoomId +'\')">Dispositivos</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\'' + chosenRoomId + '\')">Dispositivos</a>');
 		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showActions(\'' + deviceId + '\')">Acciones</a>');
 		var typeId;
 		api.devices.get(deviceId)
@@ -264,9 +269,10 @@
 				api.get(api.baseUrl + "devicetypes/" + typeId)
 					.then(data => {
 						var deviceActions = data["device"]["actions"];
-						for(actionNum in deviceActions)
-							itemList.append('<a class="list-group-item list-group-item-action" actionName="'+ deviceActions[actionNum]["name"]+
-								'"onClick="chooseAction(this)">'+ actionsTranslation[deviceActions[actionNum]["name"]] +'</a>');
+						for (action of deviceActions)
+							if (action["name"] != "getState")
+								itemList.append('<a class="list-group-item list-group-item-action" actionName="' + action["name"] +
+									'"onClick="chooseAction(this)">' + actionsTranslation[action["name"]] + '</a>');
 					}).catch(error => {
 						alert("Request failed: " + error);
 					});
@@ -277,97 +283,97 @@
 	function showParams(actionName) {
 		var typeId;
 		api.devices.get(chosenDeviceId)
-				.then(data => {
-					typeId = data["device"]["typeId"];
-				}).catch(error => {
-					alert("Request failed: " + error);
-				}).then(data => {
-					api.fetch(api.baseUrl + "devicetypes/" + typeId)
-						.then(data => {
-							var actions = data["device"]["actions"];
-							var params = null;
-							for(actionNum in actions){
-								if (actions[actionNum]["name"].toLowerCase() === actionName.toLowerCase()){
-									params = actions[actionNum]["params"];
-									break;
-								}
+			.then(data => {
+				typeId = data["device"]["typeId"];
+			}).catch(error => {
+				alert("Request failed: " + error);
+			}).then(data => {
+				api.fetch(api.baseUrl + "devicetypes/" + typeId)
+					.then(data => {
+						var actions = data["device"]["actions"];
+						var params = null;
+						for (actionNum in actions) {
+							if (actions[actionNum]["name"].toLowerCase() === actionName.toLowerCase()) {
+								params = actions[actionNum]["params"];
+								break;
 							}
-							var i = 0;
-							if(params != null && params.length > 0){
-								for(paramNum in params){
-									++i;
-									if(params[paramNum]["supportedValues"] !== undefined){
-										$('#getParamsForm').append(
-											"<div class=\"form-group-row\">" +
-												"<div class=\"col-md-6\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" + 	
-												"<div class=\"col-md-6\">"  +
-													"<div class=\"d-inline dropdown\" id=\"deviceTypeBtn\">" +
-														"<button class=\"btn btn-secondary dropdown-toggle btn-sm\" type=\"button\"" +
-															"id=\"param"+i+"\" name=\""+params[paramNum]["name"]+"\" data-toggle=\"dropdown\" aria-haspopup=\"true\"" +
-															"aria-expanded=\"false\" style=\"display:inline;\">Seleccionar...</button>" +
-														"<div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton\" id=\"supportedValues\">" +
-														"</div>" +
-													"</div>" +
-												"</div>" +
-											"</div>");
-										for(var j=0 ; j < params[paramNum]["supportedValues"].length; j++){
-											var value = params[paramNum]["supportedValues"][j];
-											$('#supportedValues').append(
-												"<button class=\"dropdown-item btn-sm\" id=\""+ value +"\"type=\"button\" onClick=\"updateDropdown(this,"+i+")\">" + 
-													(isNaN(value) ? supportedValuesTranslation[value] : value) + "</button>");
-										}
-										continue;
-									}
-									var placeholderString = "Valor max: " + params[paramNum]["maxValue"] + " | Valor min: " + params[paramNum]["minValue"];
-									var input = document.createElement('input');
-									input.id = "param" + i;
-									if(params[paramNum]["type"] === "integer" || params[paramNum]["type"] === "number")
-										input.setAttribute("type","number");
-									else if(params[paramNum]["name"] === "color"){
-										input.setAttribute("type","color");
-										input.setAttribute("value","#ffffff");
-									}
-									else
-										input.setAttribute("type","text");
-									input.setAttribute("max",params[paramNum]["maxValue"]);
-									input.setAttribute("min",params[paramNum]["minValue"]);
-									input.setAttribute("name",params[paramNum]["name"]);
-									input.setAttribute("style","display:table-cell; width:100%");
-									if(params[paramNum]["name"] !== "color"){
-										input.setAttribute("placeholder",placeholderString);
-										input.oninput = ((event) => {
-											console.log("asd");
-											var disabled = false;
-											for(var i=1; i <= params.length && !disabled; i++) {
-												if($('#param'+i).is("input") && !isValid($('#param'+i)))
-													disabled = true;
-											}
-											$('#addActionBtn').prop("disabled",disabled);
-										});
-									}
+						}
+						var i = 0;
+						if (params != null && params.length > 0) {
+							for (paramNum in params) {
+								++i;
+								if (params[paramNum]["supportedValues"] !== undefined) {
 									$('#getParamsForm').append(
-										"<div class=\"form-group row\">" +
-											"<div class=\"col-md-4\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" + 	
-											"<div class=\"col-md-8\" id=\"param"+ i + "container\">" +
-											"</div>" +
+										"<div class=\"form-group-row\">" +
+										"<div class=\"col-md-6\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" +
+										"<div class=\"col-md-6\">" +
+										"<div class=\"d-inline dropdown\" id=\"deviceTypeBtn\">" +
+										"<button class=\"btn btn-secondary dropdown-toggle btn-sm\" type=\"button\"" +
+										"id=\"param" + i + "\" name=\"" + params[paramNum]["name"] + "\" data-toggle=\"dropdown\" aria-haspopup=\"true\"" +
+										"aria-expanded=\"false\" style=\"display:inline;\">Seleccionar...</button>" +
+										"<div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton\" id=\"supportedValues\">" +
+										"</div>" +
+										"</div>" +
+										"</div>" +
 										"</div>");
-									$('#param'+i+'container').append(input);
+									for (var j = 0; j < params[paramNum]["supportedValues"].length; j++) {
+										var value = params[paramNum]["supportedValues"][j];
+										$('#supportedValues').append(
+											"<button class=\"dropdown-item btn-sm\" id=\"" + value + "\"type=\"button\" onClick=\"updateDropdown(this," + i + ")\">" +
+											(isNaN(value) ? supportedValuesTranslation[value] : value) + "</button>");
+									}
+									continue;
 								}
+								var placeholderString = "Valor max: " + params[paramNum]["maxValue"] + " | Valor min: " + params[paramNum]["minValue"];
+								var input = document.createElement('input');
+								input.id = "param" + i;
+								if (params[paramNum]["type"] === "integer" || params[paramNum]["type"] === "number")
+									input.setAttribute("type", "number");
+								else if (params[paramNum]["name"] === "color") {
+									input.setAttribute("type", "color");
+									input.setAttribute("value", "#ffffff");
+								}
+								else
+									input.setAttribute("type", "text");
+								input.setAttribute("max", params[paramNum]["maxValue"]);
+								input.setAttribute("min", params[paramNum]["minValue"]);
+								input.setAttribute("name", params[paramNum]["name"]);
+								input.setAttribute("style", "display:table-cell; width:100%");
+								if (params[paramNum]["name"] !== "color") {
+									input.setAttribute("placeholder", placeholderString);
+									input.oninput = ((event) => {
+										console.log("asd");
+										var disabled = false;
+										for (var i = 1; i <= params.length && !disabled; i++) {
+											if ($('#param' + i).is("input") && !isValid($('#param' + i)))
+												disabled = true;
+										}
+										$('#addActionBtn').prop("disabled", disabled);
+									});
+								}
+								$('#getParamsForm').append(
+									"<div class=\"form-group row\">" +
+									"<div class=\"col-md-4\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" +
+									"<div class=\"col-md-8\" id=\"param" + i + "container\">" +
+									"</div>" +
+									"</div>");
+								$('#param' + i + 'container').append(input);
 							}
-							$('#getParamsForm').attr('params',i);
-							
-							if(params != null && params.length > 0)
-								$('#getParamsModal').modal('show');
-							else
-								$('#addActionBtn').click();
-						}).catch(error => {
-							alert("Request failed: " + error);
-						});
-				}).catch(error => {
-					alert("Request failed: " + error);
-				});
+						}
+						$('#getParamsForm').attr('params', i);
+
+						if (params != null && params.length > 0)
+							$('#getParamsModal').modal('show');
+						else
+							$('#addActionBtn').click();
+					}).catch(error => {
+						alert("Request failed: " + error);
+					});
+			}).catch(error => {
+				alert("Request failed: " + error);
+			});
 	}
-	$('#cancelActionBtn').on('click', function(event) {
+	$('#cancelActionBtn').on('click', function (event) {
 		resetActionModal();
 		$('#newActionModal').modal('hide');
 	});

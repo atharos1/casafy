@@ -52,7 +52,7 @@
               <a href="index.html" class="btn black-text btn-md align-middle" id="goBackButton"><i class="fa fa-arrow-left"
                   aria-hidden="true"></i></i>
                 Volver al menú</a>
-              <i id="isFavorite" class="align-middle" aria-hidden="true" onclick="changeStateOfFavourite()"></i>
+              <i id="isFavorite" class="align-middle fa fa-2x" aria-hidden="true" onclick="changeStateOfFavourite()"></i>
               <h4 id="roomName" class="d-inline card-title align-middle"><a>NOMBRE-HABITACIÓN</a></h4>
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right;">
                 <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i class="fa fa-pencil-square-o"
@@ -134,7 +134,7 @@
   <!-- MDB core JavaScript -->
   <script type="text/javascript" src="js/mdb.min.js"></script>
 
-  <script type="text/javascript" src="js/apiManager.js"></script>
+  <script type="text/javascript" src="js/apiManager2.js"></script>
 
   <script type="text/javascript" src="js/qSort.js"></script>
 
@@ -217,12 +217,16 @@
           var room = data["room"];
           $("#roomName").text(room["name"]);
           var meta = JSON.parse(room["meta"]);
-          document.getElementById("isFavorite").classList.add("fa", "fa-2x");
-          if (meta["isFavorite"] == "true") {
-            document.getElementById("isFavorite").classList.add("fa-star", "amber-text");
+
+          if (meta["isFavorite"] == true) {
+            $("#isFavorite").removeClass("fa-star-o");
+            $("#isFavorite").addClass("fa-star amber-text");
+            //document.getElementById("isFavorite").classList.add("fa-star", "amber-text");
             roomIsFavorite = true;
           } else {
-            document.getElementById("isFavorite").classList.add("fa-star-o");
+            $("#isFavorite").removeClass("fa-star amber-text");
+            $("#isFavorite").addClass("fa-star-o");
+            //document.getElementById("isFavorite").classList.add("fa-star-o");
             roomIsFavorite = false;
           }
 
@@ -317,11 +321,10 @@
     });
     function eliminateRoom(roomID) {
       // alert(roomID);
-      api.rooms.getDevices(roomID)
+      api.rooms.getDevices(roomID, false)
         .then((data) => {
           data["devices"].forEach(device => {
-            api.devices.delete(device["id"])
-              .then(() => { })
+            api.devices.delete(device["id"], false)
               .catch(error => {
                 alert("Failure to delete device: " + error);
               });
@@ -330,7 +333,7 @@
         }).catch((error) => {
           alert('Failure to get devices list: ' + error);
         });
-      api.rooms.delete(roomID).then(() => { window.location.href = "index.html#"; completedPromises++; }).catch(error => alert("Request failed: " + error));
+      api.rooms.delete(roomID).then(() => { window.location.href = "index.html"; completedPromises++; }).catch(error => alert("Request failed: " + error));
     };
 
     function changeStateOfFavourite() {
@@ -347,24 +350,24 @@
         roomIsFavorite = true;
       }
       api.rooms
-          .get(roomID)
-          .then(data => {
-            var room = data["room"];
-            var meta = JSON.parse(room["meta"]);
+        .get(roomID)
+        .then(data => {
+          var room = data["room"];
+          var meta = JSON.parse(room["meta"]);
 
-            meta["isFavorite"] = !meta["isFavorite"];
-            room["meta"] = JSON.stringify(meta);
+          meta["isFavorite"] = !meta["isFavorite"];
+          room["meta"] = JSON.stringify(meta);
 
-            api.rooms
-              .modify(room)
-              .then(data => {})
-              .catch(error => {
-                alert("Request failed: " + error);
-              });
-          })
-          .catch(error => {
-            alert("Request failed: " + error);
-          });
+          api.rooms
+            .modify(room)
+            .then(data => { })
+            .catch(error => {
+              alert("Request failed: " + error);
+            });
+        })
+        .catch(error => {
+          alert("Request failed: " + error);
+        });
 
     }
 

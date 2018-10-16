@@ -1,5 +1,5 @@
 <div class="modal fade" id="newRoutineModal" tabindex="-1" role="dialog" aria-labelledby="createRoutineTitle"
- aria-hidden="true" data-backdrop="false">
+ aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -14,7 +14,8 @@
 						<div class="col-md-3">*Nombre:
 						</div>
 						<div class="col-md-9">
-							<input id="routineName" style="display:table-cell; width:100%" type="text" maxlength="25" placeholder="Nombre de la rutina" oninput="updateCreateButton()">
+							<input id="routineName" style="display:table-cell; width:100%" type="text" maxlength="25" placeholder="Nombre de la rutina"
+							 oninput="updateCreateButton()">
 						</div>
 					</div>
 					<div class="row">
@@ -50,18 +51,18 @@
 	var actionInfo = [];
 	var editRoutineId = "";
 	//Setea el modal para actualizar una rutina especificada en vez de crear una nueva.
-	function editRoutine(value){
+	function editRoutine(value) {
 		editRoutineId = value;
 	}
-	function resetRoutineModal(){
+	function resetRoutineModal() {
 		actionInfo = [];
 		editRoutineId = "";
 		$('#actionAccordion').empty();
 		$('#routineName').val("");
 	}
 	function updateCreateButton() {
-		if($('#routineName').val().length >= 3 && $('#routineName').val().length < $('#routineName').attr("maxlength") &&
-				$('#actionAccordion').children().length > 0)
+		if ($('#routineName').val().length >= 3 && $('#routineName').val().length < $('#routineName').attr("maxlength") &&
+			$('#actionAccordion').children().length > 0)
 			$("#saveRoutineBtn").prop('disabled', false);
 		else
 			$("#saveRoutineBtn").prop('disabled', true);
@@ -179,8 +180,8 @@
 			actions: actions,
 			meta: "{}"
 		}
-		if(editRoutineId !== ""){
-			api.routines.update(editRoutineId,newRoutine)
+		if (editRoutineId !== "") {
+			api.routines.update(editRoutineId, newRoutine)
 				.then(data => {
 					$('#showSuccessModal').modal('show');
 					resetRoutineModal();
@@ -201,6 +202,6 @@
 					alert("Request failed: " + error);
 				});
 		}
-		
+
 	});
 </script>
