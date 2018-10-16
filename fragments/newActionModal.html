@@ -4,7 +4,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="newActionTitle">Añadir Acción</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" onClick="resetActionModal()" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -113,6 +113,11 @@
 		"heat": "Calor",
 		"fan": "Ventilador"
 	}
+	function resetActionModal(){
+		chosenRoomId = "";
+		chosenDeviceId = "";
+		$('#addActionBtn').prop("disabled",true);
+	}
 	function updateDropdown(chosenElem,paramNum){
 		$('#param'+paramNum).attr('chosen',$(chosenElem).attr('id'));
 		$('#param'+paramNum).text($(chosenElem).text());
@@ -154,33 +159,55 @@
 	$('#addActionBtn').on('click',function(event) {
 		var actionName = $('#getParamsForm').attr("actionName");
 		var paramNum = $('#getParamsForm').attr("params");
-		var params = [];
-		var valid = true;
-		var alert = "";
+		var paramValues = [];
 		for(var i=1; i <= paramNum; i++) {
 			var value;
 			if(!$('#param'+i).is("input"))
 				value = $('#param'+i).attr("chosen");
 			else
 				value = $('#param'+i).val();
-			
-			params.push({
-				name: paramsTranslation[$('#param'+i).attr("name")],
-				value: value
-			});
+			paramValues.push(value);
 		}
 		$('#addActionBtn').prop("disabled",true);
 		$('#getParamsModal').modal('hide');
 		$('#newActionModal').modal('hide');
-		var action = {
-			actionName: actionName,
-			deviceId: chosenDeviceId,
-			params: params,
-			meta: {}
-		}
+		createAction(actionName,chosenDeviceId,paramValues);
 		//Funcion en newRoutineModal.html
-		addAction(action);
 	});
+	function createAction(actionName,deviceId,paramValues){
+		var params = [];
+		api.devices.get(deviceId)
+			.then(data => {
+				var typeId = data["device"]["typeId"];
+				api.fetch(api.baseUrl + "devicetypes/" + typeId)
+					.then(data => {
+						var actions = data["device"]["actions"];
+						for(var i=0; i < data["device"]["actions"].length; i++){
+							var action = data["device"]["actions"][i];
+							if(action["name"] === actionName){
+								for(var j=0; j < action["params"].length; j++){
+									params.push({
+										name: paramsTranslation[action["params"][j]["name"]],
+										value: paramValues[j]
+									});
+								}
+								break;
+							}
+						}
+						var action = {
+							actionName: actionName,
+							deviceId: deviceId,
+							params: params,
+							meta: {}
+						};
+						addAction(action);
+					}).catch(error => {
+						alert("Request failed: " + error);
+					});
+			}).catch(error => {
+				alert("Request failed" + error);
+			});
+	}
 	function chooseAction(actionElem) {
 		var actionName = $(actionElem).attr("actionName");
 		$('#getParamsForm').empty();
@@ -341,7 +368,7 @@
 				});
 	}
 	$('#cancelActionBtn').on('click', function(event) {
-		$('#addActionBtn').prop("disabled",true);
-		$('#newActionModal').modal('hide')
+		resetActionModal();
+		$('#newActionModal').modal('hide');
 	});
 </script>

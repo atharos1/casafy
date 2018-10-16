@@ -51,6 +51,9 @@
                 <a class="btn btn-sm btn-exec-routine" href="#" role="button">
                   <i class="fa fa-play" aria-hidden="true"></i>
                 </a>
+                <a class="btn btn-sm btn-edit-routine" href="#" role="button">
+                  <i class="fa fa-edit" aria-hidden="true"></i>
+                </a>
               </td>
             </tr>`
   }
@@ -104,7 +107,22 @@
         alert("Request failed: " + error);
       });
   });
-
+  $("#routineTable").on('click', '.btn-edit-routine', function(event) {
+    var id = $(event.target).closest(".routineRow").data("id");
+	api.routines.get(id)
+		.then(data => {
+			resetRoutineModal();
+			var name = data["routine"]["name"];
+			$('#routineName').val(name);
+			var actions = data["routine"]["actions"];
+			for(var i=0; i < actions.length; i++)
+				createAction(actions[i]["actionName"],actions[i]["deviceId"],actions[i]["params"]);
+			$('#newRoutineModal').modal('show');
+			editRoutine(id);
+		}).catch(error => {
+			alert("Request failed: " + error);
+		});
+  });
   $(document).ready(function() {
     $("#divNewRoutineModal").load("fragments/newRoutineModal.html");
     $("#divNewActionModal").load("fragments/newActionModal.html");
