@@ -168,98 +168,51 @@
   }
 
   var body = new Array(1);
-  var acUpdateIndex = -1;
-
-  $('#updateACBtn').on('click', function(event) {
-    acUpdateIndex = -1;
-    acUpdate();
-  });
-
   var acUpdateFunctions = [acUpdateStatus, acUpdateTemperature, acUpdateMode, acUpdateFanSpeed, acUpdateHorizontalSwing, acUpdateVerticalSwing];
 
-  function acUpdate() {
-    acUpdateIndex++;
-    if (acUpdateIndex < acUpdateFunctions.length) {
-      acUpdateFunctions[acUpdateIndex]();
+  $('#updateACBtn').on('click', function(event) {
+    for (updateFunction of acUpdateFunctions) {
+      try {
+        await updateFunction();
+      } catch (e) {
+        alert("Error");
+      }
     }
-  }
+  });
 
-  function acUpdateStatus() {
+  async function acUpdateStatus() {
     if (document.getElementById("acStatusSwitch").checked == true) {
-      api.actions.put(deviceId, "turnOn")
-        .then((data) => {
-          acUpdate();
-        })
-        .catch(error => {
-          alert("Request failed: " + error);
-        });
-    } else {
-      api.actions.put(deviceId, "turnOff")
-        .then((data) => {
-          acUpdate();
-        })
-        .catch(error => {
-          alert("Request failed: " + error);
-        });
-    }
+      return api.actions.put(deviceId, "turnOn", false);
+    else
+      return api.actions.put(deviceId, "turnOff", false);
   }
 
-  function acUpdateTemperature() {
+  async function acUpdateTemperature() {
     body[0] = document.getElementById('acTemperatureSlider').value;
-    api.actions.put(deviceId, "setTemperature", body)
-      .then((data) => {
-        acUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
+    return api.actions.put(deviceId, "setTemperature", body, false);
   }
 
-  function acUpdateMode() {
+  async function acUpdateMode() {
     for (var key in acModeTranslation) {
       if (acModeTranslation[key] == document.getElementById('dropdownACModeBtn').innerText.toLowerCase()) {
         body[0] = key;
       }
     }
-    api.actions.put(deviceId, "setMode", body)
-      .then((data) => {
-        acUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
+    return api.actions.put(deviceId, "setMode", body, false);
   }
 
-  function acUpdateFanSpeed() {
+  async function acUpdateFanSpeed() {
     body[0] = document.getElementById('dropdownFanSpeedBtn').innerText;
-    api.actions.put(deviceId, "setFanSpeed", body)
-      .then((data) => {
-        acUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
+    return api.actions.put(deviceId, "setFanSpeed", body, false);
   }
 
-  function acUpdateHorizontalSwing() {
+  async function acUpdateHorizontalSwing() {
     body[0] = document.getElementById('dropdownACHorizontalSwingBtn').innerText;
-    api.actions.put(deviceId, "setHorizontalSwing", body)
-      .then((data) => {
-        acUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
+    return api.actions.put(deviceId, "setHorizontalSwing", body, false);
   }
 
-  function acUpdateVerticalSwing() {
+  async function acUpdateVerticalSwing() {
     body[0] = document.getElementById('dropdownACVerticalSwingBtn').innerText;
-    api.actions.put(deviceId, "setVerticalSwing", body)
-      .then((data) => {
-        acUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
+    return api.actions.put(deviceId, "setVerticalSwing", body, false);
   }
 </script>
