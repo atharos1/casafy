@@ -170,7 +170,7 @@
   var body = new Array(1);
   var acUpdateFunctions = [acUpdateStatus, acUpdateTemperature, acUpdateMode, acUpdateFanSpeed, acUpdateHorizontalSwing, acUpdateVerticalSwing];
 
-  $('#updateACBtn').on('click', function(event) {
+  $('#updateACBtn').on('click', async function(event) {
     for (updateFunction of acUpdateFunctions) {
       try {
         await updateFunction();

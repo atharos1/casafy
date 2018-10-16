@@ -1,6 +1,3 @@
-<div id="divNewRoutineModal"></div>
-<div id="divNewActionModal"></div>
-
 <div id="routinesCard" class="card mask rgba-white-strong" style="height:85vh">
   <div class="pb-0" style="padding: 1.25rem">
     <h4 class="card-title">Rutinas</h4>
@@ -64,6 +61,10 @@
   </div>
 </div>
 <script>
+  $('body').prepend("<div id='divNewActionModal'></div>");
+  $('body').prepend("<div id='divNewRoutineModal'></div>");
+
+
   function renderRoutine(id, nombre) {
     return `<tr class="routineRow" data-id="${id}">
               <td>${nombre}</td>
