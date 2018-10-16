@@ -182,7 +182,7 @@
 		if(editRoutineId !== ""){
 			api.routines.update(editRoutineId,newRoutine)
 				.then(data => {
-					alert("Rutina editada satisfactoriamente!");
+					$('#showSuccessModal').modal('show');
 					resetRoutineModal();
 					$('#newRoutineModal').modal('hide');
 					populateRoutineTable();
@@ -193,7 +193,7 @@
 		else {
 			api.routines.create(newRoutine)
 				.then(data => {
-					alert("Rutina creada satisfactoriamente!");
+					$('#showSuccessModal').modal('show');
 					resetRoutineModal();
 					$('#newRoutineModal').modal('hide');
 					populateRoutineTable();

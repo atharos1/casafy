@@ -39,7 +39,7 @@
 </div>
 <div id="divNewRoutineModal"></div>
 <div id="divNewActionModal"></div>
-<div id="deleteConfirmationModal"class="modal" tabindex="-1" role="dialog" data-backdrop="false">
+<div id="deleteConfirmationModal"class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -120,7 +120,7 @@
     api.routines
       .execute(id)
       .then(data => {
-        alert("Rutina ejecutada exitosamente");
+		$('#showSuccessModal').modal('show');
       })
       .catch(error => {
         alert("Request failed: " + error);
