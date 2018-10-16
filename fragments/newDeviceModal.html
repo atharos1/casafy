@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="createDeviceTitle">Crear dispositivo</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="clearNewDeviceModal()">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -15,8 +15,7 @@
 							<div class="dropdown" id="deviceTypeBtn">
 								<button class="btn btn-secondary dropdown-toggle" type="button"
 									id="dropdownDeviceBtn" data-toggle="dropdown" aria-haspopup="true"
-									aria-expanded="false">
-									Seleccionar...
+									aria-expanded="false">Seleccionar...
 								</button>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
 									id="deviceOptions">
@@ -27,7 +26,7 @@
 					<div class="form-group row" style="padding-bottom: 10px">
 						<div class="col-md-3">*Nombre:</div>
 						<div class="col-md-2">
-							<input id="deviceName" type="text" name="devicename" size=25 maxlength=25><br>
+							<input id="deviceName" type="text" name="devicename" size=25 maxlength=25 oninput="checkInputs()"><br>
 						</div>
 					</div>
 					<div class="form-group row" style="padding-bottom: 10px">
@@ -46,21 +45,35 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-primary" id="createDeviceBtn">Crear</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="clearNewDeviceModal()">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="createDeviceBtn" disabled>Crear</button>
 			</div>
 		</div>
 	</div>
 </div>
 
 <script>
-	$('#newDeviceModal').on('show.bs.modal', function (event) {
+	
+	function checkInputs() {
+		if($('#deviceName').val().length > 0 && $('#deviceName').val().length < $('#deviceName').attr("maxlength") &&
+			$('#dropdownDeviceBtn').attr("chosen") === "true")
+			$('#createDeviceBtn').prop("disabled",false);
+		else
+			$('#createDeviceBtn').prop("disabled",true);
+	
+	}
+	function selectType(typeElem){
+		$('#dropdownDeviceBtn').text(typeElem.innerText);
+		$('#dropdownDeviceBtn').attr("chosen","true");
+		checkInputs();
+	}
+	$('#newDeviceModal').on('shown.bs.modal', function (event) {
 			if ($('#deviceOptions').children().length == 0) {
 				api.get(api.baseUrl + "devicetypes")
 					.then(data => {
 						var deviceTypes = data["devices"];
 						for (typeNum in deviceTypes) {
-							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownDeviceBtn.innerText = this.innerText;\" id=\"" +
+							$('#deviceOptions').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"selectType(this)\" id=\"" +
 								deviceTypes[typeNum]["id"] + "\">" + deviceNameTranslation[deviceTypes[typeNum]["name"].toLowerCase()] + "</button>");
 						}
 					})
@@ -69,7 +82,6 @@
 					});
 			}
 	});
-
 	$('#createDeviceBtn').on('click', function(event) {
 		var type = document.getElementById('dropdownDeviceBtn').innerText.toLowerCase();
 		var typeId = "";
@@ -116,6 +128,8 @@
 		document.getElementById("dropdownDeviceBtn").innerText = "Seleccionar...";
 		document.getElementById("favouriteDevice").checked = false;
 		document.getElementById("deviceDescription").value = "";
+		$('#createDeviceBtn').prop("disabled",true);
+		$('#dropdownDeviceBtn').attr("chosen",false);
 	}
 
 	var deviceNameTranslation = {
