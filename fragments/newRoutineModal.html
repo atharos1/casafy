@@ -180,10 +180,11 @@
 			actions: actions,
 			meta: "{}"
 		}
+
 		if (editRoutineId !== "") {
 			api.routines.update(editRoutineId, newRoutine)
 				.then(data => {
-					$('#showSuccessModal').modal('show');
+					showSuccessMessage();
 					resetRoutineModal();
 					$('#newRoutineModal').modal('hide');
 					populateRoutineTable();
@@ -194,7 +195,7 @@
 		else {
 			api.routines.create(newRoutine)
 				.then(data => {
-					$('#showSuccessModal').modal('show');
+					showSuccessMessage();
 					resetRoutineModal();
 					$('#newRoutineModal').modal('hide');
 					populateRoutineTable();
@@ -202,6 +203,13 @@
 					alert("Request failed: " + error);
 				});
 		}
-
 	});
+
+	function showSuccessMessage() {
+		Snackbar.show({
+          text: "¡La operación se ha realizado con éxito!",
+          actionText: 'Ocultar',
+          pos: 'top-center'
+        });
+	}
 </script>

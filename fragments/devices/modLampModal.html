@@ -86,65 +86,36 @@
   });
 
   function updateLampBrightness() {
-    document.getElementById('lampBrightness').innerText = document.getElementById('lampBrightnessSlider').value;
+    document.getElementById('lampBrightness').innerText = document.getElementById('lampBrightnessSlider').value + "%";
   }
 
   var body = new Array(1);
-  var lampUpdateIndex = -1;
-
-  $('#updateLampBtn').on('click', function(event) {
-    lampUpdateIndex = -1;
-    lampUpdate();
-  });
-
   var lampUpdateFunctions = [lampUpdateStatus, lampUpdateColor, lampUpdateBrightness];
 
-  function lampUpdate() {
-    lampUpdateIndex++;
-    if (lampUpdateIndex < lampUpdateFunctions.length) {
-      lampUpdateFunctions[lampUpdateIndex]();
+  $('#updateLampBtn').on('click', async function(event) {
+    for (updateFunction of lampUpdateFunctions) {
+      try {
+        await updateFunction();
+      } catch (e) {
+        alert("Error");
+      }
     }
+  });
+
+  async function lampUpdateStatus() {
+    if (document.getElementById("lampStatusSwitch").checked == true)
+      return api.actions.put(deviceId, "turnOn", false);
+    else
+      return api.actions.put(deviceId, "turnOff", false);
   }
 
-  function lampUpdateStatus() {
-    if (document.getElementById("lampStatusSwitch").checked == true) {
-      api.actions.put(deviceId, "turnOn")
-        .then((data) => {
-          lampUpdate();
-        })
-        .catch(error => {
-          alert("Request failed: " + error);
-        });
-    } else {
-      api.actions.put(deviceId, "turnOff")
-        .then((data) => {
-          lampUpdate();
-        })
-        .catch(error => {
-          alert("Request failed: " + error);
-        });
-    }
-  }
-
-  function lampUpdateColor() {
+  async function lampUpdateColor() {
     body[0] = document.getElementById('lampColorPicker').value.substring(1, 7);
-    api.actions.put(deviceId, "setColor", body)
-      .then((data) => {
-        lampUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
+    return api.actions.put(deviceId, "setColor", body, false);
   }
 
-  function lampUpdateBrightness() {
+  async function lampUpdateBrightness() {
     body[0] = document.getElementById('lampBrightnessSlider').value;
-    api.actions.put(deviceId, "setBrightness", body)
-      .then((data) => {
-        lampUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
+    return api.actions.put(deviceId, "setBrightness", body, false);
   }
 </script>

@@ -62,59 +62,29 @@
       });
   });
 
-  var doorUpdateIndex = -1;
-
-  $('#updateDoorBtn').on('click', function(event) {
-    doorUpdateIndex = -1;
-    doorUpdate();
-  });
-
   var doorUpdateFunctions = [doorUpdateStatus, doorUpdateLock];
 
-  function doorUpdate() {
-    doorUpdateIndex++;
-    if (doorUpdateIndex < doorUpdateFunctions.length) {
-      doorUpdateFunctions[doorUpdateIndex]();
+  $('#updateDoorBtn').on('click', async function(event) {
+    for (updateFunction of doorUpdateFunctions) {
+      try {
+        await updateFunction();
+      } catch (e) {
+        alert("Error");
+      }
     }
+  });
+
+  async function doorUpdateStatus() {
+    if (document.getElementById("doorStatusSwitch").checked == true)
+      return api.actions.put(deviceId, "open", false);
+    else
+      return api.actions.put(deviceId, "close", false);
   }
 
-  function doorUpdateStatus() {
-    if (document.getElementById("doorStatusSwitch").checked == true) {
-      api.actions.put(deviceId, "open")
-        .then((data) => {
-          doorUpdate();
-        })
-        .catch(error => {
-          alert("Request failed: " + error);
-        });
-    } else {
-      api.actions.put(deviceId, "close")
-        .then((data) => {
-          doorUpdate();
-        })
-        .catch(error => {
-          alert("Request failed: " + error);
-        });
-    }
-  }
-
-  function doorUpdateLock() {
-    if (document.getElementById("doorLockSwitch").checked == true) {
-      api.actions.put(deviceId, "unlock")
-        .then((data) => {
-          doorUpdate();
-        })
-        .catch(error => {
-          alert("Request failed: " + error);
-        });
-    } else {
-      api.actions.put(deviceId, "lock")
-        .then((data) => {
-          doorUpdate();
-        })
-        .catch(error => {
-          alert("Request failed: " + error);
-        });
-    }
+  async function doorUpdateLock() {
+    if (document.getElementById("doorLockSwitch").checked == true)
+      return api.actions.put(deviceId, "unlock", false);
+    else
+      return api.actions.put(deviceId, "lock", false);
   }
 </script>

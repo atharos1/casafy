@@ -18,6 +18,8 @@
   <link rel="stylesheet" type="text/css" href="css/datatables.min.css" />
 
   <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="css/snackbar.min.css"/>
 </head>
 
 <body>
@@ -140,6 +142,8 @@
 
   <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
+  <script src="js/snackbar.min.js"></script>
+
   <script>
 
     var deviceId = "";
@@ -193,10 +197,10 @@
 
           qSort(data["devices"], compareElements);
 
-          data["devices"].forEach(device => {
+          for (device of data["devices"]) {
             var meta = JSON.parse(device["meta"]);
             $(devicesDiv).append(renderDeviceCard(device["id"], device["typeId"], meta["isFavorite"], device["name"], meta["image"]));
-          });
+          }
 
           if (isElementEmpty($(devicesDiv))) {
             $("#roomsEmptyDiv").show();

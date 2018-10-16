@@ -181,7 +181,7 @@
   });
 
   async function acUpdateStatus() {
-    if (document.getElementById("acStatusSwitch").checked == true) {
+    if (document.getElementById("acStatusSwitch").checked == true)
       return api.actions.put(deviceId, "turnOn", false);
     else
       return api.actions.put(deviceId, "turnOff", false);
@@ -194,9 +194,8 @@
 
   async function acUpdateMode() {
     for (var key in acModeTranslation) {
-      if (acModeTranslation[key] == document.getElementById('dropdownACModeBtn').innerText.toLowerCase()) {
+      if (acModeTranslation[key] == document.getElementById('dropdownACModeBtn').innerText.toLowerCase())
         body[0] = key;
-      }
     }
     return api.actions.put(deviceId, "setMode", body, false);
   }

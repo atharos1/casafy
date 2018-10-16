@@ -112,56 +112,33 @@
   }
 
   var body = new Array(1);
-  var refrigeratorUpdateIndex = -1;
-
-  $('#updateRefrigeratorBtn').on('click', function(event) {
-    refrigeratorUpdateIndex = -1;
-    refrigeratorUpdate();
-  });
-
   var refrigeratorUpdateFunctions = [refrigeratorUpdateTemperature, refrigeratorUpdateFreezerTemperature, refrigeratorUpdateMode];
 
-  function refrigeratorUpdate() {
-    refrigeratorUpdateIndex++;
-    if (refrigeratorUpdateIndex < refrigeratorUpdateFunctions.length) {
-      refrigeratorUpdateFunctions[refrigeratorUpdateIndex]();
-    }
-  }
-
-  function refrigeratorUpdateTemperature() {
-    body[0] = document.getElementById('refrigeratorTempSlider').value;
-    api.actions.put(deviceId, "setTemperature", body)
-      .then((data) => {
-        refrigeratorUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
-  }
-
-  function refrigeratorUpdateFreezerTemperature() {
-    body[0] = document.getElementById('freezerTempSlider').value;
-    api.actions.put(deviceId, "setFreezerTemperature", body)
-      .then((data) => {
-        refrigeratorUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
-  }
-
-  function refrigeratorUpdateMode() {
-    for (var key in regrigeratorModeTranslation) {
-      if (regrigeratorModeTranslation[key] == document.getElementById('dropdownRefrigeratorModeBtn').innerText.toLowerCase()) {
-        body[0] = key;
+  $('#updateRefrigeratorBtn').on('click', async function(event) {
+    for (updateFunction of refrigeratorUpdateFunctions) {
+      try {
+        await updateFunction();
+      } catch (e) {
+        alert("Error");
       }
     }
-    api.actions.put(deviceId, "setMode", body)
-      .then((data) => {
-        refrigeratorUpdate();
-      })
-      .catch(error => {
-        alert("Request failed: " + error);
-      });
+  });
+
+  async function refrigeratorUpdateTemperature() {
+    body[0] = document.getElementById('refrigeratorTempSlider').value;
+    return api.actions.put(deviceId, "setTemperature", body, false);
+  }
+
+  async function refrigeratorUpdateFreezerTemperature() {
+    body[0] = document.getElementById('freezerTempSlider').value;
+    return api.actions.put(deviceId, "setFreezerTemperature", body, false);
+  }
+
+  async function refrigeratorUpdateMode() {
+    for (var key in regrigeratorModeTranslation) {
+      if (regrigeratorModeTranslation[key] == document.getElementById('dropdownRefrigeratorModeBtn').innerText.toLowerCase())
+        body[0] = key;
+    }
+    return api.actions.put(deviceId, "setMode", body, false);
   }
 </script>
