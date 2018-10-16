@@ -140,7 +140,6 @@
 	$('#getParamsModal').on('shown.bs.modal', function () {
 		var disabled = false;
 		var i = 0;
-		console.log("asd");
 		while ($('#param' + ++i).length > 0 && !disabled) {
 			//Apenas carga no puede estar ya estar elegida la opción del botón.
 			if (!$('#param' + i).is("input"))
@@ -324,11 +323,12 @@
 									}
 									continue;
 								}
-								var placeholderString = "Valor max: " + params[paramNum]["maxValue"] + " | Valor min: " + params[paramNum]["minValue"];
 								var input = document.createElement('input');
 								input.id = "param" + i;
-								if (params[paramNum]["type"] === "integer" || params[paramNum]["type"] === "number")
-									input.setAttribute("type", "number");
+								if (params[paramNum]["type"] === "integer" || params[paramNum]["type"] === "number"){
+									input.setAttribute("type", "range");
+									input.setAttribute("class","custom-range");
+								}
 								else if (params[paramNum]["name"] === "color") {
 									input.setAttribute("type", "color");
 									input.setAttribute("value", "#ffffff");
@@ -339,24 +339,31 @@
 								input.setAttribute("min", params[paramNum]["minValue"]);
 								input.setAttribute("name", params[paramNum]["name"]);
 								input.setAttribute("style", "display:table-cell; width:100%");
-								if (params[paramNum]["name"] !== "color") {
-									input.setAttribute("placeholder", placeholderString);
-									input.oninput = ((event) => {
-										console.log("asd");
+								if(input.type === "range"){
+									$('#getParamsForm').append(
+										"<div class=\"form-group row\">" +
+										"<div class=\"col-md-4\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" +
+										"<div class=\"col-md-6\" id=\"param" + i + "container\" style=\"margin-top:8px;\">" + "</div>" +
+										"<div class=\"col-md-2\" id=\"param" + i + "value\">" + input.value + "</div>" +
+										"</div>");
+									input.onchange = ((event) => {
 										var disabled = false;
-										for (var i = 1; i <= params.length && !disabled; i++) {
-											if ($('#param' + i).is("input") && !isValid($('#param' + i)))
+										for (var j = 1; j <= params.length && !disabled; j++) {
+											if ($('#param' + j).is("input") && !isValid($('#param' + j)))
 												disabled = true;
 										}
 										$('#addActionBtn').prop("disabled", disabled);
+										document.getElementById('param' + i + 'value').innerText = input.value;
 									});
 								}
-								$('#getParamsForm').append(
-									"<div class=\"form-group row\">" +
-									"<div class=\"col-md-4\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" +
-									"<div class=\"col-md-8\" id=\"param" + i + "container\">" +
-									"</div>" +
-									"</div>");
+								else{
+									$('#getParamsForm').append(
+										"<div class=\"form-group row\">" +
+										"<div class=\"col-md-4\">" + paramsTranslation[params[paramNum]["name"]] + ":</div>" +
+										"<div class=\"col-md-8\" id=\"param" + i + "container\">" +
+										"</div>" +
+										"</div>");
+								}
 								$('#param' + i + 'container').append(input);
 							}
 						}
