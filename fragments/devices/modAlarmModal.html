@@ -10,29 +10,28 @@
 
       <div class="modal-body">
         <form>
-          <div class="form-group row" style="padding-bottom: 10px">
            <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-6">Modo:</div>
-            <div class="col-md-6">
-              <div class="dropdown" id="arlarmModeBtn" style="display:table-cell; width:100%">
+            <div class="col-md-4">Modo:</div>
+            <div class="col-md-5">
+              <div class="dropdown" id="arlarmModeBtn">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownAlarmModeBtn" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false" style="display:table-cell; width:100%">Cargando...</button>
+                  aria-haspopup="true" aria-expanded="false">Cargando...</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="alarmMode">
-					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" style="display:table-cell; width:100%">Desactivar</button>
-					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" style="display:table-cell; width:100%">Activar dentro</button>
-					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" style="display:table-cell; width:100%">Activar fuera</button>
+					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" >Desactivar</button>
+					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" >Activar dentro</button>
+					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" >Activar fuera</button>
                 </div>
               </div>
             </div>
           </div>
           <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-6">Cambiar código:</div>
-            <div class="col-md-6" >
+            <div class="col-md-4">Cambiar código:</div>
+            <div class="col-md-5" >
               <input type="text" id="newSecurityCode" style="display:table-cell; width:100%;"> 
             </div>
           </div>
         </form>
-      </div>
+	</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#codeRequestModal" id="updateAlarmBtn">Guardar</button>
@@ -118,13 +117,13 @@
 				  document.getElementById('securityCode').placeHolder = placeholderString;
 				  document.getElementById('newSecurityCode').placeholder = placeholderString;
 				  document.getElementById('newSecurityCode').oninput = ((event) => {
-					if($('#newSecurityCode').val().length < maxValue)
+					if($('#newSecurityCode').val() < parseInt(maxValue))
 						$('#updateAlarmBtn').prop("disabled",false);
 					else
 						$('#updateAlarmBtn').prop("disabled",true);
 				  });
 				  document.getElementById('securityCode').oninput = ((event) => {
-					if($('#securityCode').val().length < maxValue && $('#securityCode').val().length > 0)
+					if($('#securityCode').val() < parseInt(maxValue) && $('#securityCode').val().length > 0)
 						$('#saveAlarmChanges').prop("disabled",false);
 					else
 						$('#saveAlarmChanges').prop("disabled",true);
