@@ -41,7 +41,7 @@
 </div>
 
 <script>
-  $('#modDoorModal').on('show.bs.modal', function(event) {
+  $('#modDoorModal').on('show.bs.modal', function (event) {
     api.actions.put(deviceId, "getState")
       .then(data => {
         var result = data["result"];
@@ -64,7 +64,7 @@
 
   var doorUpdateFunctions = [doorUpdateStatus, doorUpdateLock];
 
-  $('#updateDoorBtn').on('click', async function(event) {
+  $('#updateDoorBtn').on('click', async function (event) {
     for (updateFunction of doorUpdateFunctions) {
       try {
         await updateFunction();
@@ -72,6 +72,7 @@
         alert("Error");
       }
     }
+    reloadSearch();
   });
 
   async function doorUpdateStatus() {

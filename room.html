@@ -19,7 +19,9 @@
 
   <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.min.css" />
 
-  <link rel="stylesheet" type="text/css" href="css/snackbar.min.css"/>
+  <link rel="stylesheet" type="text/css" href="css/snackbar.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="css/selectize.default.css" />
 </head>
 
 <body>
@@ -62,7 +64,8 @@
                   Editar ajustes</a>
               </div>
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right; margin-right: 5px">
-                <a href="#" class="btn red-text btn-md" data-toggle="modal" data-target="#deleteRoomConfirmationModal"><i class="mdi mdi-delete"></i></i>
+                <a href="#" class="btn red-text btn-md" data-toggle="modal" data-target="#deleteRoomConfirmationModal"><i
+                    class="mdi mdi-delete"></i></i>
                   Eliminar habitacion</a>
               </div>
             </div>
@@ -99,27 +102,27 @@
           <div id="divRoutines"></div>
         </div>
       </div>
-	  
-		<div id="deleteRoomConfirmationModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
-		  <div class="modal-dialog" role="document">
-			<div class="modal-content">
-			  <div class="modal-header">
-				<h5 class="modal-title">Eliminar habitación</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				  <span aria-hidden="true">&times;</span>
-				</button>
-			  </div>
-			  <div class="modal-body">
-				<p>¿Estas seguro que desea eliminar la habitación?</p>
-				<p style="color: #ff4500;">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>
-			  </div>
-			  <div class="modal-footer">
-				<button type="button" class="btn btn-danger" id="deleteRoomBtn" data-dismiss="modal" onclick="eliminateRoom(roomID)">Eliminar</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-			  </div>
-			</div>
-		  </div>
-		</div>
+
+      <div id="deleteRoomConfirmationModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Eliminar habitación</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>¿Estas seguro que desea eliminar la habitación?</p>
+              <p style="color: #ff4500;">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" id="deleteRoomBtn" data-dismiss="modal" onclick="eliminateRoom(roomID)">Eliminar</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="divFooter"></div>
@@ -143,6 +146,8 @@
   <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
   <script src="js/snackbar.min.js"></script>
+
+  <script type="text/javascript" src="js/selectize.min.js"></script>
 
   <script>
 
@@ -260,7 +265,7 @@
       populateDevicesList(roomID);
 
       $("#divNavbar").load("fragments/navbar.html", function () {
-        //Acciones
+        initializeSearch();
       });
 
       $("#divFooter").load("fragments/footer.html");

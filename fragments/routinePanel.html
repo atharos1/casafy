@@ -26,13 +26,13 @@
   </div>
 
   <div class="btn-float-control">
-    <a href="#" data-toggle="modal" data-target="#newRoutineModal" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
+    <a href="#" onclick="editRoutine()" class="btn-float-main mask rgba-red-strong flex-center white-text z-depth-2"
       id="menu-share">
       <i class="fa fa-plus" aria-hidden="true"></i>
     </a>
     <ul>
       <li>
-        <a class="btn mask rgba-black-strong" data-toggle="modal" data-target="#newRoutineModal" href="#" role="button">Agregar
+        <a class="btn mask rgba-black-strong" onclick="editRoutine()" href="#" role="button">Agregar
           nueva
           rutina</a>
       </li>
@@ -43,21 +43,21 @@
 <div id="divNewActionModal"></div>
 <div id="deleteRoutineConfirmationModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
   <div class="modal-dialog" role="document">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<h5 class="modal-title">Eliminar rutina</h5>
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		  <span aria-hidden="true">&times;</span>
-		</button>
-	  </div>
-	  <div class="modal-body">
-		<p>¿Esta seguro que desea eliminar la rutina?</p>
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn btn-danger" id="deleteRoutineBtn" data-dismiss="modal">Eliminar</button>
-		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-	  </div>
-	</div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Eliminar rutina</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>¿Esta seguro que desea eliminar la rutina?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="deleteRoutineBtn" data-dismiss="modal">Eliminar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
   </div>
 </div>
 <script>
@@ -106,22 +106,22 @@
       })
   }
 
-  $('#deleteRoutineBtn').on('click',function(event) {
-	var id = $('#deleteRoutineConfirmationModal').attr("routineId");
-	api.routines
-	.delete(id)
-	.then(data => {
-		populateRoutineTable();
-	})
-	.catch(error => {
-		alert("Request failed: " + error);
-	});
+  $('#deleteRoutineBtn').on('click', function (event) {
+    var id = $('#deleteRoutineConfirmationModal').attr("routineId");
+    api.routines
+      .delete(id)
+      .then(data => {
+        populateRoutineTable();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
   });
-  $("#routineTable").on('click', '.btn-delete-routine', function(event) {
+  $("#routineTable").on('click', '.btn-delete-routine', function (event) {
     var id = $(event.target).closest(".routineRow").data("id");
-    $('#deleteRoutineConfirmationModal').attr("routineId",id);
+    $('#deleteRoutineConfirmationModal').attr("routineId", id);
   });
-  $("#routineTable").on('click', '.btn-exec-routine', function(event) {
+  $("#routineTable").on('click', '.btn-exec-routine', function (event) {
     var id = $(event.target).closest(".routineRow").data("id");
     api.routines
       .execute(id)
@@ -138,7 +138,8 @@
   });
   $("#routineTable").on('click', '.btn-edit-routine', function (event) {
     var id = $(event.target).closest(".routineRow").data("id");
-    api.routines.get(id)
+    editRoutine(id);
+    /*api.routines.get(id)
       .then(data => {
         resetRoutineModal();
         var name = data["routine"]["name"];
@@ -150,7 +151,7 @@
         editRoutine(id);
       }).catch(error => {
         alert("Request failed: " + error);
-      });
+      });*/
   });
   $(document).ready(function () {
     $("#divNewRoutineModal").load("fragments/newRoutineModal.html");

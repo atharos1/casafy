@@ -1,11 +1,11 @@
 <nav class="navbar justify-content-between navbar-dark rgba-black-light">
     <a class="navbar-brand font-weight-bold" href="#">Casafy</a>
-    <form class="form-inline">
+    <div class="form-inline">
         <div class="md-form form-md my-0" style="width: 25em;">
             <!--<input class="form-control form-control-xl mr-md-2 mb-2" style="width: 23em;" type="text" placeholder="Buscar dispositivos, habitaciones y rutinas..."
                 aria-label="Search">-->
-            <select class="js-example-templating" style="width: 23em;" name="state">
-                <optgroup label="Habitaciones">
+            <select class="js-example-templating" style="width: 23em;">
+                <!--<optgroup label="Habitaciones">
                     <option value="A" data-img="img/rooms/bedroom.jpg">Dormitorio principal</option>
                     <option value="B" data-img="img/rooms/kitchen.jpg">Cocina</option>
                 </optgroup>
@@ -17,13 +17,129 @@
             
                 <optgroup label="Rutinas">
                     <option value="D">Volver a casa</option>
-                </optgroup>
-            
+                </optgroup>-->
+
             </select>
         </div>
         <button class="btn btn-outline-white btn-sm my-0" type="submit"><i class="fa fa-question-circle" aria-hidden="true"></i>
             Ayuda</button>
-    </form>
+    </div>
 </nav>
 
 <br>
+
+<script>
+
+    var searchBarControl;
+
+    function initializeSearch() {
+        var $buscador = $('.js-example-templating').selectize({
+            optgroups: [
+                { value: 'hab', label: 'Habitaciones' },
+                { value: 'dis', label: 'Dispositivos' },
+                { value: 'rut', label: 'Rutinas' }
+            ],
+            lockOptgroupOrder: true,
+            optgroupField: 'class',
+            labelField: 'name',
+            searchField: ['name', 'hab_name'],
+            render: {
+                option: function (data, escape) {
+                    var $ret;
+                    if (data.class == "hab") {
+                        $ret = '<div class="option">' +
+                            '<span style="font-weight: bold;">' +
+                            '<img height="42" width="42" src="' + data.img + '"/> ' +
+                            escape(data.name) +
+                            '</span>' +
+                            '</div>';
+                    } else if (data.class == "dis") {
+                        $ret = '<div class="option">' + `<div style="display:inline-block;vertical-align:top;">
+                            <img height="42" width="42" src="` + data.img + `" class="img-flag d-inline" />
+                          </div>
+                            <div style="display:inline-block;">
+                              <div><span style="font-weight: bold;">` + data.name + `</span>
+                            </div>
+                            <div>` + data.hab_name + `</div>
+                            </div>`+
+                            '</div>';
+                    } else if (data.class == "rut") {
+                        $ret = '<div class="option">' +
+                            '<span style="font-weight: bold;">' +
+                            '<img height="42" width="42" src="img/routine.jpg"/> ' +
+                            escape(data.name) +
+                            '</span>' +
+                            '</div>';
+                    }
+                    return $ret;
+                }
+            },
+            placeholder: "Buscar habitaciones, dispositivos y rutinas...",
+            onInitialize: function () {
+                //if (!query.length) return callback();
+                var self = this;
+                api.rooms.getAll()
+                    .then((data) => {
+                        for (room of data["rooms"]) {
+                            let meta = JSON.parse(room["meta"]);
+                            self.addOption({
+                                id: room.id,
+                                class: 'hab',
+                                value: "hab_" + room.id,
+                                name: room.name,
+                                img: "img/" + meta.image
+                            });
+
+                            api.rooms.getDevices(room["id"])
+                                .then((data) => {
+                                    for (device of data["devices"]) {
+                                        let meta = JSON.parse(device["meta"]);
+                                        self.addOption({
+                                            id: device.id,
+                                            class: 'dis',
+                                            value: "dis_" + device.id,
+                                            name: device.name,
+                                            hab_name: room.name,
+                                            deviceType: device.typeId,
+                                            img: "img/" + meta.image
+                                        });
+                                    }
+                                });
+
+                        }
+                    });
+
+                api.routines.getAll()
+                    .then((data) => {
+                        for (rutina of data.routines)
+                            self.addOption({
+                                id: rutina.id,
+                                class: 'rut',
+                                value: "rut_" + rutina.id,
+                                name: rutina.name,
+                                img: "img/routine.jpg"
+                            });
+                    });
+            },
+            onChange: function (value) {
+                var obj = $buscador[0].selectize;
+                var option = obj.options[value];
+                if (option.class == "hab") {
+                    window.location.href = "room.html?id=" + option.id;
+                } else if (option.class == "dis") {
+                    showModDeviceModal(option.id, option.deviceType);
+                } else if (option.class == "rut") {
+                    editRoutine(option.id);
+                }
+                obj.setValue(null, true);
+            }
+        });
+
+        searchBarControl = $buscador[0].selectize;
+    }
+
+    function reloadSearch() {
+        searchBarControl.destroy();
+        initializeSearch();
+    }
+</script>

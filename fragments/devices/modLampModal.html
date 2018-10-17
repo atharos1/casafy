@@ -46,7 +46,7 @@
 <script>
   var loadedLampModal = false;
 
-  $('#modLampModal').on('show.bs.modal', function(event) {
+  $('#modLampModal').on('show.bs.modal', function (event) {
     if (!loadedLampModal) {
       api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
         .then(data => {
@@ -92,7 +92,7 @@
   var body = new Array(1);
   var lampUpdateFunctions = [lampUpdateStatus, lampUpdateColor, lampUpdateBrightness];
 
-  $('#updateLampBtn').on('click', async function(event) {
+  $('#updateLampBtn').on('click', async function (event) {
     for (updateFunction of lampUpdateFunctions) {
       try {
         await updateFunction();
@@ -100,6 +100,7 @@
         alert("Error");
       }
     }
+    reloadSearch();
   });
 
   async function lampUpdateStatus() {

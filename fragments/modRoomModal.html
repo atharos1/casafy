@@ -74,6 +74,7 @@
             .then(data => {
                 fillRoomData($('#modRoomModal').data("id"));
                 $('#modRoomModal').modal('hide');
+                reloadSearch();
             })
             .catch(error => {
                 alert("Request failed: " + error);

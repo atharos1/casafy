@@ -40,6 +40,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
+				<button type="button" class="btn btn-success" id="btn-exec-routine">Ejecutar rutina</button>
 				<button type="button" class="btn btn-secondary" id="cancelRoutineBtn">Cancelar</button>
 				<button type="button" class="btn btn-primary" id="saveRoutineBtn" disabled>Guardar</button>
 			</div>
@@ -52,13 +53,51 @@
 	var editRoutineId = "";
 	//Setea el modal para actualizar una rutina especificada en vez de crear una nueva.
 	function editRoutine(value) {
+		resetRoutineModal();
+		$('#btn-exec-routine').show();
+
+		if (!value) {
+			$('#newRoutineModal').modal('show');
+			return;
+		}
+
 		editRoutineId = value;
+
+		api.routines.get(editRoutineId)
+			.then(data => {
+				var name = data["routine"]["name"];
+				$("#createRoutineTitle").text("Modificar rutina " + name.toUpperCase());
+				$('#routineName').val(name);
+				var actions = data["routine"]["actions"];
+				for (var i = 0; i < actions.length; i++)
+					createAction(actions[i]["actionName"], actions[i]["deviceId"], actions[i]["params"]);
+				$('#newRoutineModal').modal('show');
+			}).catch(error => {
+				alert("Request failed: " + error);
+			});
 	}
+	$("#newRoutineModal").on('click', '#btn-exec-routine', function (event) {
+		var id = editRoutineId;
+		api.routines
+			.execute(id)
+			.then(data => {
+				Snackbar.show({
+					text: "Ejecutando rutina " + $(event.target).closest(".routineRow").text().toUpperCase(),
+					actionText: 'Ocultar',
+					pos: 'top-center'
+				});
+			})
+			.catch(error => {
+				alert("Request failed: " + error);
+			});
+	});
 	function resetRoutineModal() {
 		actionInfo = [];
 		editRoutineId = "";
 		$('#actionAccordion').empty();
 		$('#routineName').val("");
+		$("#createRoutineTitle").text("Crear rutina");
+		$('#btn-exec-routine').hide();
 	}
 	function updateCreateButton() {
 		if ($('#routineName').val().length >= 3 && $('#routineName').val().length < $('#routineName').attr("maxlength") &&
@@ -160,6 +199,7 @@
 
 	$('#saveRoutineBtn').on('click', function (event) {
 		var name = $('#routineName').val();
+
 		var actions = [];
 		for (var i = 0; i < actionInfo.length; i++) {
 			var deviceId = actionInfo[i]["deviceId"];
@@ -188,6 +228,7 @@
 					resetRoutineModal();
 					$('#newRoutineModal').modal('hide');
 					populateRoutineTable();
+					reloadSearch();
 				}).catch(error => {
 					alert("Request failed: " + error);
 				});
@@ -199,6 +240,7 @@
 					resetRoutineModal();
 					$('#newRoutineModal').modal('hide');
 					populateRoutineTable();
+					reloadSearch();
 				}).catch(error => {
 					alert("Request failed: " + error);
 				});
@@ -207,9 +249,9 @@
 
 	function showSuccessMessage() {
 		Snackbar.show({
-          text: "¡La operación se ha realizado con éxito!",
-          actionText: 'Ocultar',
-          pos: 'top-center'
-        });
+			text: "¡La operación se ha realizado con éxito!",
+			actionText: 'Ocultar',
+			pos: 'top-center'
+		});
 	}
 </script>
