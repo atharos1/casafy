@@ -371,10 +371,12 @@
     async function checkElimination() {
       let devices = await api.devices.getAll(false);
       let canEliminate = true;
-      for (i = 0; i < devices["devices"].length && canEliminate; i++) {
-        if (await deviceIsInRoutine(devices["devices"][i]["id"])) {
-          console.log("llegue aca dentro");
-          canEliminate = false;
+      if (devices["devices"].length != 0) {
+        for (i = 0; i < devices["devices"].length && canEliminate; i++) {
+          if (await deviceIsInRoutine(devices["devices"][i]["id"])) {
+            console.log("llegue aca dentro");
+            canEliminate = false;
+          }
         }
       }
       // devices["devices"].forEach(await async function(device) {
@@ -471,18 +473,22 @@
       let ret = false;
       let routines = await api.routines.getAll(false);
       routines["routines"].forEach(routine => {
-        if (routine["actions"][0]["deviceId"] == deviceId) {
-          console.log("llegue");
-          ret = true;
-          return;
+        for(i = 0; i < routine["actions"].length; i++) {
+          if(routine["actions"][i]["deviceId"] == deviceId) {
+            console.log("llegue deviceIsInRoutine");
+            ret = true;
+            return;
+          }
         }
       });
       return ret;
     }
 
     async function removeDevice(id) {
+      console.log(id);
       if (await deviceIsInRoutine(id)) {
         $("#alertAboutRoutinesModal").modal("show");
+        return;
       } else {
         api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { alert("Error while trying to delete device: " + error); });
       }
