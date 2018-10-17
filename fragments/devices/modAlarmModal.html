@@ -93,11 +93,11 @@
 		var mode = alarmModeActionName[$('#dropdownAlarmModeBtn').text()];
 		api.actions.put(deviceId,mode,[enteredCode],false)
 			.then(data => {})
-			.catch(error => {showErrorMessage("Request failed: " + error);
+			.catch(error => {showErrorMessage("Request failed: " + error)});
 		if(newSecurityCode !== null)
 			api.actions.put(deviceId,"changeSecurityCode",[enteredCode, newSecurityCode],false)
 				.then(data => {})
-				.catch(error => {showErrorMessage("Request failed: " + error);
+				.catch(error => {showErrorMessage("Request failed: " + error)});
 		$('#codeRequestModal').modal('hide');
 		$('#modAlarmModal').modal('hide');
 		$('#ewSecurityCode').text();
