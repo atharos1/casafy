@@ -332,17 +332,37 @@
       // alert(roomID);
       api.rooms.getDevices(roomID, false)
         .then((data) => {
-          data["devices"].forEach(device => {
-            api.devices.delete(device["id"], false)
-              .catch(error => {
-                alert("Failure to delete device: " + error);
+          let flag = false;
+          //Si no tiene dispositivos puedo borrar directamente
+          if (data["devices"].length == 0) {
+            api.rooms.delete(roomID, false).then(() => { window.location.href = "index.html"; completedPromises++; }).catch(error => alert("Request failed: " + error));
+          } else {
+            //Caso contrario: tiene dispositvos
+            let routinesPromise = api.routines.getAll(false);
+            routinesPromise.then(routines => {
+              //Me fijo por cada dispositivo si existe una rutina que lo contiene
+              data["devices"].forEach(device => {
+                routines["routines"].forEach(routine => {
+                  if (routine["actions"][0]["deviceId"] == device["id"]) {
+                    alert("Please remove all associated devices from routines list");
+                    flag = true;
+                    return;
+                  }
+                });
               });
-            completedPromises++;
-          })
+              //Si al final no existia tal rutina puedo borrar los dispositivos
+              if (!flag) {
+                data["devices"].forEach(device => {
+                  api.devices.delete(device["id"], false);
+                });
+                api.rooms.delete(roomID, false).then(() => { window.location.href = "index.html"; completedPromises++; }).catch(error => alert("Request failed: " + error));
+              }
+            })
+              .catch(error => alert("Failure in getting routines: " + error));
+          }
         }).catch((error) => {
           alert('Failure to get devices list: ' + error);
         });
-      api.rooms.delete(roomID).then(() => { window.location.href = "index.html"; completedPromises++; }).catch(error => alert("Request failed: " + error));
     };
 
     function changeStateOfFavourite() {
