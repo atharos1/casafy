@@ -214,35 +214,36 @@
 			.then(data => {
 				var rooms = data["rooms"];
 				for (roomNum in rooms)
-					itemList.append('<a class="list-group-item list-group-item-action" onClick="showDevices(\'' + rooms[roomNum]["id"] + '\')" data-toggle="list">' + rooms[roomNum]["name"] + '</a>');
+					itemList.append('<a class="list-group-item list-group-item-action" onClick="showDevices(\'' + rooms[roomNum]["name"] + '\',\'' + rooms[roomNum]["id"] + '\')" data-toggle="list">' + rooms[roomNum]["name"] + '</a>');
 
 			}).catch(error => {
 				showErrorMessage("Request failed: " + error);
 			});
 	}
-	function showDevices(roomId) {
+	function showDevices(roomName,roomId) {
 		chosenRoomId = roomId;
 		$('#routineBreadcrumb').empty();
-		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showRooms()">Habitaciones</a>');
-		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\'' + roomId + '\')">Dispositivos</a>');
+		$('#routineBreadcrumb').append('<a href="#" id="roomName" class="breadcrumb-item" onClick="showRooms()">'+ roomName +'</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\'' + roomName + '\',\'' + roomId + '\')">Dispositivos</a>');
 		var itemList = $('#itemList');
 		itemList.empty();
 		api.get(api.rooms.url + roomId + "/devices")
 			.then(data => {
 				var devices = data["devices"];
 				for (deviceNum in devices)
-					itemList.append('<a class="list-group-item list-group-item-action" onClick="showActions(\'' + devices[deviceNum]["id"] + '\')"data-toggle="list">' + devices[deviceNum]["name"] + '</a>');
+					itemList.append('<a class="list-group-item list-group-item-action" onClick="showActions(\'' + devices[deviceNum]["name"] + '\',\'' + devices[deviceNum]["id"] + '\')"data-toggle="list">' + devices[deviceNum]["name"] + '</a>');
 
 			}).catch(error => {
 				showErrorMessage("Request failed: " + error);
 			});
 	}
-	function showActions(deviceId) {
+	function showActions(deviceName,deviceId) {
 		chosenDeviceId = deviceId;
+		var roomName = $('#roomName').text();
 		$('#routineBreadcrumb').empty();
-		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showRooms()">Habitaciones</a>');
-		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\'' + chosenRoomId + '\')">Dispositivos</a>');
-		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showActions(\'' + deviceId + '\')">Acciones</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showRooms()">'+roomName+'</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showDevices(\'' + roomName + '\',\'' + chosenRoomId + '\')">'+deviceName+'</a>');
+		$('#routineBreadcrumb').append('<a href="#" class="breadcrumb-item" onClick="showActions(\'' + deviceName + '\',\'' + deviceId + '\')">Acciones</a>');
 		var typeId;
 		api.devices.get(deviceId)
 			.then(data => {
