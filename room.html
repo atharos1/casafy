@@ -41,6 +41,7 @@
   <div id="divModRoomModal"></div>
   <div id="divModDeviceModal"></div>
   <div id="divShowSuccessModal"></div>
+  <div id="divConnectionErrorModal"></div>
 
   <div id="background" class="bg">
 
@@ -310,6 +311,7 @@
       $("#divNewDeviceModal").load("fragments/newDeviceModal.html");
       $("#divModDeviceModal").load("fragments/devices/modDeviceModal.html");
       $("#divShowSuccessModal").load("fragments/showSuccessModal.html");
+      $("#divConnectionErrorModal").load("fragments/connectionErrorModal.html");
 
       awaitingPromises++;
       $("#divRoutines").load("fragments/routinePanel.html", function () {

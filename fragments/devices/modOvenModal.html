@@ -9,64 +9,59 @@
       </div>
 
       <div class="modal-body">
-        <form>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-3">Apagado</div>
-            <div class="col-md-3">
-              <label class="bs-switch">
-                <input type="checkbox" id="ovenStatusSwitch">
-                <span class="slider round"></span>
-              </label>
-            </div>
-            <div class="col-md-3">Prendido</div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-3">Apagado</div>
+          <div class="col-md-3">
+            <label class="bs-switch">
+              <input type="checkbox" id="ovenStatusSwitch">
+              <span class="slider round"></span>
+            </label>
           </div>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-4">Temperatura:</div>
-            <div class="col-md-5">
-              <input type="range" class="custom-range" id="ovenTemperatureSlider" onchange="updateOvenTemperature()">
-            </div>
-            <div class="col-md-3" id="ovenTemperature">...</div>
+          <div class="col-md-3">Prendido</div>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-4">Temperatura:</div>
+          <div class="col-md-5">
+            <input type="range" class="custom-range" id="ovenTemperatureSlider" onchange="updateOvenTemperature()">
           </div>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-4">Calor:</div>
-            <div class="col-md-6">
-              <div class="dropdown" id="ovenHeatBtn">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenHeatBtn" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-                  Cargando...
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenHeat">
-                </div>
+          <div class="col-md-3" id="ovenTemperature">...</div>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-4">Calor:</div>
+          <div class="col-md-6">
+            <div class="dropdown" id="ovenHeatBtn">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenHeatBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Cargando...
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenHeat">
               </div>
             </div>
           </div>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-4">Grill:</div>
-            <div class="col-md-6">
-              <div class="dropdown" id="ovenGrillBtn">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenGrillBtn" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-                  Cargando...
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenGrill">
-                </div>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-4">Grill:</div>
+          <div class="col-md-6">
+            <div class="dropdown" id="ovenGrillBtn">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenGrillBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Cargando...
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenGrill">
               </div>
             </div>
           </div>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-4">Convección:</div>
-            <div class="col-md-6">
-              <div class="dropdown" id="ovenConvectionBtn">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenConvectionBtn"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Cargando...
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenConvection">
-                </div>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-4">Convección:</div>
+          <div class="col-md-6">
+            <div class="dropdown" id="ovenConvectionBtn">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenConvectionBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Cargando...
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenConvection">
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -79,7 +74,7 @@
 <script>
   var loadedOvenModal = false;
 
-  $('#modOvenModal').on('show.bs.modal', function (event) {
+  $('#modOvenModal').on('show.bs.modal', function(event) {
     if (!loadedOvenModal) {
       api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
         .then(data => {
@@ -115,7 +110,7 @@
           }
         })
         .catch(error => {
-          alert("Request failed: " + error);
+          showErrorMessage("Request failed: " + error);
         });
 
       loadedOvenModal = true;
@@ -136,7 +131,7 @@
         updateOvenTemperature();
       })
       .catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });
   });
 
@@ -153,12 +148,12 @@
   var body = new Array(1);
   var ovenUpdateFunctions = [ovenUpdateStatus, ovenUpdateTemperature, ovenUpdateHeat, ovenUpdateGrill, ovenUpdateConvection];
 
-  $('#updateOvenBtn').on('click', async function (event) {
+  $('#updateOvenBtn').on('click', async function(event) {
     for (updateFunction of ovenUpdateFunctions) {
       try {
         await updateFunction();
       } catch (e) {
-        alert("Error");
+        showErrorMessage("Error");
       }
     }
     reloadSearch();

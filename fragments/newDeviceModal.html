@@ -8,39 +8,32 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form>
-					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-3">*Tipo:</div>
-						<div class="col-md-7">
-							<div class="dropdown" id="deviceTypeBtn">
-								<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownDeviceBtn" data-toggle="dropdown"
-								 aria-haspopup="true" aria-expanded="false">Seleccionar...
-								</button>
-								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="deviceOptions">
-								</div>
+				<div class="form-group row" style="padding-bottom: 10px">
+					<div class="col-md-3">*Tipo:</div>
+					<div class="col-md-7">
+						<div class="dropdown" id="deviceTypeBtn">
+							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownDeviceBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seleccionar...
+							</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="deviceOptions">
 							</div>
 						</div>
 					</div>
-					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-3">*Nombre:</div>
-						<div class="col-md-2">
-							<input id="deviceName" type="text" name="devicename" size=25 maxlength=25 oninput="checkInputs()"><br>
+				</div>
+				<div class="form-group row" style="padding-bottom: 10px">
+					<div class="col-md-3">*Nombre:</div>
+					<div class="col-md-2">
+						<input id="deviceName" type="text" name="devicename" size=25 maxlength=25 oninput="checkInputs()"><br>
+					</div>
+				</div>
+				<div class="form-group row" style="padding-bottom: 10px">
+					<div class="col-md-3">Favorito:</div>
+					<div class="col-md-1">
+						<div class="form-group form-check">
+							<input type="checkbox" class="form-check-input" id="favouriteDevice">
+							<label class="form-check-label" for="favouriteDevice"></label>
 						</div>
 					</div>
-					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-3">Favorito:</div>
-						<div class="col-md-1">
-							<div class="form-group form-check">
-								<input type="checkbox" class="form-check-input" id="favouriteDevice">
-								<label class="form-check-label" for="favouriteDevice"></label>
-							</div>
-						</div>
-					</div>
-					<div class="form-group" style="padding-bottom: 10px">
-						<label for="description">Descripción</label>
-						<textarea class="form-control" id="deviceDescription" rows="3"></textarea>
-					</div>
-				</form>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="clearNewDeviceModal()">Cancelar</button>
@@ -51,11 +44,7 @@
 </div>
 
 <script>
-
 	function isSupportedDevice(deviceId) {
-		if (deviceId == "mxztsyjzsrq7iaqc") //Alarma
-			return false;
-
 		if (deviceId == "ofglvd9gqX8yfl3l") //Temporizador
 			return false;
 
@@ -70,12 +59,13 @@
 			$('#createDeviceBtn').prop("disabled", true);
 
 	}
+
 	function selectType(typeElem) {
 		$('#dropdownDeviceBtn').text(typeElem.innerText);
 		$('#dropdownDeviceBtn').attr("chosen", "true");
 		checkInputs();
 	}
-	$('#newDeviceModal').on('shown.bs.modal', function (event) {
+	$('#newDeviceModal').on('shown.bs.modal', function(event) {
 		if ($('#deviceOptions').children().length == 0) {
 			api.get(api.baseUrl + "devicetypes")
 				.then(data => {
@@ -91,10 +81,10 @@
 				});
 		}
 	});
-	$('#createDeviceBtn').on('click', function (event) {
+	$('#createDeviceBtn').on('click', function(event) {
 		var type = document.getElementById('dropdownDeviceBtn').innerText.toLowerCase();
 		var typeId = "";
-		$('#deviceOptions').children(".dropdown-item").each(function (i) {
+		$('#deviceOptions').children(".dropdown-item").each(function(i) {
 			if ($(this).text().toLowerCase() === type)
 				typeId = $(this).attr("id");
 		});
@@ -105,11 +95,10 @@
 		}
 
 		var name = $('#deviceName').val();
-		var desc = $('#deviceDescription').val();
 		var newDevice = {
 			name: name,
 			typeId: typeId,
-			meta: "{\"desc\":\"" + desc + "\",\"image\":\"" + deviceImg[type] + "\", \"isFavorite\":" + document.getElementById("favouriteDevice").checked + "}"
+			meta: "{\"image\":\"" + deviceImg[type] + "\", \"isFavorite\":" + document.getElementById("favouriteDevice").checked + "}"
 		};
 
 		api.devices
@@ -137,7 +126,6 @@
 		document.getElementById("deviceName").value = "";
 		document.getElementById("dropdownDeviceBtn").innerText = "Seleccionar...";
 		document.getElementById("favouriteDevice").checked = false;
-		document.getElementById("deviceDescription").value = "";
 		$('#createDeviceBtn').prop("disabled", true);
 		$('#dropdownDeviceBtn').attr("chosen", false);
 	}
@@ -159,6 +147,7 @@
 		"persiana": "devices/blinds.jpg",
 		"horno": "devices/oven.jpg",
 		"puerta": "devices/door.jpg",
-		"heladera": "devices/refrigerator.jpg"
+		"heladera": "devices/refrigerator.jpg",
+		"alarma": "devices/alarm.jpg"
 	}
 </script>

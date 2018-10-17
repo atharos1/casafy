@@ -4,6 +4,7 @@
 <div id="divModLampModal"></div>
 <div id="divModRefrigeratorModal"></div>
 <div id="divModOvenModal"></div>
+<div id="divModAlarmModal"></div>
 
 <script>
   $("#divModBlindModal").load("fragments/devices/modBlindModal.html");
@@ -12,6 +13,7 @@
   $("#divModLampModal").load("fragments/devices/modLampModal.html");
   $("#divModRefrigeratorModal").load("fragments/devices/modRefrigeratorModal.html");
   $("#divModOvenModal").load("fragments/devices/modOvenModal.html");
+  $("#divModAlarmModal").load("fragments/devices/modAlarmModal.html");
 
   function showModDeviceModal(id, typeId) {
     deviceId = id;
@@ -32,12 +34,14 @@
           $('#modRefrigeratorModal').modal('show');
         } else if (name == "oven") {
           $('#modOvenModal').modal('show');
-        } else {
-          alert("Dispositivo no soportado aún");
+        } else  if (name == "alarm") {
+          $('#modAlarmModal').modal('show');
+        } else{
+          showErrorMessage("Dispositivo no soportado aún");
         }
       })
       .catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });
   }
 </script>

@@ -1,84 +1,101 @@
-<div class="modal fade" id="modRoomModal" data-id="0" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-notify modal-warning" role="document">
-        <!--Content-->
-        <div class="modal-content">
-            <!--Header-->
-            <div class="modal-header text-center">
-                <h4 class="modal-title white-text w-100 font-weight-bold py-2">Modificar habitación</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" class="white-text">&times;</span>
-                </button>
-            </div>
+<div class="modal fade" id="modRoomModal" data-id="0" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-warning" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <div class="modal-header">
+				<h5 class="modal-title" id="modRoomTitle">Modificar habitación</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
 
-            <!--Body-->
-            <div class="modal-body">
-                <form>
-                    <div class="md-form">
-                        <i class="fa fa-edit prefix grey-text"></i>
-                        <label data-error="wrong" data-success="right" for="form3">Nombre</label>
-                        <input type="text" id="modRoom_name" value="John Doe" class="form-control validate">
-                    </div>
-                </form>
-            </div>
+			<div class="modal-body">
+					<div class="form-group row" style="padding-bottom: 10px">
+						<div class="col-md-3">*Nombre:</div>
+						<div class="col-md-3">
+							<input id="modRoomName" type="text" name="roomname" size=25 maxlength=25><br>
+						</div>
+						<p class="input-warning" id="modRoomIllegalNameText">El nombre debe contener al menos tres letras.</p>
+					</div>
+					<div class="form-group row" style="padding-bottom: 10px">
+						<div class="col-md-3">Favorito:</div>
+						<div class="col-md-1">
+							<div class="form-group form-check">
+								<input type="checkbox" class="form-check-input" id="modRoomFavourite">
+								<label class="form-check-label" for="modRoomFavourite"></label>
+							</div>
+						</div>
+					</div>
+			</div>
 
-            <!--Footer-->
-            <div class="modal-footer justify-content-center">
-                <a type="button" class="btn btn-outline-danger waves-effect" data-dismiss="modal">Cancelar</a>
-                <a type="button" class="btn btn-outline-warning waves-effect" onclick="updateRoom()">Modificar</a>
-            </div>
-        </div>
-        <!--/.Content-->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary" onclick="updateRoom()" id="modRoomBtn">Modificar</button>
+			</div>
     </div>
+    <!--/.Content-->
+  </div>
 </div>
 
 <script>
+  function fixFieldState(inputField) {
+    $(inputField).trigger("focusin");
+    $(inputField).trigger("blur");
+  }
 
-    function fixFieldState(inputField) {
-        $(inputField).trigger("focusin");
-        $(inputField).trigger("blur");
+  let nameInput = document.getElementById("modRoomName");
+  nameInput.oninput = ((event) => {
+    if (nameInput.value.length < 3) {
+      document.getElementById("modRoomIllegalNameText").style.visibility = "visible";
+      document.getElementById("modRoomBtn").disabled = true;
+    } else {
+      document.getElementById("modRoomIllegalNameText").style.visibility = "hidden";
+      document.getElementById("modRoomBtn").disabled = false;
     }
+  });
 
-    function showUpdateRoomModal(id) {
-        if (id && id != 0) {
-            api.rooms.get(id)
-                .then((data) => {
-                    var room = data["room"];
-                    $("#modRoom_name").val(room["name"]);
-                    var meta = JSON.parse(room["meta"]);
+  function showUpdateRoomModal(id) {
+    document.getElementById("modRoomIllegalNameText").style.visibility = "hidden";
 
-                    fixFieldState($("#modRoom_name"));
+    if (id && id != 0) {
+      api.rooms.get(id)
+        .then((data) => {
+          var room = data["room"];
+          $("#modRoomName").val(room["name"]);
+          var meta = JSON.parse(room["meta"]);
+          document.getElementById("modRoomFavourite").checked = meta["isFavorite"];
+          fixFieldState($("#modRoomName"));
 
-                    $('#modRoomModal').data("id", id);
+          $('#modRoomModal').data("id", id);
 
-                    $('#modRoomModal').modal('show');
+          $('#modRoomModal').modal('show');
 
-                })
-                .catch((error) => {
-                    alert('Request failed: ' + error);
-                });
-        }
+        })
+        .catch((error) => {
+          alert('Request failed: ' + error);
+        });
     }
+  }
 
-    function updateRoom() {
-        var room = {
-            id: $('#modRoomModal').data("id"),
-            name: $("#modRoom_name").val(),
-            meta: "{\"isFavorite\":false,\"image\":\"rooms/kitchen.jpg\"}"
-        };
+  function updateRoom() {
+    var room = {
+      id: $('#modRoomModal').data("id"),
+      name: $("#modRoomName").val(),
+      meta: "{\"isFavorite\":"+ document.getElementById("modRoomFavourite").checked + ",\"image\":\"rooms/room.jpg\"}"
+    };
 
-        //TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
+    //TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
 
-        api.rooms
-            .modify(room)
-            .then(data => {
-                fillRoomData($('#modRoomModal').data("id"));
-                $('#modRoomModal').modal('hide');
-                reloadSearch();
-            })
-            .catch(error => {
-                alert("Request failed: " + error);
-            });
+    api.rooms
+      .modify(room)
+      .then(data => {
+        fillRoomData($('#modRoomModal').data("id"));
+        $('#modRoomModal').modal('hide');
+        reloadSearch();
+      })
+      .catch(error => {
+        alert("Request failed: " + error);
+      });
 
-    }
+  }
 </script>

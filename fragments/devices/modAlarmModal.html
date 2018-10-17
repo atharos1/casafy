@@ -1,0 +1,153 @@
+<div class="modal fade" id="modAlarmModal" tabindex="-1" role="dialog" aria-labelledby="modAlarmTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modAlarmTitle">Configurar Alarm</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+           <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Modo:</div>
+            <div class="col-md-5">
+              <div class="dropdown" id="arlarmModeBtn">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownAlarmModeBtn" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">Cargando...</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="alarmMode">
+					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" >Desactivar</button>
+					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" >Activar dentro</button>
+					<button class="dropdown-item" type="button" onClick="dropdownAlarmModeBtn.innerText = this.innerText;" >Activar fuera</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" style="padding-bottom: 10px">
+            <div class="col-md-4">Cambiar código:</div>
+            <div class="col-md-5" >
+              <input type="text" id="newSecurityCode" style="display:table-cell; width:100%;"> 
+            </div>
+          </div>
+        </form>
+	</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#codeRequestModal" id="updateAlarmBtn">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="codeRequestModal" tabindex="-1" role="dialog" aria-labelledby="codeRequestTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="codeRequestTitle">Guardar cambios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="securityCode" class="col-form-label">Escriba el codigo de seguridad para guardar:</label>
+            <input type="text" class="form-control" id="securityCode">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" id="saveAlarmChanges" class="btn btn-primary" onClick="updateAlarm()" disabled>Aceptar</button>
+      </div>
+    </div>
+  </div>
+  <div id="wrongCodeAlert" class="alert alert-warning alert-dismissible fade" role="alert" style="display:none">
+	<strong>Código incorrecto.</strong> Por favor ingrese el código de vuelta.
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+</div>
+<script>
+	var loadedAlarmModal = false;
+	var alarmModeTranslation = {
+		"disarmed": "Desactivada",
+		"armedStay": "Activada dentro",
+		"armedAway": "Activada fuera"
+	}
+	var alarmModeActionName = {
+		"Desactivar": "disarm",
+		"Activar dentro": "armStay",
+		"Activar fuera": "armAway"
+	}
+	function updateAlarm() {
+		var enteredCode = $('#securityCode').val();
+		if(enteredCode === undefined || enteredCode.length < $('#securityCode').attr("min") || enteredCode.length > $('#securityCode').attr("max")){
+			$('#wrongCodeAlert').attr("style","display:block");
+			return;
+		}
+		var newSecurityCode = null;
+		if($('#newSecurityCode').length > 0)
+			newSecurityCode = $('#newSecurityCode').val();
+		var mode = alarmModeActionName[$('#dropdownAlarmModeBtn').text()];
+		api.actions.put(deviceId,mode,[enteredCode],false)
+			.then(data => {})
+			.catch(error => {showErrorMessage("Request failed: " + error)});
+		if(newSecurityCode !== null)
+			api.actions.put(deviceId,"changeSecurityCode",[enteredCode, newSecurityCode],false)
+				.then(data => {})
+				.catch(error => {showErrorMessage("Request failed: " + error)});
+		$('#codeRequestModal').modal('hide');
+		$('#modAlarmModal').modal('hide');
+		$('#ewSecurityCode').text();
+		var loadedAlaramModal = false;
+	}
+	$('#modAlarmModal').on('show.bs.modal', function (event) {
+	  if(loadedAlarmModal)
+		return;
+	  api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
+		.then(data => {
+			  var actions = data["device"]["actions"];
+			  for (action in actions) {
+				if (actions[action]["name"] == "changeSecurityCode") {
+				  var minValue = actions[action]["params"][1]["minValue"];
+				  var maxValue = actions[action]["params"][1]["maxValue"];
+				  var placeholderString = "Valor max: " + maxValue;
+				  document.getElementById('newSecurityCode').min = minValue;
+				  document.getElementById('newSecurityCode').max = maxValue;
+				  document.getElementById('securityCode').min = minValue;
+				  document.getElementById('securityCode').max = maxValue;
+				  document.getElementById('securityCode').placeHolder = placeholderString;
+				  document.getElementById('newSecurityCode').placeholder = placeholderString;
+				  document.getElementById('newSecurityCode').oninput = ((event) => {
+					if($('#newSecurityCode').val() < parseInt(maxValue))
+						$('#updateAlarmBtn').prop("disabled",false);
+					else
+						$('#updateAlarmBtn').prop("disabled",true);
+				  });
+				  document.getElementById('securityCode').oninput = ((event) => {
+					if($('#securityCode').val() < parseInt(maxValue) && $('#securityCode').val().length > 0)
+						$('#saveAlarmChanges').prop("disabled",false);
+					else
+						$('#saveAlarmChanges').prop("disabled",true);
+				  });
+				  break;
+				}
+			  }
+			  api.actions.put(deviceId, "getState")
+				.then(data => {
+					var result = data["result"];
+					console.log(data);
+					$('#dropdownAlarmModeBtn').text(alarmModeTranslation[result["status"]]);
+				})
+				.catch(error => {
+					alert("Request failed: " + error);
+				});
+			  loadedAlarmModal = true;
+		
+		}).catch(error => {
+		  alert("Request failed: " + error);
+		});
+	});
+</script>
