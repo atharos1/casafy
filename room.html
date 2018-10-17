@@ -183,7 +183,8 @@
                     </h4>
                     <!--Text-->
 
-                    <a href="#" class="btn btn-primary btn-configuracion" role="button" onclick="showModDeviceModal('${id}', '${typeId}')">Configuración</a>
+                    <a href="#" class="btn btn-primary btn-configuracion" role="button" style="margin-top: -5px" onclick="showModDeviceModal('${id}', '${typeId}')">Configuración</a>
+                    <a htref="#"><i class="fa fa-trash fa-2x" style="margin-left: 15px;" aria-hidden="true" onclick="removeDevice('${id}')"></i></a>
                   </div>
                 </div>
               </div>`
@@ -398,6 +399,25 @@
           alert("Request failed: " + error);
         });
 
+    }
+
+    async function deviceIsInRoutine(deviceId) {
+      let routines = await api.routines.getAll(false);
+      routines["routines"].forEach(routine => {
+        if (routine["actions"][0]["deviceId"] == deviceId) {
+          return true;
+        }
+      });
+      console.log("afuera: " + ret);
+      return false;
+    }
+
+    async function removeDevice(id) {
+      if (await deviceIsInRoutine(id)) {
+        alert("please remove the device from the routines");
+      } else {
+        api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { alert("Error while trying to delete device: " + error); });
+      }
     }
 
   </script>
