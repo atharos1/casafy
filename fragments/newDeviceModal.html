@@ -34,6 +34,9 @@
 						</div>
 					</div>
 				</div>
+				<div class="alert alert-warning" role="alert" style="display:none" id="deviceNameExists">
+				  El nombre elegido ya pertenece a un dispositivo, por favor escoja otro.
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="clearNewDeviceModal()">Cancelar</button>
@@ -95,37 +98,50 @@
 		}
 
 		var name = $('#deviceName').val();
-		var newDevice = {
-			name: name,
-			typeId: typeId,
-			meta: "{\"image\":\"" + deviceImg[type] + "\", \"isFavorite\":" + document.getElementById("favouriteDevice").checked + "}"
-		};
-
-		api.devices
-			.create(newDevice)
+		var exists = false;
+		api.devices.getAll()
 			.then(data => {
-				api.post(api.baseUrl + "devices/" + data["device"]["id"] + "/rooms/" + getQueryStringParameter("id"), "{}")
+				var devices = data["devices"];
+				var exists = false;
+				for(let j=0; j < devices.length && !exists ; j++){
+					if(devices[j]["name"] === name)
+						exists = true;
+				}
+				if(exists){
+					$('#deviceNameExists').attr("style","display: block");
+					return;
+				}
+				var newDevice = {
+					name: name,
+					typeId: typeId,
+					meta: "{\"image\":\"" + deviceImg[type] + "\", \"isFavorite\":" + document.getElementById("favouriteDevice").checked + "}"
+				};
+				api.devices.create(newDevice)
 					.then(data => {
-						roomID = getQueryStringParameter("id");
-						populateDevicesList(roomID);
-						reloadSearch();
+						api.post(api.baseUrl + "devices/" + data["device"]["id"] + "/rooms/" + getQueryStringParameter("id"), "{}")
+							.then(data => {
+								roomID = getQueryStringParameter("id");
+								populateDevicesList(roomID);
+								reloadSearch();
+							})
+							.catch(error => {
+								showErrorMessage("Request failed: " + error);
+							});
 					})
 					.catch(error => {
 						showErrorMessage("Request failed: " + error);
 					});
-			})
-			.catch(error => {
-				showErrorMessage("Request failed: " + error);
-			});
 
-		$('#newDeviceModal').modal('hide');
-		clearNewDeviceModal();
+				$('#newDeviceModal').modal('hide');
+				clearNewDeviceModal();
+			}).catch(error => {showErrorMessage("Request failed: " + error)});
 	});
 
 	function clearNewDeviceModal() {
 		document.getElementById("deviceName").value = "";
 		document.getElementById("dropdownDeviceBtn").innerText = "Seleccionar...";
 		document.getElementById("favouriteDevice").checked = false;
+		$('#deviceNameExists').attr("style","display: none");
 		$('#createDeviceBtn').prop("disabled", true);
 		$('#dropdownDeviceBtn').attr("chosen", false);
 	}
