@@ -72,7 +72,7 @@
 
         })
         .catch((error) => {
-          alert('Request failed: ' + error);
+          showErrorMessage('Request failed: ' + error);
         });
     }
   }
@@ -94,7 +94,7 @@
         reloadSearch();
       })
       .catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });
 
   }

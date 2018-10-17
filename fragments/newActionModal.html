@@ -206,10 +206,10 @@
 						};
 						addAction(action);
 					}).catch(error => {
-						alert("Request failed: " + error);
+						showErrorMessage("Request failed: " + error);
 					});
 			}).catch(error => {
-				alert("Request failed" + error);
+				showErrorMessage("Request failed" + error);
 			});
 	}
 	function chooseAction(actionElem) {
@@ -230,7 +230,7 @@
 					itemList.append('<a class="list-group-item list-group-item-action" onClick="showDevices(\'' + rooms[roomNum]["id"] + '\')" data-toggle="list">' + rooms[roomNum]["name"] + '</a>');
 
 			}).catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			});
 	}
 	function showDevices(roomId) {
@@ -247,7 +247,7 @@
 					itemList.append('<a class="list-group-item list-group-item-action" onClick="showActions(\'' + devices[deviceNum]["id"] + '\')"data-toggle="list">' + devices[deviceNum]["name"] + '</a>');
 
 			}).catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			});
 	}
 	function showActions(deviceId) {
@@ -261,7 +261,7 @@
 			.then(data => {
 				typeId = data["device"]["typeId"];
 			}).catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			}).then(data => {
 				var itemList = $('#itemList');
 				itemList.empty();
@@ -273,10 +273,10 @@
 								itemList.append('<a class="list-group-item list-group-item-action" actionName="' + action["name"] +
 									'"onClick="chooseAction(this)">' + actionsTranslation[action["name"]] + '</a>');
 					}).catch(error => {
-						alert("Request failed: " + error);
+						showErrorMessage("Request failed: " + error);
 					});
 			}).catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			});
 	}
 	function showParams(actionName) {
@@ -285,7 +285,7 @@
 			.then(data => {
 				typeId = data["device"]["typeId"];
 			}).catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			}).then(data => {
 				api.fetch(api.baseUrl + "devicetypes/" + typeId)
 					.then(data => {
@@ -374,10 +374,10 @@
 						else
 							$('#addActionBtn').click();
 					}).catch(error => {
-						alert("Request failed: " + error);
+						showErrorMessage("Request failed: " + error);
 					});
 			}).catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			});
 	}
 	$('#cancelActionBtn').on('click', function (event) {
