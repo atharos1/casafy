@@ -23,6 +23,9 @@
 
   <link rel="stylesheet" type="text/css" href="css/snackbar.min.css" />
 
+  <link rel="stylesheet" type="text/css" href="css/selectize.min.css" />
+
+
 </head>
 
 <body>
@@ -117,7 +120,41 @@
 
     <script src="js/snackbar.min.js"></script>
 
+    <script type="text/javascript" src="js/selectize.min.js"></script>
+
     <script>
+
+      function formatState(data) {
+        if (!data.id) {
+          return data.text;
+        }
+
+        var $ret;
+        var element = $(data.element);
+        var elementType = element.parent().attr("label");
+
+        if (elementType == "Habitaciones") {
+          $ret = $(
+            '<span style="font-weight: bold;"><img height="42" width="42" src="' + element.data("img") + '" class="img-flag" /> ' + data.text + '</span>'
+          );
+        } else if (elementType == "Dispositivos") {
+          $ret = $(`<div style="display:inline-block;vertical-align:top;">
+          <img height="42" width="42" src="` + element.data("img") + `" class="img-flag d-inline" />
+        </div>
+          <div style="display:inline-block;">
+            <div><span style="font-weight: bold;">` + data.text + `</span>
+          </div>
+          <div>` + element.data("room") + `</div>
+          </div>`);
+        } else if (elementType == "Rutinas") {
+          $ret = $(
+            '<span style="font-weight: bold;"><img height="42" width="42" src="img/routine.jpg" class="img-flag" /> ' + data.text + '</span>'
+          );
+        }
+
+        return $ret;
+      };
+
       function renderRoomCard(id, isFavorite, name, image, deviceCount, powerOnCount) {
         return `<div class="col-5 col-lg-4 col-xl-4">
                   <div class="card m-4 hoverable animated fadeIn" style="width: 18rem;" data-id="${id}">
@@ -169,12 +206,12 @@
             qSort(data["rooms"], compareElements);
 
 
-            data["rooms"].forEach(room => {
+            data["rooms"].forEach(async room => {
 
               var deviceCount = 0;
               var powerOnCount = 0;
 
-              api.rooms.getDevices(room["id"], false)
+              await api.rooms.getDevices(room["id"], false)
                 .then(async (data) => {
 
                   for (const device of data["devices"]) {
@@ -230,18 +267,6 @@
           });
       }
 
-
-      function formatState(state) {
-        if (!state.id) {
-          return state.text;
-        }
-        var baseUrl = "/user/pages/images/flags";
-        var $state = $(
-          '<span><img src="' + baseUrl + '/' + state.element.value + '.png" class="img-flag" /> ' + state.text + '</span>'
-        );
-        return $state;
-      };
-
       var completedPromises = 0;
       var awaitingPromises = 0;
 
@@ -250,7 +275,16 @@
         populateRoomList();
 
         $("#divNavbar").load("fragments/navbar.html", function () {
-          //Acciones
+          /*$(".js-example-templating").select2({
+            placeholder: "Buscar dispositivos, habitaciones y rutinas...",
+            multiple: true,
+            maximumSelectionSize: 1,
+            templateResult: formatState
+          });*/
+
+          $('.js-example-templating').selectize({
+            sortField: 'text'
+          });
         });
 
         $("#divFooter").load("fragments/footer.html");

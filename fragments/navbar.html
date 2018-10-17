@@ -2,8 +2,24 @@
     <a class="navbar-brand font-weight-bold" href="#">Casafy</a>
     <form class="form-inline">
         <div class="md-form form-md my-0" style="width: 25em;">
-            <input class="form-control form-control-xl mr-md-2 mb-2" style="width: 23em;" type="text" placeholder="Buscar dispositivos, habitaciones y rutinas..."
-                aria-label="Search">
+            <!--<input class="form-control form-control-xl mr-md-2 mb-2" style="width: 23em;" type="text" placeholder="Buscar dispositivos, habitaciones y rutinas..."
+                aria-label="Search">-->
+            <select class="js-example-templating" style="width: 23em;" name="state">
+                <optgroup label="Habitaciones">
+                    <option value="A" data-img="img/rooms/bedroom.jpg">Dormitorio principal</option>
+                    <option value="B" data-img="img/rooms/kitchen.jpg">Cocina</option>
+                </optgroup>
+            
+                <optgroup label="Dispositivos">
+                    <option value="C" data-img="img/devices/airconditioner.jpg" data-room="Dormitorio principal">Aire
+                        acondicionado</option>
+                </optgroup>
+            
+                <optgroup label="Rutinas">
+                    <option value="D">Volver a casa</option>
+                </optgroup>
+            
+            </select>
         </div>
         <button class="btn btn-outline-white btn-sm my-0" type="submit"><i class="fa fa-question-circle" aria-hidden="true"></i>
             Ayuda</button>

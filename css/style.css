@@ -539,3 +539,22 @@ svg:nth-child(19) {
   .select2-selection {
   box-shadow: none;
 }
+
+
+.select2-container--default .select2-results__option--highlighted[aria-selected], .select2-container--default .select2-selection__choice {
+	background-color: #FFFFFF !important;
+	color: #222 !important;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.select2-container--default .select2-selection__choice {
+	margin: 0px 2px 0px 2px !important;
+	padding: 2px 5px 2px 5px !important;
+}
+
+.clearfix {
+	overflow: auto;
+}
