@@ -34,10 +34,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-group" style="padding-bottom: 10px">
-					<label for="description">Descripción</label>
-					<textarea class="form-control" id="deviceDescription" rows="3"></textarea>
-				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="clearNewDeviceModal()">Cancelar</button>
@@ -99,11 +95,10 @@
 		}
 
 		var name = $('#deviceName').val();
-		var desc = $('#deviceDescription').val();
 		var newDevice = {
 			name: name,
 			typeId: typeId,
-			meta: "{\"desc\":\"" + desc + "\",\"image\":\"" + deviceImg[type] + "\", \"isFavorite\":" + document.getElementById("favouriteDevice").checked + "}"
+			meta: "{\"image\":\"" + deviceImg[type] + "\", \"isFavorite\":" + document.getElementById("favouriteDevice").checked + "}"
 		};
 
 		api.devices
@@ -131,7 +126,6 @@
 		document.getElementById("deviceName").value = "";
 		document.getElementById("dropdownDeviceBtn").innerText = "Seleccionar...";
 		document.getElementById("favouriteDevice").checked = false;
-		document.getElementById("deviceDescription").value = "";
 		$('#createDeviceBtn').prop("disabled", true);
 		$('#dropdownDeviceBtn').attr("chosen", false);
 	}
