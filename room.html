@@ -432,7 +432,9 @@
               "<p>¿Estas seguro que desea eliminar la habitación?</p>"+
               "<p style=\"color: #ff4500;\">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>");
 		$("#deleteBtn").off("click");
-		$("#deleteBtn").on('click',eliminateRoom(roomID));
+		$("#deleteBtn").on('click',function(event){
+			eliminateRoom(roomID)
+		});
       }
     }
 
