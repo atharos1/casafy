@@ -74,8 +74,8 @@
           document.getElementById("lampStatusSwitch").checked = false;
         }
 
-        document.getElementById('lampColorPicker').value = "#" + result["color"];
-        document.getElementById('lampBrightnessSlider').value = result["brightness"];
+        $('#lampColorPicker').val("#" + result["color"]);
+        $('#lampBrightnessSlider').val(result["brightness"]);
         updateLampBrightness();
       })
       .catch(error => {
@@ -84,7 +84,7 @@
   });
 
   function updateLampBrightness() {
-    document.getElementById('lampBrightness').innerText = document.getElementById('lampBrightnessSlider').value + "%";
+    $('#lampBrightness').text($('#lampBrightnessSlider').val() + "%");
   }
 
   var body = new Array(1);
@@ -102,19 +102,19 @@
   });
 
   async function lampUpdateStatus() {
-    if (document.getElementById("lampStatusSwitch").checked == true)
+    if (document.getElementById("lampStatusSwitch").checked)
       return api.actions.put(deviceId, "turnOn", false);
     else
       return api.actions.put(deviceId, "turnOff", false);
   }
 
   async function lampUpdateColor() {
-    body[0] = document.getElementById('lampColorPicker').value.substring(1, 7);
+    body[0] = $('#lampColorPicker').val().substring(1, 7);
     return api.actions.put(deviceId, "setColor", body, false);
   }
 
   async function lampUpdateBrightness() {
-    body[0] = document.getElementById('lampBrightnessSlider').value;
+    body[0] = $('#lampBrightnessSlider').val();
     return api.actions.put(deviceId, "setBrightness", body, false);
   }
 </script>

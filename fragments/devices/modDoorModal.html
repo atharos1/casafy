@@ -74,14 +74,14 @@
   });
 
   async function doorUpdateStatus() {
-    if (document.getElementById("doorStatusSwitch").checked == true)
+    if (document.getElementById("doorStatusSwitch").checked)
       return api.actions.put(deviceId, "open", false);
     else
       return api.actions.put(deviceId, "close", false);
   }
 
   async function doorUpdateLock() {
-    if (document.getElementById("doorLockSwitch").checked == true)
+    if (document.getElementById("doorLockSwitch").checked)
       return api.actions.put(deviceId, "unlock", false);
     else
       return api.actions.put(deviceId, "lock", false);

@@ -96,7 +96,7 @@
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#acMode').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownACModeBtn.innerText = this.innerText;\">" +
-                  acModeTranslation[values[value].toLowerCase()] + "</button>");
+                  supportedValuesTranslation[values[value]] + "</button>");
               }
             }
             if (actions[action]["name"] == "setTemperature") {
@@ -143,11 +143,11 @@
         } else {
           document.getElementById("acStatusSwitch").checked = false;
         }
-        document.getElementById('acTemperatureSlider').value = result["temperature"];
-        document.getElementById('dropdownACModeBtn').innerText = acModeTranslation[result["mode"].toLowerCase()];
-        document.getElementById('dropdownFanSpeedBtn').innerText = result["fanSpeed"];
-        document.getElementById('dropdownACHorizontalSwingBtn').innerText = result["horizontalSwing"];
-        document.getElementById('dropdownACVerticalSwingBtn').innerText = result["verticalSwing"];
+        $('#acTemperatureSlider').val(result["temperature"]);
+        $('#dropdownACModeBtn').text(supportedValuesTranslation[result["mode"]]);
+        $('#dropdownFanSpeedBtn').text(result["fanSpeed"]);
+        $('#dropdownACHorizontalSwingBtn').text(result["horizontalSwing"]);
+        $('#dropdownACVerticalSwingBtn').text(result["verticalSwing"]);
         updateACTemperature();
       })
       .catch(error => {
@@ -156,13 +156,7 @@
   });
 
   function updateACTemperature() {
-    document.getElementById('acTemperature').innerText = document.getElementById('acTemperatureSlider').value + "°C";
-  }
-
-  var acModeTranslation = {
-    "cool": "frío",
-    "heat": "calor",
-    "fan": "ventilador"
+    $('#acTemperature').text($('#acTemperatureSlider').val() + "°C");
   }
 
   var body = new Array(1);
@@ -180,37 +174,34 @@
   });
 
   async function acUpdateStatus() {
-    if (document.getElementById("acStatusSwitch").checked == true)
+    if (document.getElementById("acStatusSwitch").checked)
       return api.actions.put(deviceId, "turnOn", false);
     else
       return api.actions.put(deviceId, "turnOff", false);
   }
 
   async function acUpdateTemperature() {
-    body[0] = document.getElementById('acTemperatureSlider').value;
+    body[0] = $('#acTemperatureSlider').val();
     return api.actions.put(deviceId, "setTemperature", body, false);
   }
 
   async function acUpdateMode() {
-    for (var key in acModeTranslation) {
-      if (acModeTranslation[key] == document.getElementById('dropdownACModeBtn').innerText.toLowerCase())
-        body[0] = key;
-    }
+    body[0] = getOriginal($('#dropdownACModeBtn').text());
     return api.actions.put(deviceId, "setMode", body, false);
   }
 
   async function acUpdateFanSpeed() {
-    body[0] = document.getElementById('dropdownFanSpeedBtn').innerText;
+    body[0] = $('#dropdownFanSpeedBtn').text();
     return api.actions.put(deviceId, "setFanSpeed", body, false);
   }
 
   async function acUpdateHorizontalSwing() {
-    body[0] = document.getElementById('dropdownACHorizontalSwingBtn').innerText;
+    body[0] = $('#dropdownACHorizontalSwingBtn').text();
     return api.actions.put(deviceId, "setHorizontalSwing", body, false);
   }
 
   async function acUpdateVerticalSwing() {
-    body[0] = document.getElementById('dropdownACVerticalSwingBtn').innerText;
+    body[0] = $('#dropdownACVerticalSwingBtn').text();
     return api.actions.put(deviceId, "setVerticalSwing", body, false);
   }
 </script>

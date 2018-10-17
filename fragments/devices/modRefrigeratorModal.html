@@ -69,7 +69,7 @@
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#refrigeratorMode').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownRefrigeratorModeBtn.innerText = this.innerText;\">" +
-                  regrigeratorModeTranslation[values[value].toLowerCase()] + "</button>");
+                  supportedValuesTranslation[values[value]] + "</button>");
               }
             }
           }
@@ -84,9 +84,9 @@
     api.actions.put(deviceId, "getState")
       .then(data => {
         var result = data["result"];
-        document.getElementById('refrigeratorTempSlider').value = result["temperature"];
-        document.getElementById('freezerTempSlider').value = result["freezerTemperature"];
-        document.getElementById('dropdownRefrigeratorModeBtn').innerText = regrigeratorModeTranslation[result["mode"].toLowerCase()];
+        $('#refrigeratorTempSlider').val(result["temperature"]);
+        $('#freezerTempSlider').val(result["freezerTemperature"]);
+        $('#dropdownRefrigeratorModeBtn').text(supportedValuesTranslation[result["mode"]]);
         updateRefrigeratorTemp();
         updateFreezerTemp();
       })
@@ -95,18 +95,12 @@
       });
   });
 
-  var regrigeratorModeTranslation = {
-    "default": "defecto",
-    "vacation": "vacaciones",
-    "party": "fiesta"
-  }
-
   function updateRefrigeratorTemp() {
-    document.getElementById('refrigeratorTemp').innerText = document.getElementById('refrigeratorTempSlider').value + "°C";
+    $('#refrigeratorTemp').text($('#refrigeratorTempSlider').val() + "°C");
   }
 
   function updateFreezerTemp() {
-    document.getElementById('freezerTemp').innerText = document.getElementById('freezerTempSlider').value + "°C";
+    $('#freezerTemp').text($('#freezerTempSlider').val() + "°C");
   }
 
   var body = new Array(1);
@@ -124,20 +118,17 @@
   });
 
   async function refrigeratorUpdateTemperature() {
-    body[0] = document.getElementById('refrigeratorTempSlider').value;
+    body[0] = $('#refrigeratorTempSlider').val();
     return api.actions.put(deviceId, "setTemperature", body, false);
   }
 
   async function refrigeratorUpdateFreezerTemperature() {
-    body[0] = document.getElementById('freezerTempSlider').value;
+    body[0] = $('#freezerTempSlider').val();
     return api.actions.put(deviceId, "setFreezerTemperature", body, false);
   }
 
   async function refrigeratorUpdateMode() {
-    for (var key in regrigeratorModeTranslation) {
-      if (regrigeratorModeTranslation[key] == document.getElementById('dropdownRefrigeratorModeBtn').innerText.toLowerCase())
-        body[0] = key;
-    }
+    body[0] = getOriginal($('#dropdownRefrigeratorModeBtn').text());
     return api.actions.put(deviceId, "setMode", body, false);
   }
 </script>

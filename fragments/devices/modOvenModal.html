@@ -90,21 +90,21 @@
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#ovenHeat').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenHeatBtn.innerText = this.innerText;\">" +
-                  supportedValuesTranslation[values[value].toLowerCase()] + "</button>");
+                  supportedValuesTranslation[values[value]] + "</button>");
               }
             }
             if (actions[action]["name"] == "setGrill") {
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#ovenGrill').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenGrillBtn.innerText = this.innerText;\">" +
-                  supportedValuesTranslation[values[value].toLowerCase()] + "</button>");
+                  supportedValuesTranslation[values[value]] + "</button>");
               }
             }
             if (actions[action]["name"] == "setConvection") {
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#ovenConvection').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenConvectionBtn.innerText = this.innerText;\">" +
-                  supportedValuesTranslation[values[value].toLowerCase()] + "</button>");
+                  supportedValuesTranslation[values[value]] + "</button>");
               }
             }
           }
@@ -125,9 +125,9 @@
           document.getElementById("ovenStatusSwitch").checked = false;
         }
         $('#ovenTemperatureSlider').val(result["temperature"]);
-        $('#dropdownOvenHeatBtn').text(supportedValuesTranslation[result["heat"].toLowerCase()]);
-        $('#dropdownOvenGrillBtn').text(supportedValuesTranslation[result["grill"]].toLowerCase());
-        $('#dropdownOvenConvectionBtn').text(supportedValuesTranslation[result["convection"]].toLowerCase());
+        $('#dropdownOvenHeatBtn').text(supportedValuesTranslation[result["heat"]]);
+        $('#dropdownOvenGrillBtn').text(supportedValuesTranslation[result["grill"]]);
+        $('#dropdownOvenConvectionBtn').text(supportedValuesTranslation[result["convection"]]);
         updateOvenTemperature();
       })
       .catch(error => {
@@ -154,7 +154,7 @@
   });
 
   async function ovenUpdateStatus() {
-    if ($('#ovenStatusSwitch').is(":checked"))
+    if (document.getElementById("ovenStatusSwitch").checked)
       return api.actions.put(deviceId, "turnOn", false);
     else
       return api.actions.put(deviceId, "turnOff", false);
