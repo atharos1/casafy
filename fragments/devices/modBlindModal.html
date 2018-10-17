@@ -40,7 +40,7 @@
         }
       })
       .catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });
   });
 
@@ -49,12 +49,12 @@
     if (document.getElementById("blindSwitch").checked == true) {
       api.actions.put(deviceId, "up")
         .catch(error => {
-          alert("Request failed: " + error);
+          showErrorMessage("Request failed: " + error);
         });
     } else {
       api.actions.put(deviceId, "down")
         .catch(error => {
-          alert("Request failed: " + error);
+          showErrorMessage("Request failed: " + error);
         });
     }
     reloadSearch();

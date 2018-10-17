@@ -56,7 +56,7 @@
         }
       })
       .catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });
   });
 
@@ -67,7 +67,7 @@
       try {
         await updateFunction();
       } catch (e) {
-        alert("Error");
+        showErrorMessage("Error");
       }
     }
     reloadSearch();

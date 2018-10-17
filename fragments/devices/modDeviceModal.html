@@ -37,11 +37,11 @@
         } else  if (name == "alarm") {
           $('#modAlarmModal').modal('show');
         } else{
-          alert("Dispositivo no soportado aún");
+          showErrorMessage("Dispositivo no soportado aún");
         }
       })
       .catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });
   }
 </script>
