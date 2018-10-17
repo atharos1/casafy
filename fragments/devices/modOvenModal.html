@@ -2,7 +2,7 @@
   <div class="modal-dialog modal-dialog-centered modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modOvenTitle">Configurar Aire Acondicionado</h5>
+        <h5 class="modal-title" id="modOvenTitle">Configurar Horno</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -90,21 +90,21 @@
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#ovenHeat').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenHeatBtn.innerText = this.innerText;\">" +
-                  ovenHeatTranslation[values[value].toLowerCase()] + "</button>");
+                  supportedValuesTranslation[values[value].toLowerCase()] + "</button>");
               }
             }
             if (actions[action]["name"] == "setGrill") {
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#ovenGrill').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenGrillBtn.innerText = this.innerText;\">" +
-                  values[value].toLowerCase() + "</button>");
+                  supportedValuesTranslation[values[value].toLowerCase()] + "</button>");
               }
             }
             if (actions[action]["name"] == "setConvection") {
               var values = actions[action]["params"][0]["supportedValues"];
               for (value in values) {
                 $('#ovenConvection').append("<button class=\"dropdown-item\" type=\"button\" onClick=\"dropdownOvenConvectionBtn.innerText = this.innerText;\">" +
-                  values[value].toLowerCase() + "</button>");
+                  supportedValuesTranslation[values[value].toLowerCase()] + "</button>");
               }
             }
           }
@@ -124,10 +124,10 @@
         } else {
           document.getElementById("ovenStatusSwitch").checked = false;
         }
-        document.getElementById('ovenTemperatureSlider').value = result["temperature"];
-        document.getElementById('dropdownOvenHeatBtn').innerText = ovenHeatTranslation[result["heat"].toLowerCase()];
-        document.getElementById('dropdownOvenGrillBtn').innerText = result["grill"].toLowerCase();
-        document.getElementById('dropdownOvenConvectionBtn').innerText = result["convection"].toLowerCase();
+        $('#ovenTemperatureSlider').val(result["temperature"]);
+        $('#dropdownOvenHeatBtn').text(supportedValuesTranslation[result["heat"].toLowerCase()]);
+        $('#dropdownOvenGrillBtn').text(supportedValuesTranslation[result["grill"]].toLowerCase());
+        $('#dropdownOvenConvectionBtn').text(supportedValuesTranslation[result["convection"]].toLowerCase());
         updateOvenTemperature();
       })
       .catch(error => {
@@ -136,13 +136,7 @@
   });
 
   function updateOvenTemperature() {
-    document.getElementById('ovenTemperature').innerText = document.getElementById('ovenTemperatureSlider').value + "°C";
-  }
-
-  var ovenHeatTranslation = {
-    "conventional": "convencional",
-    "top": "superior",
-    "bottom": "inferior"
+    $('#ovenTemperature').text($('#ovenTemperatureSlider').val() + "°C");
   }
 
   var body = new Array(1);
@@ -160,32 +154,29 @@
   });
 
   async function ovenUpdateStatus() {
-    if (document.getElementById("ovenStatusSwitch").checked == true)
+    if ($('#ovenStatusSwitch').is(":checked"))
       return api.actions.put(deviceId, "turnOn", false);
     else
       return api.actions.put(deviceId, "turnOff", false);
   }
 
   async function ovenUpdateTemperature() {
-    body[0] = document.getElementById('ovenTemperatureSlider').value;
+    body[0] = $('#ovenTemperatureSlider').val();
     return api.actions.put(deviceId, "setTemperature", body, false);
   }
 
   async function ovenUpdateHeat() {
-    for (var key in ovenHeatTranslation) {
-      if (ovenHeatTranslation[key] == document.getElementById('dropdownOvenHeatBtn').innerText.toLowerCase())
-        body[0] = key;
-    }
+    body[0] = getOriginal($('#dropdownOvenHeatBtn').text());
     return api.actions.put(deviceId, "setHeat", body, false);
   }
 
   async function ovenUpdateGrill() {
-    body[0] = document.getElementById('dropdownOvenGrillBtn').innerText.toLowerCase();
+    body[0] = getOriginal($('#dropdownOvenGrillBtn').text());
     return api.actions.put(deviceId, "setGrill", body, false);
   }
 
   async function ovenUpdateConvection() {
-    body[0] = document.getElementById('dropdownOvenConvectionBtn').innerText.toLowerCase();
+    body[0] = getOriginal($('#dropdownOvenConvectionBtn').text());
     return api.actions.put(deviceId, "setConvection", body, false);
   }
 </script>
