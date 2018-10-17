@@ -230,6 +230,8 @@
 		var name = $nameLabel.text();
 		var input = document.createElement("input");
 		input.setAttribute("type","text");
+    input.setAttribute("size",15);
+    input.setAttribute("maxlength",25);
 		input.value = name;
 		$nameLabel.replaceWith(input);
 		$(input).on('keypress',function(e) {
@@ -430,7 +432,7 @@
               "<p>¿Estas seguro que desea eliminar la habitación?</p>"+
               "<p style=\"color: #ff4500;\">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>");
 		$("#deleteBtn").off("click");
-		$("#deleteBtn").on('click',eliminateRoom(roomID));	  
+		$("#deleteBtn").on('click',eliminateRoom(roomID));
       }
     }
 
