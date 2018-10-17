@@ -4,7 +4,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="createRoomTitle">Crear habitación</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="resetNewRoomModal()">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -25,9 +25,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-group">
-					<label for="roomImgPath">Imágen de la habitación: </label>
-					<input type="file" class="form-control-file" id="roomImgPath" accept="image/jpg, image/png">
+				<div class="alert alert-warning" role="alert" style="display:none" id="roomNameExists">
+				  El nombre elegido ya pertenece a una habitación, por favor escoja otro.
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -38,6 +37,7 @@
 	</div>
 </div>
 <script>
+
 	document.getElementById("saveRoomBtn").disabled = true;
 	let nameInput = document.getElementById("newRoomName");
 	nameInput.oninput = ((event) => {
@@ -52,6 +52,11 @@
 	});
 	var devicesAdded = [];
 
+	function resetNewRoomModal(){
+		devicesAdded = [];
+		$('#deviceList').empty();
+		$('#roomNameExists').attr("style","display:none");
+	}
 	function createNewRoom() {
 		var room = {
 			name: $("#newRoomName").val(),
@@ -59,20 +64,33 @@
 		};
 
 		//TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
-
-		api.rooms
-			.create(room)
+		api.rooms.getAll()
 			.then(data => {
-				window.location.href = "room.html?id=" + data.room.id;
-			})
-			.catch(error => {
-				showErrorMessage("Request failed: " + error.responseText);
+				var exists = false;
+				var rooms = data["rooms"];
+				for(let j=0; j < rooms.length && !exists; j++){
+					if(rooms[j]["name"] === room["name"])
+						exists = true;
+				}
+				if(exists){
+					$('#roomNameExists').attr("style","display:block");
+					return;
+				}
+				api.rooms
+					.create(room)
+					.then(data => {
+						window.location.href = "room.html?id=" + data.room.id;
+					})
+					.catch(error => {
+						showErrorMessage("Request failed: " + error.responseText);
+					});
+			}).catch(error => {
+				showErrorMessage("Request failed: " + error);
 			});
 	}
 
 	$('#cancelRoomBtn').on('click', function(event) {
-		devicesAdded = [];
-		$('#deviceList').empty();
+		resetNewRoomModal();
 		$('#newRoomModal').modal('hide')
 	});
 </script>
