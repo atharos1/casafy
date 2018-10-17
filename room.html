@@ -406,11 +406,10 @@
     });
 
     async function checkElimination() {
-      let devices = await api.devices.getAll(false);
+      let devices = await api.rooms.getDevices(roomID,false);
       let canEliminate = true;
       for (i = 0; i < devices["devices"].length && canEliminate; i++) {
         if (await deviceIsInRoutine(devices["devices"][i]["id"])) {
-          console.log("llegue aca dentro");
           canEliminate = false;
         }
       }
@@ -424,7 +423,6 @@
       // });
       // console.log("afuera: " + flag);
       if (!canEliminate) {
-        console.log("alertAboutRoutines");
         $("#alertAboutRoutinesForRoomEliminationModal").modal("show");
       } else {
         $("#deleteRoomConfirmationModal").modal("show");
@@ -509,7 +507,6 @@
       let routines = await api.routines.getAll(false);
       routines["routines"].forEach(routine => {
         if (routine["actions"][0]["deviceId"] == deviceId) {
-          console.log("llegue");
           ret = true;
           return;
         }
