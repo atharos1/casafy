@@ -103,21 +103,19 @@
         </div>
       </div>
 
-      <div id="deleteRoomConfirmationModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+      <div id="deleteConfirmationModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Eliminar habitación</h5>
+              <h5 class="modal-title" id="deleteConfirmationTitle">Eliminar habitación</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class="modal-body">
-              <p>¿Estas seguro que desea eliminar la habitación?</p>
-              <p style="color: #ff4500;">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>
+            <div class="modal-body" id="deleteConfirmationBody">
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-danger" id="deleteRoomBtn" data-dismiss="modal" onclick="eliminateRoom(roomID)">Eliminar</button>
+              <button type="button" class="btn btn-danger" id="deleteBtn" data-dismiss="modal">Eliminar</button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
             </div>
           </div>
@@ -216,7 +214,7 @@
                       <a class="btn-disp-favorito">
                         <i class="fa ${isFavorite ? " fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
                       </a>
-                      ${name}
+					  <label id="${id}Name" onClick="editDeviceName('${id}')">${name}</label>
                     </h4>
                     <!--Text-->
 
@@ -227,6 +225,43 @@
               </div>`
     }
 
+	function editDeviceName(id){
+		var $nameLabel = $('#' + id + 'Name');
+		var name = $nameLabel.text();
+		var input = document.createElement("input");
+		input.setAttribute("type","text");
+		input.value = name;
+		$nameLabel.replaceWith(input);
+		$(input).on('keypress',function(e) {
+			//Enter
+			if(e.which === 13){
+				if(input.value.length == 0){
+					$(input).replaceWith($nameLabel);
+					return;
+				}
+				api.devices.get(id)
+					.then(data => {
+						var meta = data["device"]["meta"];
+						var typeId = data["device"]["typeId"];
+						var modifiedDevice = {
+							id: id,
+							typeId: typeId,
+							name: input.value,
+							meta: meta
+						};
+						api.devices.modify(modifiedDevice)
+							.then(data => {
+								$(input).replaceWith($nameLabel);
+								$nameLabel.text(input.value);
+							}).catch(error => {
+								showErrorMessage("Request failed: " + error);
+							});
+					}).catch(error => {
+						showErrorMessage("Request failed: " + error);
+					});
+			}
+		});
+	}
     function isElementEmpty(el) {
       return !$.trim(el.html())
     }
@@ -369,14 +404,11 @@
     });
 
     async function checkElimination() {
-      let devices = await api.devices.getAll(false);
+      let devices = await api.rooms.getDevices(roomID,false);
       let canEliminate = true;
-      if (devices["devices"].length != 0) {
-        for (i = 0; i < devices["devices"].length && canEliminate; i++) {
-          if (await deviceIsInRoutine(devices["devices"][i]["id"])) {
-            console.log("llegue aca dentro");
-            canEliminate = false;
-          }
+      for (i = 0; i < devices["devices"].length && canEliminate; i++) {
+        if (await deviceIsInRoutine(devices["devices"][i]["id"])) {
+          canEliminate = false;
         }
       }
       // devices["devices"].forEach(await async function(device) {
@@ -389,10 +421,16 @@
       // });
       // console.log("afuera: " + flag);
       if (!canEliminate) {
-        console.log("alertAboutRoutines");
         $("#alertAboutRoutinesForRoomEliminationModal").modal("show");
       } else {
-        $("#deleteRoomConfirmationModal").modal("show");
+        $("#deleteConfirmationModal").modal("show");
+		$("#deleteConfirmationTitle").text("Eliminar habitación");
+		$("#deleteConfirmationBody").empty();
+		$("#deleteConfirmationBody").append(
+              "<p>¿Estas seguro que desea eliminar la habitación?</p>"+
+              "<p style=\"color: #ff4500;\">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>");
+		$("#deleteBtn").off("click");
+		$("#deleteBtn").on('click',eliminateRoom(roomID));	  
       }
     }
 
@@ -473,24 +511,26 @@
       let ret = false;
       let routines = await api.routines.getAll(false);
       routines["routines"].forEach(routine => {
-        for(i = 0; i < routine["actions"].length; i++) {
-          if(routine["actions"][i]["deviceId"] == deviceId) {
-            console.log("llegue deviceIsInRoutine");
-            ret = true;
-            return;
-          }
+        if (routine["actions"][0]["deviceId"] == deviceId) {
+          ret = true;
+          return;
         }
       });
       return ret;
     }
 
     async function removeDevice(id) {
-      console.log(id);
       if (await deviceIsInRoutine(id)) {
         $("#alertAboutRoutinesModal").modal("show");
-        return;
       } else {
-        api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { showErrorMessage("Error while trying to delete device: " + error); });
+        $("#deleteConfirmationModal").modal("show");
+		$("#deleteConfirmationTitle").text("Eliminar dispositivo");
+		$("#deleteConfirmationBody").empty();
+		$("#deleteConfirmationBody").append("<p>¿Esta seguro que desea eliminar este dispositivo?</p>");
+		$("#deleteBtn").off("click");
+		$("#deleteBtn").on('click',function() {
+			api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { showErrorMessage("Error while trying to delete device: " + error); });
+		});
       }
     }
 
