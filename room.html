@@ -103,21 +103,19 @@
         </div>
       </div>
 
-      <div id="deleteRoomConfirmationModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+      <div id="deleteConfirmationModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Eliminar habitación</h5>
+              <h5 class="modal-title" id="deleteConfirmationTitle">Eliminar habitación</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class="modal-body">
-              <p>¿Estas seguro que desea eliminar la habitación?</p>
-              <p style="color: #ff4500;">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>
+            <div class="modal-body" id="deleteConfirmationBody">
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-danger" id="deleteRoomBtn" data-dismiss="modal" onclick="eliminateRoom(roomID)">Eliminar</button>
+              <button type="button" class="btn btn-danger" id="deleteBtn" data-dismiss="modal">Eliminar</button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
             </div>
           </div>
@@ -425,7 +423,14 @@
       if (!canEliminate) {
         $("#alertAboutRoutinesForRoomEliminationModal").modal("show");
       } else {
-        $("#deleteRoomConfirmationModal").modal("show");
+        $("#deleteConfirmationModal").modal("show");
+		$("#deleteConfirmationTitle").text("Eliminar habitación");
+		$("#deleteConfirmationBody").empty();
+		$("#deleteConfirmationBody").append(
+              "<p>¿Estas seguro que desea eliminar la habitación?</p>"+
+              "<p style=\"color: #ff4500;\">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>");
+		$("#deleteBtn").off("click");
+		$("#deleteBtn").on('click',eliminateRoom(roomID));	  
       }
     }
 
@@ -518,7 +523,14 @@
       if (await deviceIsInRoutine(id)) {
         $("#alertAboutRoutinesModal").modal("show");
       } else {
-        api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { showErrorMessage("Error while trying to delete device: " + error); });
+        $("#deleteConfirmationModal").modal("show");
+		$("#deleteConfirmationTitle").text("Eliminar dispositivo");
+		$("#deleteConfirmationBody").empty();
+		$("#deleteConfirmationBody").append("<p>¿Esta seguro que desea eliminar este dispositivo?</p>");
+		$("#deleteBtn").off("click");
+		$("#deleteBtn").on('click',function() {
+			api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { showErrorMessage("Error while trying to delete device: " + error); });
+		});
       }
     }
 
