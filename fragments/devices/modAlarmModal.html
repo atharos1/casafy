@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modAlarmTitle">Configurar Alarm</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="resetAlarmModal">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -54,6 +54,9 @@
             <label for="securityCode" class="col-form-label">Escriba el codigo de seguridad para guardar:</label>
             <input type="text" class="form-control" id="securityCode">
           </div>
+			<div id="wrongCodeAlert" class="alert alert-warning" role="alert" style="display:none">
+				<p>Código incorrecto. Por favor ingrese el código de vuelta. </p>
+			</div>
         </form>
       </div>
       <div class="modal-footer">
@@ -62,15 +65,8 @@
       </div>
     </div>
   </div>
-  <div id="wrongCodeAlert" class="alert alert-warning alert-dismissible fade" role="alert" style="display:none">
-	<strong>Código incorrecto.</strong> Por favor ingrese el código de vuelta.
-	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
 </div>
 <script>
-	var loadedAlarmModal = false;
 	var alarmModeTranslation = {
 		"disarmed": "Desactivada",
 		"armedStay": "Activada dentro",
@@ -80,6 +76,9 @@
 		"Desactivar": "disarm",
 		"Activar dentro": "armStay",
 		"Activar fuera": "armAway"
+	}
+	function resetAlarmModal() {
+		$('#wrongCodeAlert').attr("style","display:none;");
 	}
 	function updateAlarm() {
 		var enteredCode = $('#securityCode').val();
@@ -91,21 +90,31 @@
 		if($('#newSecurityCode').length > 0)
 			newSecurityCode = $('#newSecurityCode').val();
 		var mode = alarmModeActionName[$('#dropdownAlarmModeBtn').text()];
+		var wrongCode = false;
 		api.actions.put(deviceId,mode,[enteredCode],false)
-			.then(data => {})
+			.then(data => { 
+				if(!data["result"]){
+					$('#wrongCodeAlert').attr("style","display:block;");
+					wrongCode = true;
+				}
+				if(newSecurityCode !== null)
+					api.actions.put(deviceId,"changeSecurityCode",[enteredCode, newSecurityCode],false)
+						.then(data => { if(!data["result"]){
+											$('#wrongCodeAlert').attr("style","display:block;");
+											wrongCode = true
+										}				
+										if(wrongCode)
+											return;
+										$('#codeRequestModal').modal('hide');
+										$('#modAlarmModal').modal('hide');
+										$('#newSecurityCode').text();
+						})
+						.catch(error => {showErrorMessage("Request failed: " + error)});
+			})
 			.catch(error => {showErrorMessage("Request failed: " + error)});
-		if(newSecurityCode !== null)
-			api.actions.put(deviceId,"changeSecurityCode",[enteredCode, newSecurityCode],false)
-				.then(data => {})
-				.catch(error => {showErrorMessage("Request failed: " + error)});
-		$('#codeRequestModal').modal('hide');
-		$('#modAlarmModal').modal('hide');
-		$('#ewSecurityCode').text();
-		var loadedAlaramModal = false;
+		
 	}
 	$('#modAlarmModal').on('show.bs.modal', function (event) {
-	  if(loadedAlarmModal)
-		return;
 	  api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
 		.then(data => {
 			  var actions = data["device"]["actions"];
@@ -138,14 +147,11 @@
 			  api.actions.put(deviceId, "getState")
 				.then(data => {
 					var result = data["result"];
-					console.log(data);
 					$('#dropdownAlarmModeBtn').text(alarmModeTranslation[result["status"]]);
 				})
 				.catch(error => {
 					alert("Request failed: " + error);
 				});
-			  loadedAlarmModal = true;
-		
 		}).catch(error => {
 		  alert("Request failed: " + error);
 		});
