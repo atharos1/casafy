@@ -64,8 +64,7 @@
                   Editar ajustes</a>
               </div>
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right; margin-right: 5px">
-                <a href="#" class="btn red-text btn-md" data-toggle="modal" data-target="#deleteRoomConfirmationModal"><i
-                    class="mdi mdi-delete"></i></i>
+                <a href="#" class="btn red-text btn-md" onclick="checkElimination()"><i class="mdi mdi-delete"></i></i>
                   Eliminar habitacion</a>
               </div>
             </div>
@@ -124,6 +123,43 @@
         </div>
       </div>
     </div>
+
+    <div id="alertAboutRoutinesModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Eliminar dispositivo</h5>
+          </div>
+          <div class="modal-body">
+            <p>Este dipositivo se encuentra presente en alguna rutina. Por favor remueva el dispositivo de las mismas o
+              elimine la rutina para continuar.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="deleteDeviceButton" data-dismiss="modal">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="alertAboutRoutinesForRoomEliminationModal" style="visibility: visible;" class="modal fade" tabindex="-1"
+      role="dialog" data-backdrop="false">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Eliminar habitacion</h5>
+          </div>
+          <div class="modal-body">
+            <p>Hay dispositivos en esta habitacion que se encuentran presentes en alguna rutina. Por favor remueva
+              los dispositivos de las mismas o elimine las rutinas asociadas para continuar.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="deleteDeviceButton" data-dismiss="modal">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
 
     <div id="divFooter"></div>
 
@@ -329,6 +365,33 @@
           alert("Request failed: " + error);
         });
     });
+
+    async function checkElimination() {
+      let devices = await api.devices.getAll(false);
+      let canEliminate = true;
+      for (i = 0; i < devices["devices"].length && canEliminate; i++) {
+        if (await deviceIsInRoutine(devices["devices"][i]["id"])) {
+          console.log("llegue aca dentro");
+          canEliminate = false;
+        }
+      }
+      // devices["devices"].forEach(await async function(device) {
+      //   let inRoutine = await deviceIsInRoutine(device["id"]);
+      //   console.log(inRoutine);
+      //   if(inRoutine) {
+      //     flag = true;
+      //     return;
+      //   }
+      // });
+      // console.log("afuera: " + flag);
+      if (!canEliminate) {
+        console.log("alertAboutRoutines");
+        $("#alertAboutRoutinesForRoomEliminationModal").modal("show");
+      } else {
+        $("#deleteRoomConfirmationModal").modal("show");
+      }
+    }
+
     function eliminateRoom(roomID) {
       // alert(roomID);
       api.rooms.getDevices(roomID, false)
@@ -345,7 +408,6 @@
               data["devices"].forEach(device => {
                 routines["routines"].forEach(routine => {
                   if (routine["actions"][0]["deviceId"] == device["id"]) {
-                    alert("Please remove all associated devices from routines list");
                     flag = true;
                     return;
                   }
@@ -357,6 +419,8 @@
                   api.devices.delete(device["id"], false);
                 });
                 api.rooms.delete(roomID, false).then(() => { window.location.href = "index.html"; completedPromises++; }).catch(error => alert("Request failed: " + error));
+              } else {
+                $("#alertAboutRoutinesModal").modal("show");
               }
             })
               .catch(error => alert("Failure in getting routines: " + error));
@@ -402,19 +466,21 @@
     }
 
     async function deviceIsInRoutine(deviceId) {
+      let ret = false;
       let routines = await api.routines.getAll(false);
       routines["routines"].forEach(routine => {
         if (routine["actions"][0]["deviceId"] == deviceId) {
-          return true;
+          console.log("llegue");
+          ret = true;
+          return;
         }
       });
-      console.log("afuera: " + ret);
-      return false;
+      return ret;
     }
 
     async function removeDevice(id) {
       if (await deviceIsInRoutine(id)) {
-        alert("please remove the device from the routines");
+        $("#alertAboutRoutinesModal").modal("show");
       } else {
         api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { alert("Error while trying to delete device: " + error); });
       }
