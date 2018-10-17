@@ -9,31 +9,29 @@
       </div>
 
       <div class="modal-body">
-        <form>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-3">Apagada</div>
-            <div class="col-md-3">
-              <label class="bs-switch">
-                <input type="checkbox" id="lampStatusSwitch">
-                <span class="slider round"></span>
-              </label>
-            </div>
-            <div class="col-md-3">Prendida</div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-3">Apagada</div>
+          <div class="col-md-3">
+            <label class="bs-switch">
+              <input type="checkbox" id="lampStatusSwitch">
+              <span class="slider round"></span>
+            </label>
           </div>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-3">Color:</div>
-            <div class="col-md-3">
-              <input id="lampColorPicker" value="#ffffff" style="width:85%;" type="color">
-            </div>
+          <div class="col-md-3">Prendida</div>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-3">Color:</div>
+          <div class="col-md-3">
+            <input id="lampColorPicker" value="#ffffff" style="width:85%;" type="color">
           </div>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-3">Brillo:</div>
-            <div class="col-md-5">
-              <input type="range" class="custom-range" id="lampBrightnessSlider" onchange="updateLampBrightness()">
-            </div>
-            <div class="col-md-3" id="lampBrightness">...</div>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-3">Brillo:</div>
+          <div class="col-md-5">
+            <input type="range" class="custom-range" id="lampBrightnessSlider" onchange="updateLampBrightness()">
           </div>
-        </form>
+          <div class="col-md-3" id="lampBrightness">...</div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -46,7 +44,7 @@
 <script>
   var loadedLampModal = false;
 
-  $('#modLampModal').on('show.bs.modal', function (event) {
+  $('#modLampModal').on('show.bs.modal', function(event) {
     if (!loadedLampModal) {
       api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
         .then(data => {
@@ -92,7 +90,7 @@
   var body = new Array(1);
   var lampUpdateFunctions = [lampUpdateStatus, lampUpdateColor, lampUpdateBrightness];
 
-  $('#updateLampBtn').on('click', async function (event) {
+  $('#updateLampBtn').on('click', async function(event) {
     for (updateFunction of lampUpdateFunctions) {
       try {
         await updateFunction();

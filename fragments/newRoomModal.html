@@ -9,28 +9,26 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form>
-					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-3">*Nombre:</div>
-						<div class="col-md-3">
-							<input id="newRoomName" type="text" name="roomname" size=25 maxlength=25><br>
-						</div>
-						<p class="input-warning" id="illegalNameText">El nombre debe contener al menos tres letras.</p>
+				<div class="form-group row" style="padding-bottom: 10px">
+					<div class="col-md-3">*Nombre:</div>
+					<div class="col-md-3">
+						<input id="newRoomName" type="text" name="roomname" size=25 maxlength=25><br>
 					</div>
-					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-3">Favorito:</div>
-						<div class="col-md-1">
-							<div class="form-group form-check">
-								<input type="checkbox" class="form-check-input" id="favourite">
-								<label class="form-check-label" for="favourite"></label>
-							</div>
+					<p class="input-warning" id="illegalNameText">El nombre debe contener al menos tres letras.</p>
+				</div>
+				<div class="form-group row" style="padding-bottom: 10px">
+					<div class="col-md-3">Favorito:</div>
+					<div class="col-md-1">
+						<div class="form-group form-check">
+							<input type="checkbox" class="form-check-input" id="newRoomFavourite">
+							<label class="form-check-label" for="newRoomFavourite"></label>
 						</div>
 					</div>
-					<div class="form-group">
-						<label for="roomImgPath">Imágen de la habitación: </label>
-						<input type="file" class="form-control-file" id="roomImgPath" accept="image/jpg, image/png">
-					</div>
-				</form>
+				</div>
+				<div class="form-group">
+					<label for="roomImgPath">Imágen de la habitación: </label>
+					<input type="file" class="form-control-file" id="roomImgPath" accept="image/jpg, image/png">
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" id="cancelRoomBtn">Cancelar</button>
@@ -53,10 +51,11 @@
 
 	});
 	var devicesAdded = [];
+
 	function createNewRoom() {
 		var room = {
 			name: $("#newRoomName").val(),
-			meta: "{\"isFavorite\":" + document.getElementById("favourite").checked + ",\"image\":\"rooms/room.jpg\"}"
+			meta: "{\"isFavorite\":" + document.getElementById("newRoomFavourite").checked + ",\"image\":\"rooms/room.jpg\"}"
 		};
 
 		//TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
@@ -71,10 +70,9 @@
 			});
 	}
 
-	$('#cancelRoomBtn').on('click', function (event) {
+	$('#cancelRoomBtn').on('click', function(event) {
 		devicesAdded = [];
 		$('#deviceList').empty();
 		$('#newRoomModal').modal('hide')
 	});
-
 </script>

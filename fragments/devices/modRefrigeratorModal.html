@@ -1,5 +1,4 @@
-<div class="modal fade" id="modRefrigeratorModal" tabindex="-1" role="dialog" aria-labelledby="modRefrigeratorTitle"
-  aria-hidden="true">
+<div class="modal fade" id="modRefrigeratorModal" tabindex="-1" role="dialog" aria-labelledby="modRefrigeratorTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -10,35 +9,32 @@
       </div>
 
       <div class="modal-body">
-        <form>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-4">Temperatura:</div>
-            <div class="col-md-5">
-              <input type="range" class="custom-range" id="refrigeratorTempSlider" onchange="updateRefrigeratorTemp()">
-            </div>
-            <div class="col-md-3" id="refrigeratorTemp">...</div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-4">Temperatura:</div>
+          <div class="col-md-5">
+            <input type="range" class="custom-range" id="refrigeratorTempSlider" onchange="updateRefrigeratorTemp()">
           </div>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-4">Temperatura del congelador:</div>
-            <div class="col-md-5">
-              <input type="range" class="custom-range" id="freezerTempSlider" onchange="updateFreezerTemp()">
-            </div>
-            <div class="col-md-3" id="freezerTemp">...</div>
+          <div class="col-md-3" id="refrigeratorTemp">...</div>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-4">Temperatura del congelador:</div>
+          <div class="col-md-5">
+            <input type="range" class="custom-range" id="freezerTempSlider" onchange="updateFreezerTemp()">
           </div>
-          <div class="form-group row" style="padding-bottom: 10px">
-            <div class="col-md-4">Modo:</div>
-            <div class="col-md-6">
-              <div class="dropdown" id="refrigeratorModeBtn">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownRefrigeratorModeBtn"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Cargando...
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="refrigeratorMode">
-                </div>
+          <div class="col-md-3" id="freezerTemp">...</div>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-4">Modo:</div>
+          <div class="col-md-6">
+            <div class="dropdown" id="refrigeratorModeBtn">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownRefrigeratorModeBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Cargando...
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="refrigeratorMode">
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -51,7 +47,7 @@
 <script>
   var loadedRefrigeratorModal = false;
 
-  $('#modRefrigeratorModal').on('show.bs.modal', function (event) {
+  $('#modRefrigeratorModal').on('show.bs.modal', function(event) {
     if (!loadedRefrigeratorModal) {
       api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
         .then(data => {
@@ -116,7 +112,7 @@
   var body = new Array(1);
   var refrigeratorUpdateFunctions = [refrigeratorUpdateTemperature, refrigeratorUpdateFreezerTemperature, refrigeratorUpdateMode];
 
-  $('#updateRefrigeratorBtn').on('click', async function (event) {
+  $('#updateRefrigeratorBtn').on('click', async function(event) {
     for (updateFunction of refrigeratorUpdateFunctions) {
       try {
         await updateFunction();
