@@ -102,7 +102,7 @@
         completedPromises++;
       })
       .catch((error) => {
-        alert('Request failed: ' + error);
+        showErrorMessage('Request failed: ' + error);
       })
   }
 
@@ -114,7 +114,7 @@
         populateRoutineTable();
       })
       .catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });
   });
   $("#routineTable").on('click', '.btn-delete-routine', function (event) {
@@ -133,7 +133,7 @@
         });
       })
       .catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });
   });
   $("#routineTable").on('click', '.btn-edit-routine', function (event) {
@@ -150,7 +150,7 @@
         $('#newRoutineModal').modal('show');
         editRoutine(id);
       }).catch(error => {
-        alert("Request failed: " + error);
+        showErrorMessage("Request failed: " + error);
       });*/
   });
   $(document).ready(function () {

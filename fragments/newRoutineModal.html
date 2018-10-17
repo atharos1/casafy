@@ -73,7 +73,7 @@
 					createAction(actions[i]["actionName"], actions[i]["deviceId"], actions[i]["params"]);
 				$('#newRoutineModal').modal('show');
 			}).catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			});
 	}
 	$("#newRoutineModal").on('click', '#btn-exec-routine', function (event) {
@@ -88,7 +88,7 @@
 				});
 			})
 			.catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			});
 	});
 	function resetRoutineModal() {
@@ -172,7 +172,7 @@
 				$(cardBody).append(container)
 				updateCreateButton();
 			}).catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			});
 	}
 
@@ -230,7 +230,7 @@
 					populateRoutineTable();
 					reloadSearch();
 				}).catch(error => {
-					alert("Request failed: " + error);
+					showErrorMessage("Request failed: " + error);
 				});
 		}
 		else {
@@ -242,7 +242,7 @@
 					populateRoutineTable();
 					reloadSearch();
 				}).catch(error => {
-					alert("Request failed: " + error);
+					showErrorMessage("Request failed: " + error);
 				});
 		}
 	});

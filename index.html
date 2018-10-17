@@ -194,7 +194,7 @@
                       try {
                         var state = await api.actions.put(device.id, "getState", null, true);
                       } catch (e) {
-                        alert("Error");
+                        showErrorMessage("Error");
                       }
 
                       if (state["result"]["status"] != null)
@@ -226,14 +226,14 @@
 
                 })
                 .catch((error) => {
-                  alert('Request failed: ' + error);
+                  showErrorMessage('Request failed: ' + error);
                 });
             });
 
 
           })
           .catch((error) => {
-            alert('Request failed: ' + error);
+            showErrorMessage('Request failed: ' + error);
           });
         completedPromises++;
 
@@ -308,11 +308,11 @@
                 populateRoomList();
               })
               .catch(error => {
-                alert("Request failed: " + error);
+                showErrorMessage("Request failed: " + error);
               });
           })
           .catch(error => {
-            alert("Request failed: " + error);
+            showErrorMessage("Request failed: " + error);
           });
       });
 

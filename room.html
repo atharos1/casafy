@@ -254,7 +254,7 @@
           completedPromises++;
         })
         .catch((error) => {
-          alert('Request failed: ' + error);
+          showErrorMessage('Request failed: ' + error);
         });
     }
 
@@ -283,7 +283,7 @@
 
         })
         .catch((error) => {
-          alert('Request failed: ' + error);
+          showErrorMessage('Request failed: ' + error);
         });
 
     }
@@ -360,11 +360,11 @@
               populateDevicesList(getQueryStringParameter("id"));
             })
             .catch(error => {
-              alert("Request failed: " + error);
+              showErrorMessage("Request failed: " + error);
             });
         })
         .catch(error => {
-          alert("Request failed: " + error);
+          showErrorMessage("Request failed: " + error);
         });
     });
 
@@ -422,15 +422,15 @@
                 data["devices"].forEach(device => {
                   api.devices.delete(device["id"], false);
                 });
-                api.rooms.delete(roomID, false).then(() => { window.location.href = "index.html"; completedPromises++; }).catch(error => alert("Request failed: " + error));
+                api.rooms.delete(roomID, false).then(() => { window.location.href = "index.html"; completedPromises++; }).catch(error => showErrorMessage("Request failed: " + error));
               } else {
                 $("#alertAboutRoutinesModal").modal("show");
               }
             })
-              .catch(error => alert("Failure in getting routines: " + error));
+              .catch(error => showErrorMessage("Failure in getting routines: " + error));
           }
         }).catch((error) => {
-          alert('Failure to get devices list: ' + error);
+          showErrorMessage('Failure to get devices list: ' + error);
         });
     };
 
@@ -460,11 +460,11 @@
             .modify(room)
             .then(data => { })
             .catch(error => {
-              alert("Request failed: " + error);
+              showErrorMessage("Request failed: " + error);
             });
         })
         .catch(error => {
-          alert("Request failed: " + error);
+          showErrorMessage("Request failed: " + error);
         });
 
     }
@@ -490,7 +490,7 @@
         $("#alertAboutRoutinesModal").modal("show");
         return;
       } else {
-        api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { alert("Error while trying to delete device: " + error); });
+        api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { showErrorMessage("Error while trying to delete device: " + error); });
       }
     }
 

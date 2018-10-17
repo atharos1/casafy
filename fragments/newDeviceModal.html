@@ -77,7 +77,7 @@
 					}
 				})
 				.catch(error => {
-					alert("Request failed: " + error);
+					showErrorMessage("Request failed: " + error);
 				});
 		}
 	});
@@ -111,11 +111,11 @@
 						reloadSearch();
 					})
 					.catch(error => {
-						alert("Request failed: " + error);
+						showErrorMessage("Request failed: " + error);
 					});
 			})
 			.catch(error => {
-				alert("Request failed: " + error);
+				showErrorMessage("Request failed: " + error);
 			});
 
 		$('#newDeviceModal').modal('hide');
