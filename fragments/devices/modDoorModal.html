@@ -1,5 +1,6 @@
-<div class="modal fade" id="modDoorModal" tabindex="-1" role="dialog" aria-labelledby="modDoorTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+<div class="modal fade modalDeArcoiris" id="modDoorModal" tabindex="-1" role="dialog" aria-labelledby="modDoorTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md modalDeArcoiris" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modDoorTitle">Configurar Puerta</h5>
@@ -29,7 +30,10 @@
           </div>
           <div class="col-md-3">Desbloqueada</div>
         </div>
+        <button type="button" class="btn btn-secondary" onclick="showUpdateDeviceModal(deviceId);">Editar
+          dispositivo</button>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateDoorBtn">Aceptar</button>
@@ -39,7 +43,7 @@
 </div>
 
 <script>
-  $('#modDoorModal').on('show.bs.modal', function(event) {
+  $('#modDoorModal').on('show.bs.modal', function (event) {
     api.actions.put(deviceId, "getState")
       .then(data => {
         var result = data["result"];
@@ -62,7 +66,7 @@
 
   var doorUpdateFunctions = [doorUpdateStatus, doorUpdateLock];
 
-  $('#updateDoorBtn').on('click', async function(event) {
+  $('#updateDoorBtn').on('click', async function (event) {
     for (updateFunction of doorUpdateFunctions) {
       try {
         await updateFunction();

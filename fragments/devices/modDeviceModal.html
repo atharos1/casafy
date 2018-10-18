@@ -5,10 +5,12 @@
 <div id="divModRefrigeratorModal"></div>
 <div id="divModOvenModal"></div>
 <div id="divModAlarmModal"></div>
+<div id="regularEdit"></div>
 
 <script src="fragments/supportedValuesTranslation.js"></script>
 
 <script>
+  $("#regularEdit").load("fragments/devices/regularDeviceEditor.html");
   $("#divModBlindModal").load("fragments/devices/modBlindModal.html");
   $("#divModACModal").load("fragments/devices/modACModal.html");
   $("#divModDoorModal").load("fragments/devices/modDoorModal.html");
@@ -36,9 +38,9 @@
           $('#modRefrigeratorModal').modal('show');
         } else if (name == "oven") {
           $('#modOvenModal').modal('show');
-        } else  if (name == "alarm") {
+        } else if (name == "alarm") {
           $('#modAlarmModal').modal('show');
-        } else{
+        } else {
           showErrorMessage("Dispositivo no soportado aún");
         }
       })

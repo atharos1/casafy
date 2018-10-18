@@ -1,5 +1,6 @@
-<div class="modal fade" id="modBlindModal" tabindex="-1" role="dialog" aria-labelledby="modBlindTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+<div class="modal fade modalDeArcoiris" id="modBlindModal" tabindex="-1" role="dialog" aria-labelledby="modBlindTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm modalDeArcoiris" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title" id="modBlindTitle">Configurar Persiana</h4>
@@ -19,7 +20,10 @@
           </div>
           <div class="col-md-3">Abierta</div>
         </div>
+        <button type="button" class="btn btn-secondary" onclick="showUpdateDeviceModal(deviceId);">Editar
+          dispositivo</button>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateBlindBtn">Aceptar</button>
@@ -29,7 +33,7 @@
 </div>
 
 <script>
-  $('#modBlindModal').on('show.bs.modal', function(event) {
+  $('#modBlindModal').on('show.bs.modal', function (event) {
     api.actions.put(deviceId, "getState")
       .then(data => {
         var result = data["result"];
@@ -44,7 +48,7 @@
       });
   });
 
-  $('#updateBlindBtn').on('click', function(event) {
+  $('#updateBlindBtn').on('click', function (event) {
     /*status*/
     if (document.getElementById("blindSwitch").checked) {
       api.actions.put(deviceId, "up")

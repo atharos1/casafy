@@ -1,0 +1,113 @@
+<div class="modal fade" id="modDeviceModal" data-id="0" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-notify modal-warning" role="document">
+        <!--Content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modDeviceTitle">Editar dispositivo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group row" style="padding-bottom: 10px">
+                    <div class="col-md-3">*Nombre:</div>
+                    <div class="col-md-3">
+                        <input id="modDeviceName" type="text" name="roomname" size=25 maxlength=25><br>
+                    </div>
+                    <p class="input-warning" id="modDeviceIllegalNameText">El nombre debe contener al menos tres
+                        letras.</p>
+                </div>
+                <div class="form-group row" style="padding-bottom: 10px">
+                    <div class="col-md-3">Favorito:</div>
+                    <div class="col-md-1">
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="modDeviceFavourite">
+                            <label class="form-check-label" for="modDeviceFavourite"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="removeDevice(deviceId)" data-dismiss="modal"><i
+                        class="fa fa-trash text-white"></i> Eliminar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="updateRoom()" id="modDeviceBtn">Aceptar</button>
+            </div>
+        </div>
+        <!--/.Content-->
+    </div>
+</div>
+
+<script>
+    function fixFieldState(inputField) {
+        $(inputField).trigger("focusin");
+        $(inputField).trigger("blur");
+    }
+
+    var modDeviceInput = document.getElementById("modDeviceName");
+    modDeviceInput.oninput = ((event) => {
+        if (modDeviceInput.value.length < 3) {
+            document.getElementById("modDeviceIllegalNameText").style.visibility = "visible";
+            document.getElementById("modDeviceBtn").disabled = true;
+        } else {
+            document.getElementById("modDeviceIllegalNameText").style.visibility = "hidden";
+            document.getElementById("modDeviceBtn").disabled = false;
+        }
+    });
+
+    var deviceImage;
+
+    function showUpdateDeviceModal(id) {
+        console.log(id);
+        document.getElementById("modDeviceIllegalNameText").style.visibility = "hidden";
+
+        if (id && id != 0) {
+            api.devices.get(id)
+                .then((data) => {
+                    var device = data["device"];
+                    $("#modDeviceName").val(device["name"]);
+                    var meta = JSON.parse(device["meta"]);
+                    document.getElementById("modDeviceFavourite").checked = meta["isFavorite"];
+                    deviceImage = meta["image"];
+                    fixFieldState($("#modDeviceName"));
+
+                    $('#modDeviceModal').data("id", id);
+
+                    $('#modDeviceModal').modal('show');
+
+                })
+                .catch((error) => {
+                    showErrorMessage('Request failed: ' + error);
+                });
+        }
+    }
+
+    function updateRoom() {
+        var device = {
+            id: $('#modDeviceModal').data("id"),
+            name: $("#modDeviceName").val(),
+            typeId: deviceTypeId,
+            meta: "{\"image\":\"" + deviceImage + "\",\"isFavorite\":"
+                + document.getElementById("modDeviceFavourite").checked + "}"
+        };
+
+        //TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
+
+        api.devices
+            .modify(device)
+            .then(data => {
+                var roomID = getQueryStringParameter("id");
+                populateDevicesList(roomID);
+                $('#modDeviceModal').modal('hide');
+                reloadSearch();
+            })
+            .catch(error => {
+                showErrorMessage("Request failed: " + error);
+            });
+
+    }
+</script>

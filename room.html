@@ -62,7 +62,7 @@
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right;">
                 <a href="#" class="btn black-text btn-md" onclick="showUpdateRoomModal(roomID);"><i class="fa fa-pencil-square-o"
                     aria-hidden="true"></i></i>
-                  Editar ajustes</a>
+                  Editar habitacion</a>
               </div>
               <div class="d-inline btn-group align-middle" data-toggle="buttons" style="float: right; margin-right: 5px">
                 <a href="#" class="btn red-text btn-md" onclick="checkElimination()"><i class="mdi mdi-delete"></i></i>
@@ -214,56 +214,56 @@
                       <a class="btn-disp-favorito">
                         <i class="fa ${isFavorite ? " fa-star amber-text" : "fa-star-o"}" aria-hidden="true"></i>
                       </a>
-					  <label id="${id}Name" onClick="editDeviceName('${id}')">${name}</label>
+                      ${name}
                     </h4>
                     <!--Text-->
 
                     <a href="#" class="btn btn-primary btn-configuracion" role="button" style="margin-top: -5px" onclick="showModDeviceModal('${id}', '${typeId}')">Configuración</a>
-                    <a htref="#"><i class="fa fa-trash fa-2x" style="margin-left: 15px;" aria-hidden="true" onclick="removeDevice('${id}')"></i></a>
+                    
                   </div>
                 </div>
               </div>`
     }
 
-	function editDeviceName(id){
-		var $nameLabel = $('#' + id + 'Name');
-		var name = $nameLabel.text();
-		var input = document.createElement("input");
-		input.setAttribute("type","text");
-    input.setAttribute("size",15);
-    input.setAttribute("maxlength",25);
-		input.value = name;
-		$nameLabel.replaceWith(input);
-		$(input).on('keypress',function(e) {
-			//Enter
-			if(e.which === 13){
-				if(input.value.length == 0){
-					$(input).replaceWith($nameLabel);
-					return;
-				}
-				api.devices.get(id)
-					.then(data => {
-						var meta = data["device"]["meta"];
-						var typeId = data["device"]["typeId"];
-						var modifiedDevice = {
-							id: id,
-							typeId: typeId,
-							name: input.value,
-							meta: meta
-						};
-						api.devices.modify(modifiedDevice)
-							.then(data => {
-								$(input).replaceWith($nameLabel);
-								$nameLabel.text(input.value);
-							}).catch(error => {
-								showErrorMessage("Request failed: " + error);
-							});
-					}).catch(error => {
-						showErrorMessage("Request failed: " + error);
-					});
-			}
-		});
-	}
+    function editDeviceName(id) {
+      var $nameLabel = $('#' + id + 'Name');
+      var name = $nameLabel.text();
+      var input = document.createElement("input");
+      input.setAttribute("type", "text");
+      input.setAttribute("size", 15);
+      input.setAttribute("maxlength", 25);
+      input.value = name;
+      $nameLabel.replaceWith(input);
+      $(input).on('keypress', function (e) {
+        //Enter
+        if (e.which === 13) {
+          if (input.value.length == 0) {
+            $(input).replaceWith($nameLabel);
+            return;
+          }
+          api.devices.get(id)
+            .then(data => {
+              var meta = data["device"]["meta"];
+              var typeId = data["device"]["typeId"];
+              var modifiedDevice = {
+                id: id,
+                typeId: typeId,
+                name: input.value,
+                meta: meta
+              };
+              api.devices.modify(modifiedDevice)
+                .then(data => {
+                  $(input).replaceWith($nameLabel);
+                  $nameLabel.text(input.value);
+                }).catch(error => {
+                  showErrorMessage("Request failed: " + error);
+                });
+            }).catch(error => {
+              showErrorMessage("Request failed: " + error);
+            });
+        }
+      });
+    }
     function isElementEmpty(el) {
       return !$.trim(el.html())
     }
@@ -406,7 +406,7 @@
     });
 
     async function checkElimination() {
-      let devices = await api.rooms.getDevices(roomID,false);
+      let devices = await api.rooms.getDevices(roomID, false);
       let canEliminate = true;
       for (i = 0; i < devices["devices"].length && canEliminate; i++) {
         if (await deviceIsInRoutine(devices["devices"][i]["id"])) {
@@ -426,15 +426,15 @@
         $("#alertAboutRoutinesForRoomEliminationModal").modal("show");
       } else {
         $("#deleteConfirmationModal").modal("show");
-		$("#deleteConfirmationTitle").text("Eliminar habitación");
-		$("#deleteConfirmationBody").empty();
-		$("#deleteConfirmationBody").append(
-              "<p>¿Estas seguro que desea eliminar la habitación?</p>"+
-              "<p style=\"color: #ff4500;\">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>");
-		$("#deleteBtn").off("click");
-		$("#deleteBtn").on('click',function(event){
-			eliminateRoom(roomID)
-		});
+        $("#deleteConfirmationTitle").text("Eliminar habitación");
+        $("#deleteConfirmationBody").empty();
+        $("#deleteConfirmationBody").append(
+          "<p>¿Estas seguro que desea eliminar la habitación?</p>" +
+          "<p style=\"color: #ff4500;\">Si elimina la habitación se eliminarán todos los dispositivos dentro.</p>");
+        $("#deleteBtn").off("click");
+        $("#deleteBtn").on('click', function (event) {
+          eliminateRoom(roomID)
+        });
       }
     }
 
@@ -528,13 +528,14 @@
         $("#alertAboutRoutinesModal").modal("show");
       } else {
         $("#deleteConfirmationModal").modal("show");
-		$("#deleteConfirmationTitle").text("Eliminar dispositivo");
-		$("#deleteConfirmationBody").empty();
-		$("#deleteConfirmationBody").append("<p>¿Esta seguro que desea eliminar este dispositivo?</p>");
-		$("#deleteBtn").off("click");
-		$("#deleteBtn").on('click',function() {
-			api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { showErrorMessage("Error while trying to delete device: " + error); });
-		});
+        $("#deleteConfirmationTitle").text("Eliminar dispositivo");
+        $("#deleteConfirmationBody").empty();
+        $("#deleteConfirmationBody").append("<p>¿Esta seguro que desea eliminar este dispositivo?</p>");
+        $("#deleteBtn").off("click");
+        $("#deleteBtn").on('click', function () {
+          api.devices.delete(id, false).then(data => { populateDevicesList(roomID); }).catch(error => { showErrorMessage("Error while trying to delete device: " + error); });
+          $(".modalDeArcoiris").modal("hide");
+        });
       }
     }
 

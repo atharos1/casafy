@@ -1,5 +1,6 @@
-<div class="modal fade" id="modOvenModal" tabindex="-1" role="dialog" aria-labelledby="modOvenTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+<div class="modal fade modalDeArcoiris" id="modOvenModal" tabindex="-1" role="dialog" aria-labelledby="modOvenTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md modalDeArcoiris" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modOvenTitle">Configurar Horno</h5>
@@ -30,7 +31,8 @@
           <div class="col-md-4">Calor:</div>
           <div class="col-md-6">
             <div class="dropdown" id="ovenHeatBtn">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenHeatBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenHeatBtn" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
                 Cargando...
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenHeat">
@@ -42,7 +44,8 @@
           <div class="col-md-4">Grill:</div>
           <div class="col-md-6">
             <div class="dropdown" id="ovenGrillBtn">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenGrillBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenGrillBtn" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
                 Cargando...
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenGrill">
@@ -54,7 +57,8 @@
           <div class="col-md-4">Convección:</div>
           <div class="col-md-6">
             <div class="dropdown" id="ovenConvectionBtn">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenConvectionBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOvenConvectionBtn"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Cargando...
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="ovenConvection">
@@ -62,7 +66,10 @@
             </div>
           </div>
         </div>
+        <button type="button" class="btn btn-secondary" onclick="showUpdateDeviceModal(deviceId);">Editar
+          dispositivo</button>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateOvenBtn">Aceptar</button>
@@ -74,7 +81,7 @@
 <script>
   var loadedOvenModal = false;
 
-  $('#modOvenModal').on('show.bs.modal', function(event) {
+  $('#modOvenModal').on('show.bs.modal', function (event) {
     if (!loadedOvenModal) {
       api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
         .then(data => {
@@ -142,7 +149,7 @@
   var body = new Array(1);
   var ovenUpdateFunctions = [ovenUpdateStatus, ovenUpdateTemperature, ovenUpdateHeat, ovenUpdateGrill, ovenUpdateConvection];
 
-  $('#updateOvenBtn').on('click', async function(event) {
+  $('#updateOvenBtn').on('click', async function (event) {
     for (updateFunction of ovenUpdateFunctions) {
       try {
         await updateFunction();

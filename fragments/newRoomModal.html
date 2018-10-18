@@ -25,8 +25,18 @@
 						</div>
 					</div>
 				</div>
+
+				<div id="newRoom_imgSelection" class="view overlay newRoom_imgSelection">
+					<img id="newRoom_imgSelectionIMG" src="img/rooms/room.jpg" class="img-thumbnail" alt="smaple image">
+					<div class="mask flex-center rgba-blue-strong">
+						<a class="white-text">Elegir imagen</a>
+					</div>
+				</div>
+				<button type="button" class="btn btn-primary newRoom_imgSelection">
+					Elegir imagen
+				</button>
 				<div class="alert alert-warning" role="alert" style="display:none" id="roomNameExists">
-				  El nombre elegido ya pertenece a una habitación, por favor escoja otro.
+					El nombre elegido ya pertenece a una habitación, por favor escoja otro.
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -36,12 +46,67 @@
 		</div>
 	</div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="roomImageModal" tabindex="-1" role="dialog" aria-labelledby="createRoomTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Elegir imagen</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+
+				<div id="roomImageModal_body" class="row text-center">
+					<div class="col-3">
+						<div class="view overlay img-selection">
+							<img src="img/rooms/bedroom.jpg" class="img-thumbnail" alt="smaple image">
+							<div class="mask flex-center rgba-blue-strong">
+								<p class="white-text label-select">Elegir</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-3">
+						<div class="view overlay img-selection">
+							<img src="img/rooms/diningroom.jpg" class="img-thumbnail" alt="smaple image">
+							<div class="mask flex-center rgba-blue-strong">
+								<p class="white-text label-select">Elegir</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-3">
+						<div class="view overlay img-selection">
+							<img src="img/rooms/kitchen.jpg" class="img-thumbnail" alt="smaple image">
+							<div class="mask flex-center rgba-blue-strong">
+								<p class="white-text label-select">Elegir</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-3">
+						<div class="view overlay img-selection">
+							<img src="img/rooms/room.jpg" class="img-thumbnail" alt="smaple image">
+							<div class="mask flex-center rgba-blue-strong">
+								<p class="white-text label-select">Elegir</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary" onclick="selectImage();">Elegir imagen</button>
+			</div>
+		</div>
+	</div>
+</div>
 <script>
 
 	document.getElementById("saveRoomBtn").disabled = true;
-	let nameInput = document.getElementById("newRoomName");
-	nameInput.oninput = ((event) => {
-		if (nameInput.value.length < 3) {
+	var newRoomInput = document.getElementById("newRoomName");
+	newRoomInput.oninput = ((event) => {
+		if (newRoomInput.value.length < 3) {
 			document.getElementById("illegalNameText").style.visibility = "visible";
 			document.getElementById("saveRoomBtn").disabled = true;
 		} else {
@@ -52,15 +117,16 @@
 	});
 	var devicesAdded = [];
 
-	function resetNewRoomModal(){
+	function resetNewRoomModal() {
 		devicesAdded = [];
 		$('#deviceList').empty();
-		$('#roomNameExists').attr("style","display:none");
+		$('#roomNameExists').attr("style", "display:none");
 	}
 	function createNewRoom() {
+		var currImage = $("#newRoom_imgSelectionIMG").attr("src");
 		var room = {
 			name: $("#newRoomName").val(),
-			meta: "{\"isFavorite\":" + document.getElementById("newRoomFavourite").checked + ",\"image\":\"rooms/room.jpg\"}"
+			meta: "{\"isFavorite\":" + document.getElementById("newRoomFavourite").checked + ",\"image\":\"" + currImage + "\"}"
 		};
 
 		//TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
@@ -68,12 +134,12 @@
 			.then(data => {
 				var exists = false;
 				var rooms = data["rooms"];
-				for(let j=0; j < rooms.length && !exists; j++){
-					if(rooms[j]["name"] === room["name"])
+				for (let j = 0; j < rooms.length && !exists; j++) {
+					if (rooms[j]["name"] === room["name"])
 						exists = true;
 				}
-				if(exists){
-					$('#roomNameExists').attr("style","display:block");
+				if (exists) {
+					$('#roomNameExists').attr("style", "display:block");
 					return;
 				}
 				api.rooms
@@ -89,8 +155,32 @@
 			});
 	}
 
-	$('#cancelRoomBtn').on('click', function(event) {
+	$('#cancelRoomBtn').on('click', function (event) {
 		resetNewRoomModal();
-		$('#newRoomModal').modal('hide')
+		$('#newRoomModal').modal('hide');
 	});
+
+
+
+	$("#newRoomModal").on("click", ".newRoom_imgSelection", function () {
+		var curr = $("#newRoom_imgSelectionIMG").attr("src");
+		$(".img-selection").not(".overlay").addClass("overlay");
+		var imgElem = $('#roomImageModal').find('img[src$="' + curr + '"]');
+		imgElem.closest(".img-selection").removeClass("overlay");
+		imgElem.closest(".label-select").html("<i class='fa fa-check-circle' aria-hidden='true'></i> Elegida");
+		$("#roomImageModal").modal('show');
+	});
+
+	$("#roomImageModal").on("click", ".img-selection", function () {
+		$(".img-selection").not(".overlay").find(".label-select").html("Elegir");
+		$(".img-selection").not(".overlay").addClass("overlay");
+		$(this).removeClass("overlay");
+		$(this).find(".label-select").html("<i class='fa fa-check-circle' aria-hidden='true'></i> Elegida");
+	});
+
+	function selectImage() {
+		var src = $(".img-selection").not(".overlay").find("img").attr('src');
+		$("#newRoom_imgSelectionIMG").attr("src", src);
+		$("#roomImageModal").modal('hide');
+	}
 </script>

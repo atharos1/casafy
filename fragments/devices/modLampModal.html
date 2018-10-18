@@ -1,5 +1,6 @@
-<div class="modal fade" id="modLampModal" tabindex="-1" role="dialog" aria-labelledby="modLampTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+<div class="modal fade modalDeArcoiris" id="modLampModal" tabindex="-1" role="dialog" aria-labelledby="modLampTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md modalDeArcoiris" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modLampTitle">Configurar Lámpara</h5>
@@ -32,7 +33,10 @@
           </div>
           <div class="col-md-3" id="lampBrightness">...</div>
         </div>
+        <button type="button" class="btn btn-secondary" onclick="showUpdateDeviceModal(deviceId);">Editar
+          dispositivo</button>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="updateLampBtn">Aceptar</button>
@@ -44,7 +48,7 @@
 <script>
   var loadedLampModal = false;
 
-  $('#modLampModal').on('show.bs.modal', function(event) {
+  $('#modLampModal').on('show.bs.modal', function (event) {
     if (!loadedLampModal) {
       api.get(api.baseUrl + "devicetypes/" + deviceTypeId)
         .then(data => {
@@ -90,7 +94,7 @@
   var body = new Array(1);
   var lampUpdateFunctions = [lampUpdateStatus, lampUpdateColor, lampUpdateBrightness];
 
-  $('#updateLampBtn').on('click', async function(event) {
+  $('#updateLampBtn').on('click', async function (event) {
     for (updateFunction of lampUpdateFunctions) {
       try {
         await updateFunction();

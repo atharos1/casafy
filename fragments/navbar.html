@@ -4,7 +4,7 @@
         <div class="md-form form-md my-0" style="width: 25em;">
             <!--<input class="form-control form-control-xl mr-md-2 mb-2" style="width: 23em;" type="text" placeholder="Buscar dispositivos, habitaciones y rutinas..."
                 aria-label="Search">-->
-            <select class="js-example-templating" style="width: 23em;">
+            <select class="js-example-templating" style="width: 25em;">
                 <!--<optgroup label="Habitaciones">
                     <option value="A" data-img="img/rooms/bedroom.jpg">Dormitorio principal</option>
                     <option value="B" data-img="img/rooms/kitchen.jpg">Cocina</option>
@@ -87,7 +87,7 @@
                                 class: 'hab',
                                 value: "hab_" + room.id,
                                 name: room.name,
-                                img: "img/" + meta.image
+                                img: meta.image
                             });
 
                             api.rooms.getDevices(room["id"])
@@ -104,10 +104,10 @@
                                             img: "img/" + meta.image
                                         });
                                     }
-                                }).catch(error => {showErrorMessage("Request failed: " + error)});
+                                }).catch(error => { showErrorMessage("Request failed: " + error) });
 
                         }
-                    }).catch(error => {showErrorMessage("Request failed: " + error)});
+                    }).catch(error => { showErrorMessage("Request failed: " + error) });
 
                 api.routines.getAll()
                     .then((data) => {
@@ -119,7 +119,7 @@
                                 name: rutina.name,
                                 img: "img/routine.jpg"
                             });
-                    }).catch(error => {showErrorMessage("Request failed: " + error)});
+                    }).catch(error => { showErrorMessage("Request failed: " + error) });
             },
             onChange: function (value) {
                 var obj = $buscador[0].selectize;

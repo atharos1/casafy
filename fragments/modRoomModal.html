@@ -1,37 +1,38 @@
-<div class="modal fade" id="modRoomModal" data-id="0" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="modRoomModal" data-id="0" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-notify modal-warning" role="document">
     <!--Content-->
     <div class="modal-content">
       <div class="modal-header">
-				<h5 class="modal-title" id="modRoomTitle">Modificar habitación</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
+        <h5 class="modal-title" id="modRoomTitle">Editar habitación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
 
-			<div class="modal-body">
-					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-3">*Nombre:</div>
-						<div class="col-md-3">
-							<input id="modRoomName" type="text" name="roomname" size=25 maxlength=25><br>
-						</div>
-						<p class="input-warning" id="modRoomIllegalNameText">El nombre debe contener al menos tres letras.</p>
-					</div>
-					<div class="form-group row" style="padding-bottom: 10px">
-						<div class="col-md-3">Favorito:</div>
-						<div class="col-md-1">
-							<div class="form-group form-check">
-								<input type="checkbox" class="form-check-input" id="modRoomFavourite">
-								<label class="form-check-label" for="modRoomFavourite"></label>
-							</div>
-						</div>
-					</div>
-			</div>
+      <div class="modal-body">
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-3">*Nombre:</div>
+          <div class="col-md-3">
+            <input id="modRoomName" type="text" name="roomname" size=25 maxlength=25><br>
+          </div>
+          <p class="input-warning" id="modRoomIllegalNameText">El nombre debe contener al menos tres letras.</p>
+        </div>
+        <div class="form-group row" style="padding-bottom: 10px">
+          <div class="col-md-3">Favorito:</div>
+          <div class="col-md-1">
+            <div class="form-group form-check">
+              <input type="checkbox" class="form-check-input" id="modRoomFavourite">
+              <label class="form-check-label" for="modRoomFavourite"></label>
+            </div>
+          </div>
+        </div>
+      </div>
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-primary" onclick="updateRoom()" id="modRoomBtn">Modificar</button>
-			</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="updateRoom()" id="modRoomBtn">Modificar</button>
+      </div>
     </div>
     <!--/.Content-->
   </div>
@@ -43,9 +44,9 @@
     $(inputField).trigger("blur");
   }
 
-  let nameInput = document.getElementById("modRoomName");
-  nameInput.oninput = ((event) => {
-    if (nameInput.value.length < 3) {
+  let modRoomInput = document.getElementById("modRoomName");
+  modRoomInput.oninput = ((event) => {
+    if (modRoomInput.value.length < 3) {
       document.getElementById("modRoomIllegalNameText").style.visibility = "visible";
       document.getElementById("modRoomBtn").disabled = true;
     } else {
@@ -81,7 +82,7 @@
     var room = {
       id: $('#modRoomModal').data("id"),
       name: $("#modRoomName").val(),
-      meta: "{\"isFavorite\":"+ document.getElementById("modRoomFavourite").checked + ",\"image\":\"rooms/room.jpg\"}"
+      meta: "{\"isFavorite\":" + document.getElementById("modRoomFavourite").checked + ",\"image\":\"rooms/room.jpg\"}"
     };
 
     //TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
