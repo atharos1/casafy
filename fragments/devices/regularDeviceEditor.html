@@ -35,7 +35,7 @@
                 <button type="button" class="btn btn-danger" onclick="removeDevice(deviceId)" data-dismiss="modal"><i
                         class="fa fa-trash text-white"></i> Eliminar</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="updateRoom()" id="modDeviceBtn">Aceptar</button>
+                <button type="button" class="btn btn-primary" onclick="updateDevice()" id="modDeviceBtn">Aceptar</button>
             </div>
         </div>
         <!--/.Content-->
@@ -86,7 +86,7 @@
         }
     }
 
-    function updateRoom() {
+    function updateDevice() {
         var device = {
             id: $('#modDeviceModal').data("id"),
             name: $("#modDeviceName").val(),
@@ -94,8 +94,6 @@
             meta: "{\"image\":\"" + deviceImage + "\",\"isFavorite\":"
                 + document.getElementById("modDeviceFavourite").checked + "}"
         };
-
-        //TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
 
         api.devices
             .modify(device)
@@ -108,6 +106,5 @@
             .catch(error => {
                 showErrorMessage("Request failed: " + error);
             });
-
     }
 </script>

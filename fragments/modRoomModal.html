@@ -79,13 +79,13 @@
   }
 
   function updateRoom() {
+    alert("asd");
+
     var room = {
       id: $('#modRoomModal').data("id"),
       name: $("#modRoomName").val(),
       meta: "{\"isFavorite\":" + document.getElementById("modRoomFavourite").checked + ",\"image\":\"rooms/room.jpg\"}"
     };
-
-    //TODO: MOSTRAR LOADER POR SI NOS CORTAN LA CONEXION EN EL PROCESO
 
     api.rooms
       .modify(room)

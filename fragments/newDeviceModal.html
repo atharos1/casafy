@@ -12,7 +12,8 @@
 					<div class="col-md-3">*Tipo:</div>
 					<div class="col-md-7">
 						<div class="dropdown" id="deviceTypeBtn">
-							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownDeviceBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seleccionar...
+							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownDeviceBtn" data-toggle="dropdown"
+							 aria-haspopup="true" aria-expanded="false">Seleccionar...
 							</button>
 							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="deviceOptions">
 							</div>
@@ -22,8 +23,9 @@
 				<div class="form-group row" style="padding-bottom: 10px">
 					<div class="col-md-3">*Nombre:</div>
 					<div class="col-md-2">
-						<input id="deviceName" type="text" name="devicename" size=25 maxlength=25 oninput="checkInputs()"><br>
+						<input id="deviceName" type="text" name="devicename" size=25 maxlength=25><br>
 					</div>
+					<p class="input-warning" id="newDeviceIllegalNameText">El nombre debe contener al menos tres letras.</p>
 				</div>
 				<div class="form-group row" style="padding-bottom: 10px">
 					<div class="col-md-3">Favorito:</div>
@@ -35,7 +37,7 @@
 					</div>
 				</div>
 				<div class="alert alert-warning" role="alert" style="display:none" id="deviceNameExists">
-				  El nombre elegido ya pertenece a un dispositivo, por favor escoja otro.
+					El nombre elegido ya pertenece a un dispositivo, por favor escoja otro.
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -47,6 +49,19 @@
 </div>
 
 <script>
+	document.getElementById("createDeviceBtn").disabled = true;
+	var newDeviceInput = document.getElementById("deviceName");
+	newDeviceInput.oninput = ((event) => {
+		if (newDeviceInput.value.length < 3) {
+			document.getElementById("newDeviceIllegalNameText").style.visibility = "visible";
+			document.getElementById("createDeviceBtn").disabled = true;
+		} else {
+			document.getElementById("newDeviceIllegalNameText").style.visibility = "hidden";
+			document.getElementById("createDeviceBtn").disabled = false;
+		}
+
+	});
+
 	function isSupportedDevice(deviceId) {
 		if (deviceId == "ofglvd9gqX8yfl3l") //Temporizador
 			return false;
@@ -54,21 +69,12 @@
 		return true;
 	}
 
-	function checkInputs() {
-		if ($('#deviceName').val().length > 0 && $('#deviceName').val().length < $('#deviceName').attr("maxlength") &&
-			$('#dropdownDeviceBtn').attr("chosen") === "true")
-			$('#createDeviceBtn').prop("disabled", false);
-		else
-			$('#createDeviceBtn').prop("disabled", true);
-
-	}
-
 	function selectType(typeElem) {
 		$('#dropdownDeviceBtn').text(typeElem.innerText);
 		$('#dropdownDeviceBtn').attr("chosen", "true");
 		checkInputs();
 	}
-	$('#newDeviceModal').on('shown.bs.modal', function(event) {
+	$('#newDeviceModal').on('shown.bs.modal', function (event) {
 		if ($('#deviceOptions').children().length == 0) {
 			api.get(api.baseUrl + "devicetypes")
 				.then(data => {
@@ -84,10 +90,10 @@
 				});
 		}
 	});
-	$('#createDeviceBtn').on('click', function(event) {
+	$('#createDeviceBtn').on('click', function (event) {
 		var type = document.getElementById('dropdownDeviceBtn').innerText.toLowerCase();
 		var typeId = "";
-		$('#deviceOptions').children(".dropdown-item").each(function(i) {
+		$('#deviceOptions').children(".dropdown-item").each(function (i) {
 			if ($(this).text().toLowerCase() === type)
 				typeId = $(this).attr("id");
 		});
@@ -103,12 +109,12 @@
 			.then(data => {
 				var devices = data["devices"];
 				var exists = false;
-				for(let j=0; j < devices.length && !exists ; j++){
-					if(devices[j]["name"] === name)
+				for (let j = 0; j < devices.length && !exists; j++) {
+					if (devices[j]["name"] === name)
 						exists = true;
 				}
-				if(exists){
-					$('#deviceNameExists').attr("style","display: block");
+				if (exists) {
+					$('#deviceNameExists').attr("style", "display: block");
 					return;
 				}
 				var newDevice = {
@@ -134,14 +140,14 @@
 
 				$('#newDeviceModal').modal('hide');
 				clearNewDeviceModal();
-			}).catch(error => {showErrorMessage("Request failed: " + error)});
+			}).catch(error => { showErrorMessage("Request failed: " + error) });
 	});
 
 	function clearNewDeviceModal() {
 		document.getElementById("deviceName").value = "";
 		document.getElementById("dropdownDeviceBtn").innerText = "Seleccionar...";
 		document.getElementById("favouriteDevice").checked = false;
-		$('#deviceNameExists').attr("style","display: none");
+		$('#deviceNameExists').attr("style", "display: none");
 		$('#createDeviceBtn').prop("disabled", true);
 		$('#dropdownDeviceBtn').attr("chosen", false);
 	}
