@@ -66,7 +66,7 @@
                     } else if (data.class == "rut") {
                         $ret = '<div class="option">' +
                             '<span style="font-weight: bold;">' +
-                            '<img height="42" width="42" src="img/routine.jpg"/> ' +
+                            '<img height="42" width="42" src="../img/routine.jpg"/> ' +
                             escape(data.name) +
                             '</span>' +
                             '</div>';
@@ -79,7 +79,7 @@
                 //if (!query.length) return callback();
                 var self = this;
                 api.rooms.getAll()
-                    .then((data) => {
+                    .then(async (data) => {
                         for (room of data["rooms"]) {
                             let meta = JSON.parse(room["meta"]);
                             self.addOption({
@@ -90,7 +90,7 @@
                                 img: meta.image
                             });
 
-                            api.rooms.getDevices(room["id"])
+                            await api.rooms.getDevices(room["id"])
                                 .then((data) => {
                                     for (device of data["devices"]) {
                                         let meta = JSON.parse(device["meta"]);

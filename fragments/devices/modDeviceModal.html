@@ -7,9 +7,46 @@
 <div id="divModAlarmModal"></div>
 <div id="regularEdit"></div>
 
+<div id="alertAboutRoutinesModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Eliminar dispositivo</h5>
+      </div>
+      <div class="modal-body">
+        <p>Este dipositivo se encuentra presente en alguna rutina. Por favor remueva el dispositivo de las mismas o
+          elimine la rutina para continuar.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="deleteDeviceButton" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="deleteConfirmationModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmationTitle">Eliminar habitación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="deleteConfirmationBody">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="deleteBtn" data-dismiss="modal">Eliminar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="fragments/supportedValuesTranslation.js"></script>
 
 <script>
+
   $("#regularEdit").load("fragments/devices/regularDeviceEditor.html");
   $("#divModBlindModal").load("fragments/devices/modBlindModal.html");
   $("#divModACModal").load("fragments/devices/modACModal.html");
@@ -47,5 +84,39 @@
       .catch(error => {
         showErrorMessage("Request failed: " + error);
       });
+  }
+
+
+  async function deviceIsInRoutine(deviceId) {
+    let ret = false;
+    let routines = await api.routines.getAll(false);
+    routines["routines"].forEach(routine => {
+      if (routine["actions"][0]["deviceId"] == deviceId) {
+        ret = true;
+        return;
+      }
+    });
+    return ret;
+  }
+
+  async function removeDevice(id) {
+    if (await deviceIsInRoutine(id)) {
+      $("#alertAboutRoutinesModal").modal("show");
+    } else {
+      $("#deleteConfirmationModal").modal("show");
+      $("#deleteConfirmationTitle").text("Eliminar dispositivo");
+      $("#deleteConfirmationBody").empty();
+      $("#deleteConfirmationBody").append("<p>¿Esta seguro que desea eliminar este dispositivo?</p>");
+      $("#deleteBtn").off("click");
+      $("#deleteBtn").on('click', function () {
+        api.devices.delete(id, false).then(data => {
+          if (typeof populateDevicesList === "function")
+            populateDevicesList(roomID);
+          if (typeof populateRoomList === "function")
+            populateRoomList();
+        }).catch(error => { showErrorMessage("Error while trying to delete device: " + error); });
+        $(".modalDeArcoiris").modal("hide");
+      });
+    }
   }
 </script>
