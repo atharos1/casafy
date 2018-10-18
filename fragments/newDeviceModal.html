@@ -144,6 +144,7 @@
 	});
 
 	function clearNewDeviceModal() {
+		document.getElementById("newDeviceIllegalNameText").style.visibility = "visible";
 		document.getElementById("deviceName").value = "";
 		document.getElementById("dropdownDeviceBtn").innerText = "Seleccionar...";
 		document.getElementById("favouriteDevice").checked = false;

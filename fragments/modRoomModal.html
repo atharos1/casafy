@@ -55,6 +55,8 @@
     }
   });
 
+  var roomImage;
+
   function showUpdateRoomModal(id) {
     document.getElementById("modRoomIllegalNameText").style.visibility = "hidden";
 
@@ -64,6 +66,7 @@
           var room = data["room"];
           $("#modRoomName").val(room["name"]);
           var meta = JSON.parse(room["meta"]);
+          roomImage = meta["image"];
           document.getElementById("modRoomFavourite").checked = meta["isFavorite"];
           fixFieldState($("#modRoomName"));
 
@@ -84,7 +87,7 @@
     var room = {
       id: $('#modRoomModal').data("id"),
       name: $("#modRoomName").val(),
-      meta: "{\"isFavorite\":" + document.getElementById("modRoomFavourite").checked + ",\"image\":\"rooms/room.jpg\"}"
+      meta: "{\"isFavorite\":" + document.getElementById("modRoomFavourite").checked + ",\"image\":\"" + roomImage + "\"}"
     };
 
     api.rooms
