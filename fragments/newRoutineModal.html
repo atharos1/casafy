@@ -1,6 +1,6 @@
 <div class="modal fade" id="newRoutineModal" tabindex="-1" role="dialog" aria-labelledby="createRoutineTitle"
  aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="createRoutineTitle">Crear rutina</h5>
@@ -26,7 +26,7 @@
 					</div>
 					<div class="row">
 						<div class="col-md-9">
-							<div class="accordion" id="actionAccordion" style="width:100%">
+							<div class="accordion" id="actionAccordion">
 							</div>
 						</div>
 						<div class="col-md-3">
@@ -75,7 +75,11 @@
 			}).catch(error => {
 				showErrorMessage("Request failed: " + error);
 			});
-	}
+	}$("#newRoutineModal").on('show.bs.modal', function (event) {
+		$('#wrongNameText').attr("style","display:block");
+		$('#actionsWarning').attr("style","display:block");
+		
+	});
 	$("#newRoutineModal").on('click', '#btn-exec-routine', function (event) {
 		var id = editRoutineId;
 		api.routines
@@ -98,10 +102,27 @@
 		$('#routineName').val("");
 		$("#createRoutineTitle").text("Crear rutina");
 		$('#btn-exec-routine').hide();
+		$('#wrongNameText').attr("style","display:none");
+		$('#actionsWarning').attr("style","display:none");
 	}
 	function updateCreateButton() {
-		if ($('#routineName').val().length >= 3 && $('#routineName').val().length < $('#routineName').attr("maxlength") &&
-			$('#actionAccordion').children().length > 0)
+		var ready = true;
+		console.log($('#routineName').val().length);
+		if($('#routineName').val().length < 3 || $('#routineName').val().length > $('#routineName').attr("maxlength")){
+			$('#wrongNameText').attr("style","display:block");
+			ready = false;
+		}
+		else
+			$('#wrongNameText').attr("style","display:none");
+		
+		if ($('#actionAccordion').children().length === 0){
+			ready = false;
+			$('#actionsWarning').attr("style","display:block");
+		}
+		else
+			$('#actionsWarning').attr("style","display:none");
+		
+		if(ready)
 			$("#saveRoutineBtn").prop('disabled', false);
 		else
 			$("#saveRoutineBtn").prop('disabled', true);
