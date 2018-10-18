@@ -41,6 +41,7 @@
     </noscript>
   </div>
 
+  <div id="divHelp"></div>
   <div id="divNewRoomModal"></div>
   <div id="divShowSuccessModal"></div>
   <div id="divModDeviceModal"></div>
@@ -66,7 +67,8 @@
               <h4>No tienes habitaciones registradas</h4>
               <h5>¡Presiona el botón rojo para agregar una!</h5>
               <h5>¡Recuerda que necesitas una habitación para agregar un dispositivo!</h5>
-              <a href="#">¿Qué es una habitación?</a>
+              <a role="button" data-toggle="modal" data-target="#helpModal" href="#helpModal">Para más información
+                pulse el botón de ayuda ubicada junto al buscador en la esquina superior derecha de la pantalla</a>
             </div>
 
             <div class="card-body py-0 mCustomScrollbar" style="overflow:auto;">
@@ -279,6 +281,9 @@
         $('#background').addClass('animated fadeIn slower');
         $('#roomsCard').addClass('animated zoomIn');
         $('#routinesCard').addClass('animated zoomIn');
+
+        $("#divHelp").load("fragments/helpModal.html");
+
       }
 
 
